@@ -18,8 +18,6 @@ if not pygame.mixer:
     print 'Warning, sound disabled'
 
 
-
-
 def handle_events():
     # Handle input events
     for event in pygame.event.get():
@@ -271,6 +269,8 @@ def update_status_surf():
 def draw_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
+            if GC.map[x][y] == 1:
+                print GC.map[x][y]
             GV.map_surf.blit(GC.map[x][y].tile,  (x * TILE_PW, y * TILE_PH))
     
 
@@ -324,10 +324,20 @@ def main():
     GV.screen.blit(GV.background, (0, 0))
     pygame.display.flip()
 
-    # Create a maze
+    # Prepare game objects
+    GC.clock = pygame.time.Clock()
+    GV.tiles_image = load_image('tiles16.xpm')
+
+    GV.tile_dict = create_tile_dict()
+
+    GC.u = Monster(0, 0, 'wizard')
+    GC.monsters.append(Monster(0, 2, 'Beholder',
+                                ai=None))
+    
+    # Create a dlevel
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
-    GC.map = gen_perfect_maze(MAP_W, MAP_H)
-    GC.map[int(MAP_W / 2)][int(MAP_H / 2)] = 2
+#    GC.map = gen_perfect_maze(MAP_W, MAP_H)
+    GC.map = gen_connected_rooms()
 
     GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph))
     GV.map_surf = GV.map_surf.convert()
@@ -344,19 +354,8 @@ def main():
 
     GV.font = pygame.font.Font(pygame.font.get_default_font(), FONT_SIZE)
 
-    # Prepare game objects
-    GC.clock = pygame.time.Clock()
-    GV.tiles_image = load_image('tiles16.xpm')
-
-    GV.tile_dict = create_tile_dict()
-    GV.glyph_dict = create_tile_dict()
     
-    GC.u = Monster(0, 0, 'wizard')
-    GC.monsters.append(Monster(MAP_W - 1, MAP_H - 1, 'Beholder',
-                                ai=None))
 
-    update_wall_tiles()
-    
     # Main loop
     while GC.state != 'exit':
         controller_tick()

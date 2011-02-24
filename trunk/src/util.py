@@ -47,19 +47,17 @@ def load_sound(name):
     return sound        
 
 def create_tile_dict():
-    tile_dict_width = 38 * TILE_PW
     tile_dict = {}
 
     # Read in tile mapping document, line-by-line, and build a dictionary pointing to coordinates of the graphic
     map = open('../data/tiles.map')
-    (map_x, map_y) = (0, 0)
+
     for line in map:
-        tile_name = re.findall(r'"(.*)"', line)
-        tile_dict[tile_name[0]] = pygame.Rect(map_x, map_y, TILE_PW, TILE_PH)
-        map_x += TILE_PW
-        if map_x >= tile_dict_width:
-            map_x = 0
-            map_y += TILE_PH
+        (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
+        x = (int(loc) % 38) * TILE_PW
+        y = (int(loc) / 38) * TILE_PH        
+        tile_dict[name] = pygame.Rect(x, y, TILE_PW, TILE_PH)
+
     return tile_dict
 
 

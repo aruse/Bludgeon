@@ -50,12 +50,21 @@ class Object:
         if type(x) == type(tuple()):
             x, y = x[0], x[1]
             
-        if (x >= 0 and y >= 0 and
-            x < MAP_W and y < MAP_H and
-            not GC.map[x][y].block_movement):
-            return True        
-        else:
-            return False
+        can_move = True
+
+        if x < 0 or y < 0 or x >= MAP_W or y >= MAP_H:
+            can_move = False
+
+        if GC.map[x][y].block_movement:
+            can_move = False
+
+        for mon in GC.monsters:
+            if x == mon.x and y == mon.y:
+                can_move = False
+                break
+            
+        return can_move
+            
         
     def move_randomly(self):
         direction = random.randrange(len(DIR))

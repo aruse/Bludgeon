@@ -13,9 +13,11 @@ class Tile:
         if re.findall('wall', type):
             self.block_movement = True
             self.block_sight = True
+            self.tile_class = 'wall'
         else:
             self.block_movement = False
             self.block_sight = False
+            self.tile_class = 'floor'
 
 #        self.tile_class = tile_class_dict[type]
         self.tile = create_tile(type)

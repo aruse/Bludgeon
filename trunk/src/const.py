@@ -7,6 +7,12 @@ GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
 
 
+# Max number of rooms on a single dungeon level
+MAX_ROOMS = 20
+
+ROOM_MAX_SIZE = 10
+ROOM_MIN_SIZE = 5
+
 # Size of various things
 FONT_SIZE = 16
 STATUS_H, STATUS_W = 17, 50
