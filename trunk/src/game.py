@@ -8,9 +8,6 @@ class GC:
     """Stores the controller state."""
     clock = None
 
-    # Temp.  FIXME: remove
-    monster = None
-
     key = None       # The key currently held down
     prev_key = None  # The key from last clock cycle
 
@@ -30,7 +27,7 @@ class GC:
     u = None
 
     # List of all characters on the current level
-    characters = []
+    monsters = []
 
     # All free items (not in inventory) on the current level
     items = []
@@ -51,10 +48,9 @@ class GC:
 
 class GV:
     """Stores the view state."""
+    glyph_dict = None
     tiles_image = None
-    tile_map = None
-
-    allsprites = None
+    tile_dict = None
 
     background = None
     screen = None
@@ -112,4 +108,3 @@ class GV:
     eq_quiver = (eq_cent[0] + TILE_PW * 2, eq_cent[1] - TILE_PH * 3)
     eq_light = (eq_cent[0] - TILE_PW * 2, eq_cent[1] - TILE_PH * 3)
     eq_head = (eq_cent[0], eq_cent[1] - TILE_PH * 3)
-

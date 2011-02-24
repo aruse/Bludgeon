@@ -17,11 +17,6 @@ def message(msg, color=CLR_BLACK):
             GC.msgs.pop()
 
         GC.msgs.insert(0, (line, color))
-                                        
-
-# Is the x, y location blocked
-def is_blocked(x, y):
-    return GC.map[x][y] == 1
 
 def load_image(name):
     """ Load image and return image object"""
@@ -51,21 +46,22 @@ def load_sound(name):
         raise SystemExit, message
     return sound        
 
-def create_tile_map():
-    tile_map_width = 38 * TILE_PW
-    tile_map = {}
+def create_tile_dict():
+    tile_dict_width = 38 * TILE_PW
+    tile_dict = {}
 
     # Read in tile mapping document, line-by-line, and build a dictionary pointing to coordinates of the graphic
     map = open('../data/tiles.map')
     (map_x, map_y) = (0, 0)
     for line in map:
         tile_name = re.findall(r'"(.*)"', line)
-        tile_map[tile_name[0]] = pygame.Rect(map_x, map_y, TILE_PW, TILE_PH)
+        tile_dict[tile_name[0]] = pygame.Rect(map_x, map_y, TILE_PW, TILE_PH)
         map_x += TILE_PW
-        if map_x >= tile_map_width:
+        if map_x >= tile_dict_width:
             map_x = 0
             map_y += TILE_PH
-    return tile_map
+    return tile_dict
+
 
 def create_tile(name):
-    return GV.tiles_image.subsurface(GV.tile_map[name])
+    return GV.tiles_image.subsurface(GV.tile_dict[name])

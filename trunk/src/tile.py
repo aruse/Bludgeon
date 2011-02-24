@@ -1,17 +1,29 @@
+import re
+
 from const import *
+from game import *
+from util import *
 
 class Tile:
     """Map tile, representing a single location on the map."""
 
-    def __init__(self, block_movement=False, block_sight=False):
-        self.block_movement = block_movement
-        self.block_signt = block_sight
+    def __init__(self, type):
+        self.type = type
+        
+        if re.findall('wall', type):
+            self.block_movement = True
+            self.block_sight = True
+        else:
+            self.block_movement = False
+            self.block_sight = False
+
+#        self.tile_class = tile_class_dict[type]
+        self.tile = create_tile(type)
         
         # All tiles start unexplored
         self.explored = False
                 
-        self.glyph = None
-        self.bitmap = None
+        # Which color to display in text mode
         self.color = None
 
         # Value from 0 to 1, indicating degree of illumination.

@@ -5,55 +5,68 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
+from mon_class import *
 
 class Object:
     """Generic object.  Can be sub-classed into players, monsters, items, etc."""
-    def __init__(self, x, y, name):
-        pygame.sprite.Sprite.__init__(self) # Call sprite initializer
-        self.image = create_tile(name)
-        self.rect = Rect(GV.map_x, GV.map_y, TILE_W, TILE_H)
-        self.x = 0
-        self.y = 0
+    def __init__(self, x, y, type):
+        self.x = x
+        self.y = y
         
+        # The category of this Object: human, dwarf, lich, etc.
+        self.obj_class = mon_class_dict[type]
 
-    def can_move_dir(self, x, y=None):
-        """Can the character move in this direction?"""
-        # If we passed in a tuple instead of a pair of ints, convert to a pair of ints
-        if type(x) == type(tuple()):
-            y = x[1]
-            x = x[0]
-
-        return self.can_move(self.x + x, self.y + y)
+        self.tile = create_tile(type)
         
-    def can_move(self, x, y=None):
-        """Can the character move into this location?"""
-        # If we passed in a tuple instead of a pair of ints, convert to a pair of ints
-        if type(x) == type(tuple()):
-            y = x[1]
-            x = x[0]
-
-        if x >= 0 and y >= 0 and x < MAP_W and y < MAP_H and not is_blocked(x, y):
-            return True
-        else:
-            return False
-    
-    def move_randomly(self):
-        direction = random.randrange(len(DIR))
-        if self.can_move_dir(DIR[direction]):
-            return self.move(DIR[direction])
-                             
+        # Which color to display in text mode
+        self.color = None
+ 
     def move(self, dx, dy=None):
         """Move dx and dy spaces, if possible."""
 
-        # If we passed in a tuple instead of a pair of ints, convert to a pair of ints
         if type(dx) == type(tuple()):
-            dy = dx[1]
-            dx = dx[0]
+            dx, dy = dx[0], dx[1]
             
         if self.can_move_dir(dx, dy):
             self.x += dx
             self.y += dy
-            self.rect = self.rect.move(dx * TILE_W, dy * TILE_H)
             return True
         else:
             return False
+ 
+    def draw(self):
+        """Draw this Object on the map at the current location."""
+        GV.map_surf.blit(self.tile,  (self.x * TILE_PW, self.y * TILE_PH))
+ 
+    def can_move_dir(self, x, y=None):
+        """Can the character move in this direction?"""
+        if type(x) == type(tuple()):
+            x, y = x[0], x[1]
+            
+        return self.can_move(self.x + x, self.y + y)
+        
+    def can_move(self, x, y=None):
+        """Can the character move into this location?"""
+        if type(x) == type(tuple()):
+            x, y = x[0], x[1]
+            
+        if (x >= 0 and y >= 0 and
+            x < MAP_W and y < MAP_H and
+            not GC.map[x][y].block_movement):
+            return True        
+        else:
+            return False
+        
+    def move_randomly(self):
+        direction = random.randrange(len(DIR))
+        if self.can_move_dir(DIR[direction]):
+            return self.move(DIR[direction])
+        
+
+class Monster(Object):
+    """Anything that moves and acts under its own power.  Players and NPCs count as monsters.  Pretty much any Object that's not an Item."""
+    
+    def __init__(self, x, y, type, ai=None):
+        Object.__init__(self, x, y, type)
+        self.ai = ai
+        

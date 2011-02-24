@@ -8,14 +8,17 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-from pc import *
-from npc import *
+from object import *
 from dlevel import *
+from tile import *
 
 if not pygame.font:
     print 'Warning, fonts disabled'
 if not pygame.mixer:
     print 'Warning, sound disabled'
+
+
+
 
 def handle_events():
     # Handle input events
@@ -35,6 +38,12 @@ def handle_events():
 
         handle_actions()
 
+
+def monsters_take_turn():
+    for monster in GC.monsters:
+        if monster.ai is not None:
+            monster.ai()
+        
 def handle_actions():
     # If an action has already been taken this clock cycle, don't do another one.
     if GC.action_handled:
@@ -75,7 +84,7 @@ def handle_actions():
             u_took_turn = True
                 
     if u_took_turn:
-        GC.monster.move_towards_pc(GC.u)
+        monsters_take_turn()
 
     GC.action_handled = True
         
@@ -84,7 +93,7 @@ def update_wall_tiles():
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.map[x][y] == 0:
-                GV.map_surf.blit(create_tile("cmap, floor of a room"),  (x * TILE_PW, y * TILE_PH))
+                GC.map[x][y] = Tile("cmap, floor of a room")
             if GC.map[x][y] == 1:
                 wall_tile = "cmap, wall, horizontal"
                 tee = 0
@@ -130,9 +139,9 @@ def update_wall_tiles():
                         y > 0 and GC.map[x][y - 1] == 1 and y < MAP_H - 1 and GC.map[x][y + 1] == 1:
                     wall_tile = "cmap, wall, crosswall"
 
-                GV.map_surf.blit(create_tile(wall_tile),  (x * TILE_PW, y * TILE_PH))    
+                GC.map[x][y] = Tile(wall_tile)
             if GC.map[x][y] == 2:
-                GV.map_surf.blit(create_tile("cmap, staircase down"),  (x * TILE_PW, y * TILE_PH))
+                GC.map[x][y] = Tile("cmap, staircase down")
 
 
 
@@ -174,20 +183,20 @@ def update_text_surf():
 def update_eq_surf():
     """Update the equipment surface."""
     GV.eq_surf.fill(CLR_D_GREY)
-    GV.eq_surf.blit(create_tile("object, armor, conical hat"), GV.eq_head)
-    GV.eq_surf.blit(create_tile("object, tools, lenses"), GV.eq_eyes)
-    GV.eq_surf.blit(create_tile("object, amulets, oval"), GV.eq_neck)
-    GV.eq_surf.blit(create_tile("object, weapons, runed dagger"), GV.eq_quiver)
-    GV.eq_surf.blit(create_tile("object, armor, T-shirt"), GV.eq_shirt)
-    GV.eq_surf.blit(create_tile("object, armor, blue dragon scale mail"), GV.eq_armor)
-    GV.eq_surf.blit(create_tile("object, armor, faded pall"), GV.eq_cloak)
-    GV.eq_surf.blit(create_tile("object, weapons, athame"), GV.eq_rweap)
-    GV.eq_surf.blit(create_tile("object, armor, padded gloves"), GV.eq_hands)
-    GV.eq_surf.blit(create_tile("object, weapons, long sword"), GV.eq_lweap)
-    GV.eq_surf.blit(create_tile("object, rings, obsidian"), GV.eq_rring)
-    GV.eq_surf.blit(create_tile("object, rings, topaz"), GV.eq_lring)
-    GV.eq_surf.blit(create_tile("object, armor, combat boots"), GV.eq_boots)
-    GV.eq_surf.blit(create_tile("object, tools, candle"), GV.eq_light)
+    GV.eq_surf.blit(create_tile("conical hat"), GV.eq_head)
+    GV.eq_surf.blit(create_tile("lenses"), GV.eq_eyes)
+    GV.eq_surf.blit(create_tile("oval"), GV.eq_neck)
+    GV.eq_surf.blit(create_tile("runed dagger"), GV.eq_quiver)
+    GV.eq_surf.blit(create_tile("T-shirt"), GV.eq_shirt)
+    GV.eq_surf.blit(create_tile("blue dragon scale mail"), GV.eq_armor)
+    GV.eq_surf.blit(create_tile("faded pall"), GV.eq_cloak)
+    GV.eq_surf.blit(create_tile("athame"), GV.eq_rweap)
+    GV.eq_surf.blit(create_tile("padded gloves"), GV.eq_hands)
+    GV.eq_surf.blit(create_tile("long sword"), GV.eq_lweap)
+    GV.eq_surf.blit(create_tile("obsidian"), GV.eq_rring)
+    GV.eq_surf.blit(create_tile("topaz"), GV.eq_lring)
+    GV.eq_surf.blit(create_tile("combat boots"), GV.eq_boots)
+    GV.eq_surf.blit(create_tile("candle"), GV.eq_light)
 
 
     
@@ -257,15 +266,31 @@ def update_status_surf():
     write_text(GV.status_surf, 'Weapon Range ' + str(5), 1, DEFAULT_FONT_CLR, 1, 13)
     write_text(GV.status_surf, 'Hungry Burdened Afraid', 1, DEFAULT_FONT_CLR, 1, 14)
     write_text(GV.status_surf, 'Hallucinating Sick Invisible', 1, DEFAULT_FONT_CLR, 1, 15)
+
+
+def draw_map():
+    for x in range(MAP_W):
+        for y in range(MAP_H):
+            GV.map_surf.blit(GC.map[x][y].tile,  (x * TILE_PW, y * TILE_PH))
     
+
+def draw_objects():
+    for item in GC.items:
+        item.draw()
+
+    for monster in GC.monsters:
+        monster.draw()
+
+    GC.u.draw()
         
 def view_tick():
     """Handle all of the view actions in the game loop."""
     update_text_surf()
     update_eq_surf()
     update_status_surf()
-    
-    GV.allsprites.update()
+
+    draw_map()
+    draw_objects()
 
     # Draw everything
     GV.screen.blit(GV.background, (0, 0))
@@ -273,7 +298,6 @@ def view_tick():
     GV.screen.blit(GV.eq_surf, (GV.eq_px, GV.eq_py))
     GV.screen.blit(GV.status_surf, (GV.status_px, GV.status_py))
     GV.screen.blit(GV.text_surf, (GV.text_px, GV.text_py))
-    GV.allsprites.draw(GV.screen)
     pygame.display.flip()
 
 def main():
@@ -323,12 +347,13 @@ def main():
     # Prepare game objects
     GC.clock = pygame.time.Clock()
     GV.tiles_image = load_image('tiles16.xpm')
-    GV.tiles_image
-    GV.tile_map = create_tile_map()
+
+    GV.tile_dict = create_tile_dict()
+    GV.glyph_dict = create_tile_dict()
     
-    GC.u = PC("monster, human or elf, wizard")
-    GC.monster = NPC("monster, eye or sphere, Beholder")
-    GV.allsprites = pygame.sprite.RenderPlain((GC.u, GC.monster))
+    GC.u = Monster(0, 0, 'wizard')
+    GC.monsters.append(Monster(MAP_W - 1, MAP_H - 1, 'Beholder',
+                                ai=None))
 
     update_wall_tiles()
     
