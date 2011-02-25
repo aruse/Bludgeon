@@ -81,9 +81,9 @@ def handle_actions():
                 
     if u_took_turn:
         monsters_take_turn()
-        fov_recompute = True
+        GC.fov_recompute = True
     else:
-        fov_recompute = False
+        GC.fov_recompute = False
         
     GC.action_handled = True
         
@@ -163,8 +163,8 @@ def controller_tick():
 
     GC.prev_key = GC.key
 
-#    GC.u.update_fov_map(GC.map)
-    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
+    if GC.fov_recompute:
+        GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 
 
 def update_text_surf():
@@ -281,6 +281,7 @@ def draw_map():
                 else:
                     GV.map_surf.blit(GV.blank_tile, (x * TILE_PW, y * TILE_PH))
 
+    
 def draw_objects():
     for item in GC.items:
         item.draw()
@@ -363,6 +364,9 @@ def main():
 
     GV.blank_tile = create_tile("cmap, wall, dark")
 
+    # Have to call this once to draw the initial screen before the user has inputted anything.
+    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
+    
     # Main loop
     while GC.state != 'exit':
         controller_tick()

@@ -16,7 +16,7 @@ class FOVMap(object):
         self.light = []
         for i in range(self.width):
             self.light.append([0] * self.height)
-        self.flag = 0
+        self.flag = 1
 
     def square(self, x, y):
         return self.data[x][y]
@@ -84,3 +84,4 @@ class FOVMap(object):
             self._cast_light(x, y, 1, 1.0, 0.0, radius,
                              self.mult[0][oct], self.mult[1][oct],
                              self.mult[2][oct], self.mult[3][oct], 0)
+        
