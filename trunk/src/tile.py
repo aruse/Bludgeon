@@ -30,7 +30,9 @@ class Tile:
 
         # Value from 0 to 1, indicating degree of illumination.
         self.illumination = None
-
+        
+        self.explored = False
+        
     def dig():
         self.block_movement = False
         self.block_signt = False

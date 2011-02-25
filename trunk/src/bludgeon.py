@@ -55,11 +55,9 @@ def handle_actions():
         if GC.key == K_ESCAPE:
             GC.state = 'exit'
         elif GC.key == K_UP or GC.key == K_KP8:
-            message('You moved up!')
             GC.u.move(DIRH['u'])
             u_took_turn = True
         elif GC.key == K_DOWN or GC.key == K_KP2:
-            message('You moved down!')
             GC.u.move(DIRH['d'])
             u_took_turn = True
         elif GC.key == K_LEFT or GC.key == K_KP4:
@@ -276,8 +274,12 @@ def draw_map():
         for y in range(MAP_H):
             if GC.u.fov_map.lit(x, y):
                 GV.map_surf.blit(GC.map[x][y].tile, (x * TILE_PW, y * TILE_PH))
+                GC.map[x][y].explored = True
             else:
-                GV.map_surf.blit(GV.blank_tile, (x * TILE_PW, y * TILE_PH))
+                if GC.map[x][y].explored:
+                    GV.map_surf.blit(GC.map[x][y].tile, (x * TILE_PW, y * TILE_PH))
+                else:
+                    GV.map_surf.blit(GV.blank_tile, (x * TILE_PW, y * TILE_PH))
 
 def draw_objects():
     for item in GC.items:

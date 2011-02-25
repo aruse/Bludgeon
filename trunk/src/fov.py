@@ -18,10 +18,6 @@ class FOVMap(object):
             self.light.append([0] * self.height)
         self.flag = 0
 
-        print self.width, self.height
-        print len(self.data), len(self.data[0])
-        print len(self.light), len(self.light[0])
-        
     def square(self, x, y):
         return self.data[x][y]
 
