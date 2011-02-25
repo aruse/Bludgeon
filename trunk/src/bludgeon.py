@@ -83,7 +83,10 @@ def handle_actions():
                 
     if u_took_turn:
         monsters_take_turn()
-
+        fov_recompute = True
+    else:
+        fov_recompute = False
+        
     GC.action_handled = True
         
 def update_wall_tiles():
@@ -162,6 +165,8 @@ def controller_tick():
 
     GC.prev_key = GC.key
 
+#    GC.u.update_fov_map(GC.map)
+    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 
 
 def update_text_surf():
@@ -269,10 +274,10 @@ def update_status_surf():
 def draw_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
-            if GC.map[x][y] == 1:
-                print GC.map[x][y]
-            GV.map_surf.blit(GC.map[x][y].tile,  (x * TILE_PW, y * TILE_PH))
-    
+            if GC.u.fov_map.lit(x, y):
+                GV.map_surf.blit(GC.map[x][y].tile, (x * TILE_PW, y * TILE_PH))
+            else:
+                GV.map_surf.blit(GV.blank_tile, (x * TILE_PW, y * TILE_PH))
 
 def draw_objects():
     for item in GC.items:
@@ -338,7 +343,8 @@ def main():
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
 #    GC.map = gen_perfect_maze(MAP_W, MAP_H)
     GC.map = gen_connected_rooms()
-
+    GC.u.set_fov_map(GC.map)
+    
     GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph))
     GV.map_surf = GV.map_surf.convert()
 
@@ -351,10 +357,9 @@ def main():
     GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph))
     GV.status_surf = GV.status_surf.convert()
 
-
     GV.font = pygame.font.Font(pygame.font.get_default_font(), FONT_SIZE)
 
-    
+    GV.blank_tile = create_tile("cmap, wall, dark")
 
     # Main loop
     while GC.state != 'exit':

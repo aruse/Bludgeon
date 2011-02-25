@@ -6,6 +6,7 @@ from const import *
 from game import *
 from util import *
 from mon_class import *
+from fov import *
 
 class Object:
     """Generic object.  Can be sub-classed into players, monsters, items, etc."""
@@ -36,7 +37,7 @@ class Object:
  
     def draw(self):
         """Draw this Object on the map at the current location."""
-        GV.map_surf.blit(self.tile,  (self.x * TILE_PW, self.y * TILE_PH))
+        GV.map_surf.blit(self.tile, (self.x * TILE_PW, self.y * TILE_PH))
  
     def can_move_dir(self, x, y=None):
         """Can the character move in this direction?"""
@@ -78,4 +79,9 @@ class Monster(Object):
     def __init__(self, x, y, type, ai=None):
         Object.__init__(self, x, y, type)
         self.ai = ai
-        
+
+        # Field of view map.
+        self.fov_map = None
+
+    def set_fov_map(self, map):
+        self.fov_map = FOVMap(map)

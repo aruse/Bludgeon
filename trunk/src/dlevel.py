@@ -19,13 +19,17 @@ def create_room(map, room):
 
     # Add wall tiles surrounding the room
     for x in range(room.x1 + 1, room.x2):
-        map[x][room.y1] = Tile("cmap, wall, horizontal")
+        if map[x][room.y1].tile_class != 'floor':
+            map[x][room.y1] = Tile("cmap, wall, horizontal")
     for x in range(room.x1 + 1, room.x2):
-        map[x][room.y2] = Tile("cmap, wall, horizontal")
+        if map[x][room.y1].tile_class != 'floor':
+            map[x][room.y2] = Tile("cmap, wall, horizontal")
     for y in range(room.y1 + 1, room.y2):
-        map[room.x1][y] = Tile("cmap, wall, vertical")
+        if map[x][room.y1].tile_class != 'floor':
+            map[room.x1][y] = Tile("cmap, wall, vertical")
     for y in range(room.y1 + 1, room.y2):
-        map[room.x2][y] = Tile("cmap, wall, vertical")
+        if map[x][room.y1].tile_class != 'floor':
+            map[room.x2][y] = Tile("cmap, wall, vertical")
 
     # Add corner tiles
     map[room.x1][room.y1] = Tile("cmap, wall, top left corner")

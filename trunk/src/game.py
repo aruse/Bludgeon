@@ -66,6 +66,9 @@ class GV:
 
     font = None
 
+    # What to blit over an area that's not visible
+    blank_tile = None
+    
     # Size of the map surface
     map_pw = MAP_W * TILE_PW
     map_ph = MAP_H * TILE_PH
