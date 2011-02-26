@@ -74,9 +74,9 @@ DIRH = {'u': (0, -1),
 
 # Colors
 CLR_BLACK = (0, 0, 0)
-CLR_D_GREY = (64, 64, 64)
-CLR_GREY = (128, 128, 128)
-CLR_L_GREY = (192, 192, 192)
+CLR_D_GRAY = (64, 64, 64)
+CLR_GRAY = (128, 128, 128)
+CLR_L_GRAY = (192, 192, 192)
 CLR_WHITE = (255, 255, 255)
 
 CLR_RED = (192, 0, 0)

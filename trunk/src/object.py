@@ -17,7 +17,7 @@ class Object:
         # The category of this Object: human, dwarf, lich, etc.
         self.obj_class = mon_class_dict[type]
 
-        self.tile = create_tile(type)
+        self.tile = create_tile(GV.tiles_img, type)
         
         # Which color to display in text mode
         self.color = None

@@ -183,21 +183,21 @@ def update_text_surf():
 
 def update_eq_surf():
     """Update the equipment surface."""
-    GV.eq_surf.fill(CLR_D_GREY)
-    GV.eq_surf.blit(create_tile("conical hat"), GV.eq_head)
-    GV.eq_surf.blit(create_tile("lenses"), GV.eq_eyes)
-    GV.eq_surf.blit(create_tile("oval"), GV.eq_neck)
-    GV.eq_surf.blit(create_tile("runed dagger"), GV.eq_quiver)
-    GV.eq_surf.blit(create_tile("T-shirt"), GV.eq_shirt)
-    GV.eq_surf.blit(create_tile("blue dragon scale mail"), GV.eq_armor)
-    GV.eq_surf.blit(create_tile("faded pall"), GV.eq_cloak)
-    GV.eq_surf.blit(create_tile("athame"), GV.eq_rweap)
-    GV.eq_surf.blit(create_tile("padded gloves"), GV.eq_hands)
-    GV.eq_surf.blit(create_tile("long sword"), GV.eq_lweap)
-    GV.eq_surf.blit(create_tile("obsidian"), GV.eq_rring)
-    GV.eq_surf.blit(create_tile("topaz"), GV.eq_lring)
-    GV.eq_surf.blit(create_tile("combat boots"), GV.eq_boots)
-    GV.eq_surf.blit(create_tile("candle"), GV.eq_light)
+    GV.eq_surf.fill(CLR_D_GRAY)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "conical hat"), GV.eq_head)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "lenses"), GV.eq_eyes)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "oval"), GV.eq_neck)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "runed dagger"), GV.eq_quiver)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "T-shirt"), GV.eq_shirt)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "blue dragon scale mail"), GV.eq_armor)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "faded pall"), GV.eq_cloak)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "athame"), GV.eq_rweap)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "padded gloves"), GV.eq_hands)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "long sword"), GV.eq_lweap)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "obsidian"), GV.eq_rring)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "topaz"), GV.eq_lring)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "combat boots"), GV.eq_boots)
+    GV.eq_surf.blit(create_tile(GV.tiles_img, "candle"), GV.eq_light)
 
 
     
@@ -277,7 +277,7 @@ def draw_map():
                 GC.map[x][y].explored = True
             else:
                 if GC.map[x][y].explored:
-                    GV.map_surf.blit(GC.map[x][y].tile, (x * TILE_PW, y * TILE_PH))
+                    GV.map_surf.blit(GC.map[x][y].gray_tile, (x * TILE_PW, y * TILE_PH))
                 else:
                     GV.map_surf.blit(GV.blank_tile, (x * TILE_PW, y * TILE_PH))
 
@@ -334,13 +334,14 @@ def main():
 
     # Prepare game objects
     GC.clock = pygame.time.Clock()
-    GV.tiles_image = load_image('tiles16.xpm')
 
+    GV.tiles_img = load_image('tiles16.xpm')
+    GV.gray_tiles_img = load_image('tiles16_gray.xpm')
     GV.tile_dict = create_tile_dict()
-
+    
     GC.u = Monster(0, 0, 'wizard')
-    GC.monsters.append(Monster(0, 2, 'Beholder',
-                                ai=None))
+#    GC.monsters.append(Monster(0, 2, 'Beholder',
+#                                ai=None))
     
     # Create a dlevel
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
@@ -362,7 +363,7 @@ def main():
 
     GV.font = pygame.font.Font(pygame.font.get_default_font(), FONT_SIZE)
 
-    GV.blank_tile = create_tile("cmap, wall, dark")
+    GV.blank_tile = create_tile(GV.tiles_img, "cmap, wall, dark")
 
     # Have to call this once to draw the initial screen before the user has inputted anything.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)

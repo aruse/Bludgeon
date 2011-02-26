@@ -4,6 +4,7 @@ from const import *
 from game import *
 from util import *
 
+
 class Cell:
     """Map cell, representing a single location on the map."""
 
@@ -20,7 +21,8 @@ class Cell:
             self.cell_class = 'floor'
 
 #        self.cell_class = tile_class_dict[type]
-        self.tile = create_tile(type)
+        self.tile = create_tile(GV.tiles_img, type)
+        self.gray_tile = create_tile(GV.gray_tiles_img, type)
         
         # All tiles start unexplored
         self.explored = False

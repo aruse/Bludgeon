@@ -48,9 +48,11 @@ class GC:
 
 class GV:
     """Stores the view state."""
-    glyph_dict = None
-    tiles_image = None
+    tiles_img = None
+    gray_tiles_img = None
+    
     tile_dict = None
+    glyph_dict = None
 
     background = None
     screen = None
