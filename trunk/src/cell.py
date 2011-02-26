@@ -4,8 +4,8 @@ from const import *
 from game import *
 from util import *
 
-class Tile:
-    """Map tile, representing a single location on the map."""
+class Cell:
+    """Map cell, representing a single location on the map."""
 
     def __init__(self, type):
         self.type = type
@@ -13,13 +13,13 @@ class Tile:
         if re.findall('wall', type):
             self.block_movement = True
             self.block_sight = True
-            self.tile_class = 'wall'
+            self.cell_class = 'wall'
         else:
             self.block_movement = False
             self.block_sight = False
-            self.tile_class = 'floor'
+            self.cell_class = 'floor'
 
-#        self.tile_class = tile_class_dict[type]
+#        self.cell_class = tile_class_dict[type]
         self.tile = create_tile(type)
         
         # All tiles start unexplored

@@ -10,7 +10,7 @@ from game import *
 from util import *
 from object import *
 from dlevel import *
-from tile import *
+from cell import *
 
 if not pygame.font:
     print 'Warning, fonts disabled'
@@ -92,7 +92,7 @@ def update_wall_tiles():
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.map[x][y] == 0:
-                GC.map[x][y] = Tile("cmap, floor of a room")
+                GC.map[x][y] = Cell("cmap, floor of a room")
             if GC.map[x][y] == 1:
                 wall_tile = "cmap, wall, horizontal"
                 tee = 0
@@ -138,9 +138,9 @@ def update_wall_tiles():
                         y > 0 and GC.map[x][y - 1] == 1 and y < MAP_H - 1 and GC.map[x][y + 1] == 1:
                     wall_tile = "cmap, wall, crosswall"
 
-                GC.map[x][y] = Tile(wall_tile)
+                GC.map[x][y] = Cell(wall_tile)
             if GC.map[x][y] == 2:
-                GC.map[x][y] = Tile("cmap, staircase down")
+                GC.map[x][y] = Cell("cmap, staircase down")
 
 
 
