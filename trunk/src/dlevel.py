@@ -19,17 +19,13 @@ def create_room(map, room):
 
     # Add wall tiles surrounding the room
     for x in range(room.x1 + 1, room.x2):
-        if map[x][room.y1].tile_class != 'floor':
-            map[x][room.y1] = Tile("cmap, wall, horizontal")
+        map[x][room.y1] = Tile("cmap, wall, horizontal")
     for x in range(room.x1 + 1, room.x2):
-        if map[x][room.y1].tile_class != 'floor':
-            map[x][room.y2] = Tile("cmap, wall, horizontal")
+        map[x][room.y2] = Tile("cmap, wall, horizontal")
     for y in range(room.y1 + 1, room.y2):
-        if map[x][room.y1].tile_class != 'floor':
-            map[room.x1][y] = Tile("cmap, wall, vertical")
+        map[room.x1][y] = Tile("cmap, wall, vertical")
     for y in range(room.y1 + 1, room.y2):
-        if map[x][room.y1].tile_class != 'floor':
-            map[room.x2][y] = Tile("cmap, wall, vertical")
+        map[room.x2][y] = Tile("cmap, wall, vertical")
 
     # Add corner tiles
     map[room.x1][room.y1] = Tile("cmap, wall, top left corner")
@@ -59,7 +55,7 @@ def gen_connected_rooms():
         y = random.randrange(0, MAP_H - h - 1)
  
         new_room = Room(x, y, w, h)
- 
+        
         # Run through the other rooms and see if they intersect with this one
         failed = False
         for room in rooms:
@@ -72,26 +68,30 @@ def gen_connected_rooms():
  
 #            place_objects(new_room)
  
-            (new_x, new_y) = new_room.center()
- 
             # First room
             if num_rooms == 0:
+                (new_x, new_y) = new_room.center()
                 GC.u.x = new_x
                 GC.u.y = new_y
-            else:
-                # Connect this room to the previously generated room
-                (prev_x, prev_y) = rooms[num_rooms-1].center()
- 
-                if random.randrange(0, 2):
-                    create_h_tunnel(map, prev_x, new_x, prev_y)
-                    create_v_tunnel(map, prev_y, new_y, new_x)
-                else:
-                    create_v_tunnel(map, prev_y, new_y, prev_x)
-                    create_h_tunnel(map, prev_x, new_x, new_y)
  
             rooms.append(new_room)
             num_rooms += 1
 
+    # Connect the rooms
+    connected_rooms = []
+    x = 0
+    for room in rooms:
+        if x > 0:
+            (new_x, new_y) = room.center()
+            (prev_x, prev_y) = rooms[x - 1].center()
+            if random.randrange(0, 2):
+                create_h_tunnel(map, prev_x, new_x, prev_y)
+                create_v_tunnel(map, prev_y, new_y, new_x)
+            else:
+                create_v_tunnel(map, prev_y, new_y, prev_x)
+                create_h_tunnel(map, prev_x, new_x, new_y)
+        x += 1
+        
     return map
 
 
