@@ -163,7 +163,7 @@ class GV:
     eq_quiver = None
     eq_light = None
     eq_head = None
-
+    
     black = (0, 0, 0)
     darker_gray = (31, 31, 31)
     dark_gray = (63, 63, 63)
@@ -245,7 +245,14 @@ class GV:
     else:
         default_font_color = black
 
+    hp_bar_color = (200, 32, 32)
+    hp_bar_bg_color = darker_red
+    mp_bar_color = (32, 32, 200)
+    mp_bar_bg_color = darker_blue
+    xp_bar_color = (32, 200, 32)
+    xp_bar_bg_color = darker_green
 
+    
 # From Slash'EM
 #CLR_BLACK = (0, 0, 0)
 #CLR_D_GRAY = (64, 64, 64)

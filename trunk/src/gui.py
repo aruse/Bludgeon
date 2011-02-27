@@ -82,31 +82,31 @@ def update_status_surf():
     write_status_text('HP', 3, justify='left', column=0)
     draw_bar(surf, rect.width / 4,
              rect.top + 3 * GV.font_ph, rect.width *.75 - GV.font_pw,
-             GC.u.hp, GC.u.max_hp, GV.light_red, GV.desaturated_red)
+             GC.u.hp, GC.u.max_hp, GV.hp_bar_color, GV.hp_bar_bg_color)
     write_status_text(str(GC.u.hp) + ' / ' + str(GC.u.max_hp), 3, justify='center', column=2)
     
     write_status_text('MP', 4, justify='left', column=0)
     draw_bar(surf, rect.width / 4,
              rect.top + 4 * GV.font_ph, rect.width *.75 - GV.font_pw,
-             GC.u.mp, GC.u.max_mp, GV.light_blue, GV.desaturated_blue)
+             GC.u.mp, GC.u.max_mp, GV.mp_bar_color, GV.mp_bar_bg_color)
     write_status_text(str(GC.u.mp) + ' / ' + str(GC.u.max_mp), 4, justify='center', column=2)
 
     write_status_text('XP', 5, justify='left', column=0)
     draw_bar(surf, rect.width / 4,
              rect.top + 5 * GV.font_ph, rect.width *.75 - GV.font_pw,
-             GC.u.xp, GC.u.xp_next_level, GV.light_orange, GV.desaturated_orange)
+             GC.u.xp, GC.u.xp_next_level, GV.xp_bar_color, GV.xp_bar_bg_color)
     write_status_text(str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), 5, justify='center', column=2)
 
     write_status_text('Weight', 6, justify='left', column=0)
     draw_bar(surf, rect.width / 4,
              rect.top + 6 * GV.font_ph, rect.width *.75 - GV.font_pw,
-             GC.u.weight, GC.u.burdened, GV.gray, GV.dark_gray)
+             GC.u.weight, GC.u.burdened, GV.gray, GV.darker_gray)
     write_status_text(str(GC.u.weight) + ' / ' + str(GC.u.burdened), 6, justify='center', column=2)
 
     write_status_text('Hunger', 7, justify='left', column=0)
     draw_bar(surf, rect.width / 4,
              rect.top + 7 * GV.font_ph, rect.width *.75 - GV.font_pw,
-             GC.u.hunger, GC.u.max_hunger, GV.gray, GV.dark_gray)
+             GC.u.hunger, GC.u.max_hunger, GV.gray, GV.darker_gray)
     write_status_text(str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), 7, justify='center', column=2)
     
     write_status_text('Str', 8, justify='right', column=0)
