@@ -12,6 +12,10 @@ def init_gv():
     GV.map_pw = MAP_W * TILE_PW
     GV.map_ph = MAP_H * TILE_PH
 
+    # Size of the alert surface
+    GV.alert_pw = MAP_W * TILE_PW
+    GV.alert_ph = GV.font_ph
+    
     # Size of the status panel
     GV.status_pw = STATUS_W * GV.font_pw
     GV.status_ph = STATUS_H * GV.font_ph
@@ -29,7 +33,8 @@ def init_gv():
     GV.screen_ph = GV.map_ph + GV.status_ph
 
     # Locations to blit the various surfaces
-    GV.map_px, GV.map_py = 0, GV.status_ph
+    GV.map_px, GV.map_py = 0, GV.text_ph + GV.alert_ph
+    GV.alert_px, GV.alert_py = 0, GV.text_ph
     GV.text_px, GV.text_py = 0, 0
     GV.eq_px, GV.eq_py = GV.text_pw, 0
     GV.status_px, GV.status_py = GV.eq_px + GV.eq_pw, 0
@@ -113,6 +118,7 @@ class GV:
     # pygame Surface for the text buffer
     text_surf = None
 
+    alert_surf = None
     eq_surf = None
     
     font = None
@@ -121,28 +127,16 @@ class GV:
     # What to blit over an area that's not visible
     blank_tile = None
     
-    # Size of the map surface
-    map_pw = None
-    map_ph = None
-
-    # Size of the status panel
-    status_pw = None
-    status_ph = None
-
-    # Size of the equipment panel
-    eq_pw = None
-    eq_ph = None
-
-    # Size of the text buffer
-    text_pw = None
-    text_ph = None
-
-    # Size of the full game window
-    screen_pw = None
-    screen_ph = None
+    map_pw, map_ph = None, None
+    alert_pw, alert_ph = None, None
+    status_pw, status_ph = None, None
+    eq_pw, eq_ph = None, None
+    text_pw, text_ph = None, None
+    screen_pw, screen_ph = None, None
 
     # Locations to blit the various surfaces
     map_px, map_py = None, None
+    alert_px, alert_py = None, None
     text_px, text_py = None, None
     eq_px, eq_py = None, None
     status_px, status_py = None, None
@@ -248,7 +242,7 @@ class GV:
     hp_bar_color = (200, 32, 32)
     hp_bar_bg_color = darker_red
     mp_bar_color = (32, 32, 200)
-    mp_bar_bg_color = darker_blue
+    mp_bar_bg_color = (0, 0, 95)
     xp_bar_color = (32, 200, 32)
     xp_bar_bg_color = darker_green
 

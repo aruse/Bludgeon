@@ -10,6 +10,41 @@ from dlevel import *
 from cell import *
 from ai import *
 
+def tile_under_mouse():
+    """Return the name of the top tile under the mouse."""
+    x, y = pygame.mouse.get_pos()
+    # Compensate for the relative position of the map surface.
+    y -= GV.map_py
+    # Convert into map coords
+    x /= TILE_PW
+    y /= TILE_PH
+
+    if x > 0 and y > 0 and (
+        GC.u.fov_map.lit(x, y) or GC.map[x][y].explored):
+    
+        for m in GC.monsters:
+            if m.x == x and m.y == y:
+                return m.name
+
+        for i in GC.items:
+            if i.x == x and i.y == y:
+                return i.name
+
+        return GC.map[x][y].name
+    else:
+        return None
+
+def update_alert_surf():
+    GV.alert_surf.fill(GV.black)
+    name = tile_under_mouse()
+    if name:
+        text_img = GV.font.render('You see: ' + tile_under_mouse(), True, GV.gold)
+        textpos = text_img.get_rect()
+        textpos.centerx = GV.alert_surf.get_rect().width / 2
+        textpos.top = 0
+        GV.alert_surf.blit(text_img, textpos)
+
+
 def update_eq_surf():
     """Update the equipment surface."""
     GV.eq_surf.fill(GV.dark_gray)
@@ -147,9 +182,9 @@ def update_text_surf():
 
     i = MAX_MSGS - 1
     for (line, color) in GC.msgs:
-        text_img = GV.font.render(line, 1, GV.default_font_color)
+        text_img = GV.font.render(line, True, color)
         textpos = text_img.get_rect()
-        textpos.left = GV.text_surf.get_rect().left
+        textpos.left = GV.text_surf.get_rect().left + GV.font_pw
         textpos.top = i * GV.font_ph
         GV.text_surf.blit(text_img, textpos)
         i -= 1
@@ -182,7 +217,7 @@ def draw_objects():
             if GC.map[m.x][m.y].explored:
                 m.draw_gray()
 
-    # Draw the player
+    # Always draw the player
     GC.u.draw()
         
 def view_tick():
@@ -190,12 +225,14 @@ def view_tick():
     update_text_surf()
     update_eq_surf()
     update_status_surf()
-
+    update_alert_surf()
+    
     draw_map()
     draw_objects()
 
     # Draw everything
     GV.screen.blit(GV.map_surf, (GV.map_px, GV.map_py))
+    GV.screen.blit(GV.alert_surf, (GV.alert_px, GV.alert_py))
     GV.screen.blit(GV.eq_surf, (GV.eq_px, GV.eq_py))
     GV.screen.blit(GV.status_surf, (GV.status_px, GV.status_py))
     GV.screen.blit(GV.text_surf, (GV.text_px, GV.text_py))

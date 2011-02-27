@@ -17,6 +17,8 @@ from cell import *
 from ai import *
 from gui import *
 
+
+    
 def handle_events():
     # Handle input events
     for event in pygame.event.get():
@@ -124,8 +126,7 @@ def main():
     
     pygame.display.set_caption('{0} - {1} the {2} {3} {4}'.format(GAME_TITLE, uname, usex, urace, urole))
 
-
-
+    
     # Prepare game objects
     GC.clock = pygame.time.Clock()
 
@@ -134,6 +135,7 @@ def main():
     GV.screen = pygame.display.set_mode((GV.screen_pw, GV.screen_ph))
 
     GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph)).convert()
+    GV.alert_surf = pygame.Surface((GV.alert_pw, GV.alert_ph)).convert()
     GV.text_surf = pygame.Surface((GV.text_pw, GV.text_ph)).convert()
     GV.eq_surf = pygame.Surface((GV.eq_pw, GV.eq_ph)).convert()
     GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph)).convert()
@@ -148,8 +150,7 @@ def main():
     GV.blank_tile = create_tile(GV.tiles_img, "cmap, wall, dark")
 
     GC.u = Monster(0, 0, 'wizard')
-#    GC.monsters.append(Monster(0, 2, 'Beholder',
-#                                ai=None))
+    GC.monsters.append(GC.u)
     
     # Create a dlevel
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
@@ -160,6 +161,8 @@ def main():
     
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
+
+    message("Welcome, {0}!".format(uname), GV.gold)
     
     # Main loop
     while GC.state != 'exit':

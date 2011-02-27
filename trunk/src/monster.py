@@ -14,7 +14,7 @@ from object import *
 from item import *
 
 def die_leave_corpse(monster):
-    message(monster.name.capitalize() + ' dies!')
+    message(monster.name.capitalize() + ' dies!', GV.red)
     GC.monsters.pop(GC.monsters.index(monster))
     corpse = Item(monster.x, monster.y, 'corpse', prev_monster=monster)
     GC.items.append(corpse)
@@ -103,9 +103,9 @@ class Monster(Object):
         # try to find an attackable object there
         target = None
 
-        for o in GC.monsters:
-            if o.x == x and o.y == y:
-                target = o
+        for m in GC.monsters:
+            if m.x == x and m.y == y:
+                target = m
                 break
 
         # attack if target found, move otherwise

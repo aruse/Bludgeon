@@ -119,8 +119,8 @@ class Object:
         if GC.map[x][y].block_movement:
             can_move = False
 
-        for mon in GC.monsters:
-            if x == mon.x and y == mon.y:
+        for m in GC.monsters:
+            if x == m.x and y == m.y:
                 can_move = False
                 break
             
