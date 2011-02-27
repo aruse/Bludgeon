@@ -309,7 +309,10 @@ def view_tick():
     pygame.display.flip()
 
 def main():
-    pygame.init()
+    # Initializing these modules separately instead of calling pygame.init() is WAY faster.
+    pygame.display.init()
+    pygame.font.init()
+    
     uname = 'Taimor'
     usex = 'Male'
     urace = 'Human'
@@ -324,8 +327,7 @@ def main():
     pygame.display.set_icon(system_icon)
 
     # Create the backgound
-    GV.background = pygame.Surface(GV.screen.get_size())
-    GV.background = GV.background.convert()
+    GV.background = pygame.Surface(GV.screen.get_size()).convert()
     GV.background.fill(CLR_BLACK)
     
     # Display the background
@@ -349,17 +351,10 @@ def main():
     GC.map = gen_connected_rooms()
     GC.u.set_fov_map(GC.map)
     
-    GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph))
-    GV.map_surf = GV.map_surf.convert()
-
-    GV.text_surf = pygame.Surface((GV.text_pw, GV.text_ph))
-    GV.text_surf = GV.text_surf.convert()
-
-    GV.eq_surf = pygame.Surface((GV.eq_pw, GV.eq_ph))
-    GV.eq_surf = GV.eq_surf.convert()
-
-    GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph))
-    GV.status_surf = GV.status_surf.convert()
+    GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph)).convert()
+    GV.text_surf = pygame.Surface((GV.text_pw, GV.text_ph)).convert()
+    GV.eq_surf = pygame.Surface((GV.eq_pw, GV.eq_ph)).convert()
+    GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph)).convert()
 
     GV.font = pygame.font.Font(pygame.font.get_default_font(), FONT_SIZE)
 
@@ -372,6 +367,10 @@ def main():
     while GC.state != 'exit':
         controller_tick()
         view_tick()
+
+#    controller_tick()
+#    view_tick()
+
                            
 if __name__ == '__main__':
     main()
