@@ -5,11 +5,60 @@ import random
 from const import *
 from cell import *
 from room import *
+from object import *
+from ai import *
 
 DIR_LEFT = 0
 DIR_RIGHT = 1
 DIR_UP = 2
 DIR_DOWN = 3
+
+
+def place_objects(map, room):
+    for i in range(random.randrange(3)):
+        #choose random spot for this monster
+        x = random.randrange(room.x1 + 1, room.x2 - 1)
+        y = random.randrange(room.y1 + 1, room.y2 - 1)
+ 
+        #only place it if the tile is not blocked
+        if not map[x][y].block_movement:
+            if random.randrange(0, 100) < 80:  #80% chance of getting an orc
+                monster = Monster(x, y, 'orc', ai=StupidAI())
+            else:
+                monster = Monster(x, y, 'troll', ai=StupidAI())
+ 
+            GC.monsters.append(monster)
+
+    return
+            
+    #choose random number of items
+    for i in range(random.randrange(2)):
+        x = random.randrange(room.x1 + 1, room.x2 - 1)
+        y = random.randrange(room.y1 + 1, room.y2 - 1)
+ 
+        #only place it if the tile is not blocked
+        if not map[x][y].block_movement:
+            dice = random.randrange(0, 100)
+            if dice < 70:
+                #create a healing potion (70% chance)
+                item_component = Item(use_function=cast_heal) 
+                item = Object(x, y, '!', 'healing potion', libtcod.violet, item=item_component)
+            elif dice < 70+10:
+                #create a lightning bolt scroll (10% chance)
+                item_component = Item(use_function=cast_lightning)
+                item = Object(x, y, '#', 'scroll of lightning bolt', libtcod.light_yellow, item=item_component)
+            elif dice < 70+10+10:
+                #create a fireball scroll (10% chance)
+                item_component = Item(use_function=cast_fireball) 
+                item = Object(x, y, '#', 'scroll of fireball', libtcod.light_yellow, item=item_component)
+            else:
+                #create a confuse scroll (10% chance)
+                item_component = Item(use_function=cast_confuse) 
+                item = Object(x, y, '#', 'scroll of confusion', libtcod.light_yellow, item=item_component)
+ 
+            GC.items.append(item)
+ 
+
 
 def create_room(map, room):
     # Punch out the floor tiles
@@ -64,8 +113,7 @@ def gen_connected_rooms():
  
         if not failed:
             create_room(map, new_room)
- 
-#            place_objects(new_room)
+            place_objects(map, new_room)
  
             # First room
             if len(rooms) == 0:

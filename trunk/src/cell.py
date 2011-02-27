@@ -8,10 +8,10 @@ from util import *
 class Cell:
     """Map cell, representing a single location on the map."""
 
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, name):
+        self.name = name
         
-        if re.findall('wall', type):
+        if re.findall('wall', name):
             self.block_movement = True
             self.block_sight = True
             self.cell_class = 'wall'
@@ -20,9 +20,9 @@ class Cell:
             self.block_sight = False
             self.cell_class = 'floor'
 
-#        self.cell_class = tile_class_dict[type]
-        self.tile = create_tile(GV.tiles_img, type)
-        self.gray_tile = create_tile(GV.gray_tiles_img, type)
+#        self.cell_class = tile_class_dict[name]
+        self.tile = create_tile(GV.tiles_img, name)
+        self.gray_tile = create_tile(GV.gray_tiles_img, name)
         
         # All tiles start unexplored
         self.explored = False

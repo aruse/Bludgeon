@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Copyright (c) 2011, Andy Ruse
+
 import os
 import time
 import pygame
@@ -11,11 +13,7 @@ from util import *
 from object import *
 from dlevel import *
 from cell import *
-
-if not pygame.font:
-    print 'Warning, fonts disabled'
-if not pygame.mixer:
-    print 'Warning, sound disabled'
+from ai import *
 
 
 def handle_events():
@@ -38,9 +36,9 @@ def handle_events():
 
 
 def monsters_take_turn():
-    for monster in GC.monsters:
-        if monster.ai is not None:
-            monster.ai()
+    for m in GC.monsters:
+        if m.ai:
+            m.ai.take_turn()
         
 def handle_actions():
     # If an action has already been taken this clock cycle, don't do another one.
@@ -55,33 +53,33 @@ def handle_actions():
         if GC.key == K_ESCAPE:
             GC.state = 'exit'
         elif GC.key == K_UP or GC.key == K_KP8:
-            GC.u.move(DIRH['u'])
+            GC.u.try_move(DIRH['u'])
             u_took_turn = True
         elif GC.key == K_DOWN or GC.key == K_KP2:
-            GC.u.move(DIRH['d'])
+            GC.u.try_move(DIRH['d'])
             u_took_turn = True
         elif GC.key == K_LEFT or GC.key == K_KP4:
-            GC.u.move(DIRH['l'])
+            GC.u.try_move(DIRH['l'])
             u_took_turn = True
         elif GC.key == K_RIGHT or GC.key == K_KP6:
-            GC.u.move(DIRH['r'])
+            GC.u.try_move(DIRH['r'])
             u_took_turn = True
         elif GC.key == K_KP7:
-            GC.u.move(DIRH['ul'])
+            GC.u.try_move(DIRH['ul'])
             u_took_turn = True
         elif GC.key == K_KP9:
-            GC.u.move(DIRH['ur'])
+            GC.u.try_move(DIRH['ur'])
             u_took_turn = True
         elif GC.key == K_KP1:
-            GC.u.move(DIRH['dl'])
+            GC.u.try_move(DIRH['dl'])
             u_took_turn = True
         elif GC.key == K_KP3:
-            GC.u.move(DIRH['dr'])
+            GC.u.try_move(DIRH['dr'])
             u_took_turn = True
                 
     if u_took_turn:
-        monsters_take_turn()
         GC.fov_recompute = True
+        monsters_take_turn()
     else:
         GC.fov_recompute = False
         
@@ -166,6 +164,11 @@ def controller_tick():
     if GC.fov_recompute:
         GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 
+#    if GC.state == 'playing':
+#        for m in GC.monsters:
+#            if m.ai:
+#                m.ai.take_turn()
+#
 
 def update_text_surf():
     """Update the text buffer."""
@@ -239,7 +242,7 @@ def update_status_surf():
     write_text(GV.status_surf, 'Dungeons of Doom, Level 1', 1, DEFAULT_FONT_CLR, 0, 2, justify='center')
 
     write_text(GV.status_surf, 'HP', 1, DEFAULT_FONT_CLR, 1, 3, justify='left', column=1)
-    write_text(GV.status_surf, str(20) + '/' + str(25), 1, DEFAULT_FONT_CLR, 1, 3, justify='center', column=2)
+    write_text(GV.status_surf, str(GC.u.hp) + '/' + str(GC.u.max_hp), 1, DEFAULT_FONT_CLR, 1, 3, justify='center', column=2)
 
     write_text(GV.status_surf, 'MP', 1, DEFAULT_FONT_CLR, column_w + 1, 3, justify='left', column=3)
     write_text(GV.status_surf, str(20) + '/' + str(25), 1, DEFAULT_FONT_CLR, column_w + 1, 3, justify='center', column=4)
@@ -286,9 +289,14 @@ def draw_objects():
     for item in GC.items:
         item.draw()
 
-    for monster in GC.monsters:
-        monster.draw()
+    for m in GC.monsters:
+        if GC.u.fov_map.lit(m.x, m.y):
+            m.draw()
+        else:
+            if GC.map[m.x][m.y].explored:
+                m.draw_gray()
 
+    # Draw the player
     GC.u.draw()
         
 def view_tick():
@@ -312,7 +320,7 @@ def main():
     # Initializing these modules separately instead of calling pygame.init() is WAY faster.
     pygame.display.init()
     pygame.font.init()
-    
+
     uname = 'Taimor'
     usex = 'Male'
     urace = 'Human'
@@ -367,10 +375,6 @@ def main():
     while GC.state != 'exit':
         controller_tick()
         view_tick()
-
-#    controller_tick()
-#    view_tick()
-
-                           
+    
 if __name__ == '__main__':
     main()
