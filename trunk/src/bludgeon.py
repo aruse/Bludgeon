@@ -16,7 +16,6 @@ from dlevel import *
 from cell import *
 from ai import *
 from gui import *
-import color
 
 def handle_events():
     # Handle input events
@@ -133,7 +132,7 @@ def main():
 
     # Create the backgound
     GV.background = pygame.Surface(GV.screen.get_size()).convert()
-    GV.background.fill(color.black)
+    GV.background.fill(GV.black)
     
     # Display the background
     GV.screen.blit(GV.background, (0, 0))

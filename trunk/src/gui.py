@@ -9,11 +9,10 @@ from item import *
 from dlevel import *
 from cell import *
 from ai import *
-import color
 
 def update_eq_surf():
     """Update the equipment surface."""
-    GV.eq_surf.fill(color.dark_gray)
+    GV.eq_surf.fill(GV.dark_gray)
     GV.eq_surf.blit(create_tile(GV.tiles_img, "conical hat"), GV.eq_head)
     GV.eq_surf.blit(create_tile(GV.tiles_img, "lenses"), GV.eq_eyes)
     GV.eq_surf.blit(create_tile(GV.tiles_img, "oval"), GV.eq_neck)
@@ -31,7 +30,7 @@ def update_eq_surf():
 
 
     
-def write_text(surf, text, antialias, x, y, justify=None, column=None, color=color.default_font_color):
+def write_text(surf, text, antialias, x, y, justify=None, column=None, color=GV.default_font_color):
     """Output text to a surface at x, y block coords.
     If justify is set, ignore x variable.
     Column can be one of (1, 2, 3, 4)"""
@@ -72,7 +71,7 @@ def update_status_surf():
     """Update the status surface."""
     surf = GV.status_surf
     rect = surf.get_rect()
-    surf.fill(color.text_bg_color)
+    surf.fill(GV.text_bg_color)
     column_w = STATUS_W / 2
     
     
@@ -80,7 +79,7 @@ def update_status_surf():
     write_text(surf, 'Dungeons of Doom, Level 1', 1, 0, 2, justify='center')
 
     write_text(surf, 'HP', 1, 1, 3, justify='left', column=1)
-    render_bar(surf, rect.left + 4 * FONT_SIZE, rect.top + 3 * FONT_SIZE, 100, GC.u.hp, GC.u.max_hp, color.light_red, color.darker_red)
+    render_bar(surf, rect.left + 4 * FONT_SIZE, rect.top + 3 * FONT_SIZE, 100, GC.u.hp, GC.u.max_hp, GV.light_red, GV.darker_red)
     write_text(surf, str(GC.u.hp) + '/' + str(GC.u.max_hp), 1, 1, 3, justify='center', column=2)
 
     
@@ -114,11 +113,11 @@ def update_status_surf():
 
 def update_text_surf():
     """Update the text buffer."""
-    GV.text_surf.fill(color.text_bg_color)
+    GV.text_surf.fill(GV.text_bg_color)
 
     i = MAX_MSGS - 1
     for (line, color) in GC.msgs:
-        text_img = GV.font.render(line, 1, color.default_font_color)
+        text_img = GV.font.render(line, 1, GV.default_font_color)
         textpos = text_img.get_rect()
         textpos.left = GV.text_surf.get_rect().left
         textpos.top = i * FONT_SIZE
@@ -140,7 +139,11 @@ def draw_map():
     
 def draw_objects():
     for item in GC.items:
-        item.draw()
+        if GC.u.fov_map.lit(item.x, item.y):
+            item.draw()
+        else:
+            if GC.map[item.x][item.y].explored:
+                item.draw_gray()
 
     for m in GC.monsters:
         if GC.u.fov_map.lit(m.x, m.y):
