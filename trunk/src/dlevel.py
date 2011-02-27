@@ -5,6 +5,7 @@ import random
 from const import *
 from cell import *
 from room import *
+from util import *
 from monster import *
 from item import *
 from ai import *
@@ -15,6 +16,22 @@ DIR_UP = 2
 DIR_DOWN = 3
 
 
+def blocks_movement(map, x, y):
+    if map[x][y].blocks_movement:
+        return True
+
+    for m in GC.monsters:
+        if m.x == x and m.y == y and m.blocks_movement:
+            return True
+
+    for i in GC.items:
+        if i.x == x and i.y == y and i.blocks_movement:
+            return True
+
+    return False
+
+
+
 def place_objects(map, room):
     for i in range(random.randrange(3)):
         #choose random spot for this monster
@@ -22,7 +39,7 @@ def place_objects(map, room):
         y = random.randrange(room.y1 + 1, room.y2 - 1)
  
         #only place it if the tile is not blocked
-        if not map[x][y].block_movement:
+        if not blocks_movement(map, x, y):
             if random.randrange(0, 100) < 80:  #80% chance of getting an orc
                 monster = Monster(x, y, 'orc', ai=StupidAI())
             else:
@@ -38,7 +55,7 @@ def place_objects(map, room):
         y = random.randrange(room.y1 + 1, room.y2 - 1)
  
         #only place it if the tile is not blocked
-        if not map[x][y].block_movement:
+        if not blocks_movement(map, x, y):
             dice = random.randrange(0, 100)
             if dice < 70:
                 #create a healing potion (70% chance)

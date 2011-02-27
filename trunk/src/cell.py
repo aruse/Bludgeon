@@ -12,11 +12,11 @@ class Cell:
         self.name = name
         
         if re.findall('wall', name):
-            self.block_movement = True
+            self.blocks_movement = True
             self.block_sight = True
             self.cell_class = 'wall'
         else:
-            self.block_movement = False
+            self.blocks_movement = False
             self.block_sight = False
             self.cell_class = 'floor'
 
@@ -36,5 +36,5 @@ class Cell:
         self.explored = False
         
     def dig():
-        self.block_movement = False
+        self.blocks_movement = False
         self.block_signt = False

@@ -116,7 +116,7 @@ class Object:
         if x < 0 or y < 0 or x >= MAP_W or y >= MAP_H:
             can_move = False
 
-        if GC.map[x][y].block_movement:
+        if GC.map[x][y].blocks_movement:
             can_move = False
 
         for m in GC.monsters:
