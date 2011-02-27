@@ -5,7 +5,8 @@ import random
 from const import *
 from cell import *
 from room import *
-from object import *
+from monster import *
+from item import *
 from ai import *
 
 DIR_LEFT = 0

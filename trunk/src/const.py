@@ -70,32 +70,3 @@ DIRH = {'u': (0, -1),
         'dl': (-1, 1),
         'dr': (1, 1)
         }
-
-
-# Colors
-CLR_BLACK = (0, 0, 0)
-CLR_D_GRAY = (64, 64, 64)
-CLR_GRAY = (128, 128, 128)
-CLR_L_GRAY = (192, 192, 192)
-CLR_WHITE = (255, 255, 255)
-
-CLR_RED = (192, 0, 0)
-CLR_BROWN = (192, 128, 0)
-CLR_GREEN = (0, 192, 0)
-CLR_CYAN = (0, 192, 192)
-CLR_BLUE = (0, 0, 192)
-CLR_MAGENTA = (192, 0, 192)
-
-CLR_B_RED = (255, 0, 0)
-CLR_B_YELLOW = (255, 255, 0)
-CLR_B_ORANGE = (255, 192, 0)
-CLR_B_GREEN = (0, 255, 0)
-CLR_B_CYAN = (0, 255, 255)
-CLR_B_BLUE = (0, 0, 255)
-CLR_B_MAGENTA = (255, 0, 255)
-
-TEXT_BG_CLR = CLR_BLACK
-if sum(TEXT_BG_CLR) < sum(CLR_WHITE):
-    DEFAULT_FONT_CLR = CLR_WHITE
-else:
-    DEFAULT_FONT_CLR = CLR_BLACK

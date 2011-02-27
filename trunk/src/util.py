@@ -7,8 +7,9 @@ from pygame.locals import *
 
 from const import *
 from game import *
+import color
 
-def message(msg, color=CLR_WHITE):
+def message(msg, color=color.default_font_color):
     # Split the message if necessary, among multiple lines
     # FIXME: This should wrap based on the current size of the text buffer, not at a blind 60 characters.
     lines = textwrap.wrap(msg, 60)
