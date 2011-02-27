@@ -124,27 +124,29 @@ def main():
     
     pygame.display.set_caption('{0} - {1} the {2} {3} {4}'.format(GAME_TITLE, uname, usex, urace, urole))
 
-    GV.screen = pygame.display.set_mode((GV.screen_pw, GV.screen_ph))
 
-    # Set the system icon
-    system_icon = load_image('icon.xpm')
-    pygame.display.set_icon(system_icon)
-
-    # Create the backgound
-    GV.background = pygame.Surface(GV.screen.get_size()).convert()
-    GV.background.fill(GV.black)
-    
-    # Display the background
-    GV.screen.blit(GV.background, (0, 0))
-    pygame.display.flip()
 
     # Prepare game objects
     GC.clock = pygame.time.Clock()
 
+       
+    init_gv()
+    GV.screen = pygame.display.set_mode((GV.screen_pw, GV.screen_ph))
+
+    GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph)).convert()
+    GV.text_surf = pygame.Surface((GV.text_pw, GV.text_ph)).convert()
+    GV.eq_surf = pygame.Surface((GV.eq_pw, GV.eq_ph)).convert()
+    GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph)).convert()
+
+    # Set the system icon
+    system_icon = load_image('icon.xpm')
+    pygame.display.set_icon(system_icon)
+    
     GV.tiles_img = load_image('tiles16.xpm')
     GV.gray_tiles_img = load_image('tiles16_gray.xpm')
     GV.tile_dict = create_tile_dict()
-    
+    GV.blank_tile = create_tile(GV.tiles_img, "cmap, wall, dark")
+
     GC.u = Monster(0, 0, 'wizard')
 #    GC.monsters.append(Monster(0, 2, 'Beholder',
 #                                ai=None))
@@ -154,17 +156,9 @@ def main():
 #    GC.map = gen_perfect_maze(MAP_W, MAP_H)
     GC.map = gen_connected_rooms()
     GC.u.set_fov_map(GC.map)
+
     
-    GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph)).convert()
-    GV.text_surf = pygame.Surface((GV.text_pw, GV.text_ph)).convert()
-    GV.eq_surf = pygame.Surface((GV.eq_pw, GV.eq_ph)).convert()
-    GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph)).convert()
-
-    GV.font = pygame.font.Font(pygame.font.get_default_font(), FONT_SIZE)
-
-    GV.blank_tile = create_tile(GV.tiles_img, "cmap, wall, dark")
-
-    # Have to call this once to draw the initial screen before the user has inputted anything.
+    # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
     
     # Main loop

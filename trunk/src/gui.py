@@ -30,41 +30,44 @@ def update_eq_surf():
 
 
     
-def write_text(surf, text, antialias, x, y, justify=None, column=None, color=GV.default_font_color):
-    """Output text to a surface at x, y block coords.
-    If justify is set, ignore x variable.
-    Column can be one of (1, 2, 3, 4)"""
-        
+def write_status_text(text, line_num, justify='center', column=None, color=GV.default_font_color, antialias=True):
+    """Output text to the status surface.
+    Column can be one of (None, 0, 1, 2, 3)"""
+    surf = GV.status_surf
+    rect = surf.get_rect()
+
+    col_width = rect.width / 4
+    
+    if column is None:
+        # Leave a space of one character on the left and right of the surface
+        left_border = rect.left + GV.font_pw
+        right_border = rect.right - GV.font_pw
+        center = rect.width / 2
+    else:
+        left_border = rect.left + column * col_width + GV.font_pw
+        right_border = rect.right - ((3 - column) * col_width) - GV.font_pw
+        center = (left_border + right_border) / 2
+    
     text_img = GV.font.render(text, antialias, color)
     textpos = text_img.get_rect()
-    if justify == 'center':
-        if column:
-            textpos.centerx = column * surf.get_width() / 4- (surf.get_width() / 4 - 2)
-        else:
-            textpos.centerx = surf.get_width() / 2
-    elif justify == 'left':
-        if column:
-            textpos.x = column * surf.get_width() / 4 - (surf.get_width() / 4 - 2) + FONT_SIZE / 2
-        else:
-            textpos.x = x
+    if justify == 'left':
+        textpos.left = left_border
     elif justify == 'right':
-        if column:
-            textpos.x = column * surf.get_width() / 4 - FONT_SIZE / 2 - text_img.get_width()
-        else:
-            textpos.x = x - text_img.get_width()
-    else:
-        textpos.left = surf.get_rect().left + x * (FONT_SIZE / 2)
-    textpos.top = surf.get_rect().top + y * FONT_SIZE
+        textpos.right = right_border
+    else: # justify == 'center':
+        textpos.centerx = center
+
+    textpos.top = surf.get_rect().top + line_num * GV.font_ph
     surf.blit(text_img, textpos)
 
 
-def render_bar(surf, x, y, length, value, max_value, bar_color, background_color):
+def draw_bar(surf, x, y, length, value, max_value, bar_color, background_color):
     # Render a bar (HP, experience, etc).
     bar_length = int(float(value) / max_value * length)
  
-    surf.fill(background_color, rect=pygame.Rect(x, y, length, FONT_SIZE))
+    surf.fill(background_color, rect=pygame.Rect(x, y, length, GV.font_ph - 1))
     if bar_length > 0:
-        surf.fill(bar_color, rect=pygame.Rect(x, y, bar_length, FONT_SIZE))
+        surf.fill(bar_color, rect=pygame.Rect(x, y, bar_length, GV.font_ph - 1))
  
     
 def update_status_surf():
@@ -72,43 +75,70 @@ def update_status_surf():
     surf = GV.status_surf
     rect = surf.get_rect()
     surf.fill(GV.text_bg_color)
-    column_w = STATUS_W / 2
     
+    write_status_text('Andy the Human Male Apprentice (Chaotic)', 0.5, justify='center')
+    write_status_text('Dungeons of Doom, Level 1', 1.5, justify='center')
+
+    write_status_text('HP', 3, justify='left', column=0)
+    draw_bar(surf, rect.width / 4,
+             rect.top + 3 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             GC.u.hp, GC.u.max_hp, GV.light_red, GV.desaturated_red)
+    write_status_text(str(GC.u.hp) + ' / ' + str(GC.u.max_hp), 3, justify='center', column=2)
     
-    write_text(surf, 'Andy the Human Male Apprentice (Chaotic)', 1, 0, 1, justify='center')
-    write_text(surf, 'Dungeons of Doom, Level 1', 1, 0, 2, justify='center')
+    write_status_text('MP', 4, justify='left', column=0)
+    draw_bar(surf, rect.width / 4,
+             rect.top + 4 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             GC.u.mp, GC.u.max_mp, GV.light_blue, GV.desaturated_blue)
+    write_status_text(str(GC.u.mp) + ' / ' + str(GC.u.max_mp), 4, justify='center', column=2)
 
-    write_text(surf, 'HP', 1, 1, 3, justify='left', column=1)
-    render_bar(surf, rect.left + 4 * FONT_SIZE, rect.top + 3 * FONT_SIZE, 100, GC.u.hp, GC.u.max_hp, GV.light_red, GV.darker_red)
-    write_text(surf, str(GC.u.hp) + '/' + str(GC.u.max_hp), 1, 1, 3, justify='center', column=2)
+    write_status_text('XP', 5, justify='left', column=0)
+    draw_bar(surf, rect.width / 4,
+             rect.top + 5 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             GC.u.xp, GC.u.xp_next_level, GV.light_orange, GV.desaturated_orange)
+    write_status_text(str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), 5, justify='center', column=2)
 
+    write_status_text('Weight', 6, justify='left', column=0)
+    draw_bar(surf, rect.width / 4,
+             rect.top + 6 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             GC.u.weight, GC.u.burdened, GV.gray, GV.dark_gray)
+    write_status_text(str(GC.u.weight) + ' / ' + str(GC.u.burdened), 6, justify='center', column=2)
+
+    write_status_text('Hunger', 7, justify='left', column=0)
+    draw_bar(surf, rect.width / 4,
+             rect.top + 7 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             GC.u.hunger, GC.u.max_hunger, GV.gray, GV.dark_gray)
+    write_status_text(str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), 7, justify='center', column=2)
     
-    write_text(surf, 'MP', 1, column_w + 1, 3, justify='left', column=3)
-    write_text(surf, str(20) + '/' + str(25), 1, column_w + 1, 3, justify='center', column=4)
+    write_status_text('Str', 8, justify='right', column=0)
+    write_status_text('Con', 9, justify='right', column=0)
+    write_status_text('Dex', 10, justify='right', column=0)
+    write_status_text('Int', 11, justify='right', column=0)
+    write_status_text('Wis', 12, justify='right', column=0)
+    write_status_text('Cha', 13, justify='right', column=0)
+    write_status_text(str(18), 8, justify='left', column=1)
+    write_status_text(str(18), 9, justify='left', column=1)
+    write_status_text(str(18), 10, justify='left', column=1)
+    write_status_text(str(18), 11, justify='left', column=1)
+    write_status_text(str(18), 12, justify='left', column=1)
+    write_status_text(str(18), 13, justify='left', column=1)
 
-    write_text(surf, 'XP', 1, 1, 4, justify='left', column=1)
-    write_text(surf, str(10) + '/' + str(5000), 1, 1, 4, justify='center', column=2)
-    write_text(surf, 'Weight', 1, column_w + 1, 4, justify='left', column=3)
-    write_text(surf, str(20) + '/' + str(1000), 1, column_w + 1, 4, justify='center', column=4)
+    write_status_text('AC', 8, justify='right', column=2)
+    write_status_text('Gold', 9, justify='right', column=2)
+    write_status_text('Level', 10, justify='right', column=2)
+    write_status_text('Time', 11, justify='right', column=2)
+    write_status_text('Score', 12, justify='right', column=2)
+    write_status_text('Weap Skill', 13, justify='right', column=2)
+    write_status_text(str(18), 8, justify='left', column=3)
+    write_status_text(str(18), 9, justify='left', column=3)
+    write_status_text(str(18), 10, justify='left', column=3)
+    write_status_text(str(18), 11, justify='left', column=3)
+    write_status_text(str(18), 12, justify='left', column=3)
+    write_status_text(str(18), 13, justify='left', column=3)
 
-    write_text(surf, 'Hunger ' + str(20) + '/' + str(1000), 1, column_w + 1, 5)
-    
-    write_text(surf, 'Str ' + str(18), 1, 1, 6)
-    write_text(surf, 'Con ' + str(18), 1, 1, 7)
-    write_text(surf, 'Dex ' + str(18), 1, 1, 8)
-    write_text(surf, 'Int ' + str(18), 1, 1, 9)
-    write_text(surf, 'Wis ' + str(18), 1, 1, 10)
-    write_text(surf, 'Cha ' + str(18), 1, 1, 11)
-    write_text(surf, 'AC ' + str(20), 1, column_w + 1, 6)
-    write_text(surf, 'Gold ' + str(20), 1, column_w + 1, 7)
-    write_text(surf, 'Level ' + str(20), 1, column_w + 1, 8)
-    write_text(surf, 'Time ' + str(20), 1, column_w + 1, 9)
-    write_text(surf, 'Score ' + str(20), 1, column_w + 1, 10)
-    write_text(surf, 'Weap Skill ' + str(20), 1, column_w + 1, 11)
-    write_text(surf, 'Weapon Damage 3d8 + ' + str(6), 1, 1, 12)
-    write_text(surf, 'Weapon Range ' + str(5), 1, 1, 13)
-    write_text(surf, 'Hungry Burdened Afraid', 1, 1, 14)
-    write_text(surf, 'Hallucinating Sick Invisible', 1, 1, 15)
+    write_status_text('Weapon Damage 3d8 + ' + str(6), 14, justify='left')
+    write_status_text('Weapon Range ' + str(5), 15, justify='left')
+    write_status_text('Hungry Burdened Afraid', 16, justify='left')
+    write_status_text('Hallucinating Sick Invisible', 17, justify='left')
 
 
 def update_text_surf():
@@ -120,7 +150,7 @@ def update_text_surf():
         text_img = GV.font.render(line, 1, GV.default_font_color)
         textpos = text_img.get_rect()
         textpos.left = GV.text_surf.get_rect().left
-        textpos.top = i * FONT_SIZE
+        textpos.top = i * GV.font_ph
         GV.text_surf.blit(text_img, textpos)
         i -= 1
 
@@ -165,7 +195,6 @@ def view_tick():
     draw_objects()
 
     # Draw everything
-    GV.screen.blit(GV.background, (0, 0))
     GV.screen.blit(GV.map_surf, (GV.map_px, GV.map_py))
     GV.screen.blit(GV.eq_surf, (GV.eq_px, GV.eq_py))
     GV.screen.blit(GV.status_surf, (GV.status_px, GV.status_py))

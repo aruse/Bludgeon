@@ -51,7 +51,17 @@ class Monster(Object):
             self.defense = 1
 
         self.max_hp = self.hp
-            
+
+        # FIXME dummy values
+        self.mp = 13
+        self.max_mp = 25
+        self.xp = 1220
+        self.xp_next_level = 2000
+        self.weight = 580
+        self.burdened = 1000
+        self.hunger = 450
+        self.max_hunger = 1000
+        
     def set_fov_map(self, map):
         self.fov_map = FOVMap(map)
 

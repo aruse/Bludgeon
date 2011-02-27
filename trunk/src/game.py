@@ -3,6 +3,54 @@ from pygame.locals import *
 
 from const import *
 
+def init_gv():
+    GV.font = pygame.font.SysFont('Arial', FONT_SIZE)
+    GV.font_ph = GV.font.get_height()
+    GV.font_pw = GV.font.size('X')[0]
+
+    # Size of the map surface
+    GV.map_pw = MAP_W * TILE_PW
+    GV.map_ph = MAP_H * TILE_PH
+
+    # Size of the status panel
+    GV.status_pw = STATUS_W * GV.font_pw
+    GV.status_ph = STATUS_H * GV.font_ph
+
+    # Size of the equipment panel
+    GV.eq_pw = EQ_W * TILE_PW
+    GV.eq_ph = GV.status_ph
+
+    # Size of the text buffer
+    GV.text_pw = GV.map_pw - (GV.eq_pw + GV.status_pw)
+    GV.text_ph = GV.status_ph
+
+    # Size of the full game window
+    GV.screen_pw = GV.map_pw
+    GV.screen_ph = GV.map_ph + GV.status_ph
+
+    # Locations to blit the various surfaces
+    GV.map_px, GV.map_py = 0, GV.status_ph
+    GV.text_px, GV.text_py = 0, 0
+    GV.eq_px, GV.eq_py = GV.text_pw, 0
+    GV.status_px, GV.status_py = GV.eq_px + GV.eq_pw, 0
+
+    # Locations to blit equipment on the equipment panel
+    GV.eq_cent = (GV.eq_pw / 2.0 - TILE_PW / 2, GV.eq_ph / 2 - TILE_PW / 2)
+    GV.eq_hands = GV.eq_cent
+    GV.eq_rweap = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1])
+    GV.eq_lweap = (GV.eq_cent[0] + TILE_PW, GV.eq_cent[1])
+    GV.eq_rring = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1] + TILE_PH)
+    GV.eq_lring = (GV.eq_cent[0] + TILE_PW, GV.eq_cent[1] + TILE_PH)
+    GV.eq_boots = (GV.eq_cent[0], GV.eq_cent[1] + TILE_PH * 2)
+    GV.eq_armor = (GV.eq_cent[0], GV.eq_cent[1] - TILE_PH)
+    GV.eq_shirt = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1] - TILE_PH)
+    GV.eq_cloak = (GV.eq_cent[0] + TILE_PW, GV.eq_cent[1] - TILE_PH)
+    GV.eq_neck = (GV.eq_cent[0], GV.eq_cent[1] - TILE_PH * 2)
+    GV.eq_eyes = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1] - TILE_PH * 2)
+    GV.eq_quiver = (GV.eq_cent[0] + TILE_PW * 2, GV.eq_cent[1] - TILE_PH * 3)
+    GV.eq_light = (GV.eq_cent[0] - TILE_PW * 2, GV.eq_cent[1] - TILE_PH * 3)
+    GV.eq_head = (GV.eq_cent[0], GV.eq_cent[1] - TILE_PH * 3)
+
 
 class GC:
     """Stores the controller state."""
@@ -54,7 +102,6 @@ class GV:
     tile_dict = None
     glyph_dict = None
 
-    background = None
     screen = None
     
     # pygame Surface for the current level
@@ -66,53 +113,56 @@ class GV:
     # pygame Surface for the text buffer
     text_surf = None
 
+    eq_surf = None
+    
     font = None
-
+    font_ph = None
+    
     # What to blit over an area that's not visible
     blank_tile = None
     
     # Size of the map surface
-    map_pw = MAP_W * TILE_PW
-    map_ph = MAP_H * TILE_PH
+    map_pw = None
+    map_ph = None
 
     # Size of the status panel
-    status_pw = (STATUS_W * FONT_SIZE) / 2
-    status_ph = STATUS_H * FONT_SIZE
+    status_pw = None
+    status_ph = None
 
     # Size of the equipment panel
-    eq_pw = EQ_W * TILE_PW
-    eq_ph = status_ph
+    eq_pw = None
+    eq_ph = None
 
     # Size of the text buffer
-    text_pw = map_pw - (eq_pw + status_pw)
-    text_ph = status_ph
+    text_pw = None
+    text_ph = None
 
     # Size of the full game window
-    screen_pw = map_pw
-    screen_ph = map_ph + status_ph
+    screen_pw = None
+    screen_ph = None
 
     # Locations to blit the various surfaces
-    map_px, map_py = 0, status_ph
-    text_px, text_py = 0, 0
-    eq_px, eq_py = text_pw, 0
-    status_px, status_py = eq_px + eq_pw, 0
+    map_px, map_py = None, None
+    text_px, text_py = None, None
+    eq_px, eq_py = None, None
+    status_px, status_py = None, None
 
     # Locations to blit equipment on the equipment panel
-    eq_cent = (eq_pw / 2.0 - TILE_PW / 2, eq_ph / 2 - TILE_PW / 2)
-    eq_hands = eq_cent
-    eq_rweap = (eq_cent[0] - TILE_PW, eq_cent[1])
-    eq_lweap = (eq_cent[0] + TILE_PW, eq_cent[1])
-    eq_rring = (eq_cent[0] - TILE_PW, eq_cent[1] + TILE_PH)
-    eq_lring = (eq_cent[0] + TILE_PW, eq_cent[1] + TILE_PH)
-    eq_boots = (eq_cent[0], eq_cent[1] + TILE_PH * 2)
-    eq_armor = (eq_cent[0], eq_cent[1] - TILE_PH)
-    eq_shirt = (eq_cent[0] - TILE_PW, eq_cent[1] - TILE_PH)
-    eq_cloak = (eq_cent[0] + TILE_PW, eq_cent[1] - TILE_PH)
-    eq_neck = (eq_cent[0], eq_cent[1] - TILE_PH * 2)
-    eq_eyes = (eq_cent[0] - TILE_PW, eq_cent[1] - TILE_PH * 2)
-    eq_quiver = (eq_cent[0] + TILE_PW * 2, eq_cent[1] - TILE_PH * 3)
-    eq_light = (eq_cent[0] - TILE_PW * 2, eq_cent[1] - TILE_PH * 3)
-    eq_head = (eq_cent[0], eq_cent[1] - TILE_PH * 3)
+    eq_cent = None
+    eq_hands = None
+    eq_rweap = None
+    eq_lweap = None
+    eq_rring = None
+    eq_lring = None
+    eq_boots = None
+    eq_armor = None
+    eq_shirt = None
+    eq_cloak = None
+    eq_neck = None
+    eq_eyes = None
+    eq_quiver = None
+    eq_light = None
+    eq_head = None
 
     black = (0, 0, 0)
     darker_gray = (31, 31, 31)
@@ -194,8 +244,6 @@ class GV:
         default_font_color = white
     else:
         default_font_color = black
-
-
 
 
 # From Slash'EM
