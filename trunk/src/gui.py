@@ -4,14 +4,13 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-from monster import *
-from item import *
-from dlevel import *
-from cell import *
-from ai import *
 
 # FIXME: temporary
 INVENTORY_WIDTH = 50
+
+BUTTON_L = 1
+BUTTON_M = 2
+BUTTON_R = 3
 
 
 def menu(header, options, width):
@@ -25,39 +24,25 @@ def menu(header, options, width):
     height = len(options) + header_height
  
     #create an off-screen console that represents the menu's window
-    window_surf = pygame.Surface((width * GV.font_pw, height * GV.font_ph)).convert()
+    GV.window_surf = pygame.Surface((width * GV.font_pw, height * GV.font_ph)).convert()
  
     #print the header, with auto-wrap
-    write_text(window_surf, header, 0, justify='left')
+    write_text(GV.window_surf, header, 0, justify='left')
  
     #print all the options
     y = header_height
     letter_index = ord('a')
     for option in options:
         text = '(' + chr(letter_index) + ') ' + option
-        write_text(window_surf, text, y, justify='left')
+        write_text(GV.window_surf, text, y, justify='left')
         y += 1
         letter_index += 1
  
-    #blit the contents of "window" to the root console
-    x = GV.screen_pw / 2 - (width * GV.font_pw) / 2
-    y = GV.screen_ph / 2 - (height * GV.font_ph) / 2
-    GV.screen.blit(window_surf, (x, y))
-    pygame.display.flip()
+    GV.window_px = GV.screen_pw / 2 - (width * GV.font_pw) / 2
+    GV.window_py = GV.screen_ph / 2 - (height * GV.font_ph) / 2
 
-    char = None
-    while not char:
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                char = pygame.key.name(event.key)
-                break
-    
-            
-    if len(char) == 1:
-        index = ord(char) - ord('a')
-        if index >= 0 and index < len(options):
-            return index
-    return None
+    GC.menu_options = options
+    GC.state = 'menu'
  
 def inventory_menu(header):
     inv = GC.u.inventory
@@ -67,23 +52,48 @@ def inventory_menu(header):
     else:
         options = [i.name for i in inv]
  
-    index = menu(header, options, INVENTORY_WIDTH)
+    menu(header, options, INVENTORY_WIDTH)
  
-    if index is None or len(inv) == 0:
-        return None
-    else:
-        return inv[index]
 
+def target_tile(max_range=None):
+    """Return the position of a tile left-clicked in player's FOV (optionally in a range), or (None,None) if right-clicked."""
+    button = None
+    while button is None:
+        #render the screen. this erases the inventory and shows the names of objects under the mouse.
+        view_tick()
 
-def tile_under_mouse():
-    """Return the name of the top tile under the mouse."""
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONDOWN:
+                button = event.button
+                break
+
     x, y = pygame.mouse.get_pos()
+    x, y = mouse_coords_to_map_coords(x, y)
+
+    if button == BUTTON_R:
+#    or key.vk == libtcod.KEY_ESCAPE:
+        return (None, None)  #cancel if the player right-clicked or pressed Escape
+ 
+         #accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
+    if (button == BUTTON_L and GC.u.fov_map.lit(x, y) and
+        (max_range is None or GC.u.distance(x, y) <= max_range)):
+        return (x, y)
+    else:
+        return (None, None)
+
+def mouse_coords_to_map_coords(x, y):
     # Compensate for the relative position of the map surface.
     y -= GV.map_py
     # Convert into map coords
     x /= TILE_PW
     y /= TILE_PH
-
+    return x, y
+    
+def tile_under_mouse():
+    """Return the name of the top tile under the mouse."""
+    x, y = pygame.mouse.get_pos()
+    x, y = mouse_coords_to_map_coords(x, y)
+    
     if x > 0 and y > 0 and (
         GC.u.fov_map.lit(x, y) or GC.map[x][y].explored):
     
@@ -300,4 +310,8 @@ def view_tick():
     GV.screen.blit(GV.eq_surf, (GV.eq_px, GV.eq_py))
     GV.screen.blit(GV.status_surf, (GV.status_px, GV.status_py))
     GV.screen.blit(GV.text_surf, (GV.text_px, GV.text_py))
+
+    if GC.state == 'menu':
+        GV.screen.blit(GV.window_surf, (GV.window_px, GV.window_py))
+
     pygame.display.flip()

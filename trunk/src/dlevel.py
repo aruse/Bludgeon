@@ -57,10 +57,10 @@ def place_objects(map, room):
         if not blocks_movement(map, x, y):
             dice = random.randrange(0, 100)
             if dice < 70:
-                item = Item(x, y, 'fizzy', use_function=cast_heal)
+                item = Item(x, y, 'fizzy')
             else:
-                item = Item(x, y, 'YUM YUM', use_function=cast_lightning)
-                
+                item = Item(x, y, 'THARR')
+                                
                 #            elif dice < 70+10:
 #                item = Item(x, y, 'YUM YUM', use_function=cast_lightning)
 #            elif dice < 70+10+10:

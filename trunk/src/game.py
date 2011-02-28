@@ -94,6 +94,9 @@ class GC:
     # State of the game.  Can be one of 'playing', 'exit', or 'menu'
     state = 'playing'
 
+    menu = None
+    menu_options = []
+    
     u_action = None
 
     # Messages to put in the text buffer
@@ -120,6 +123,8 @@ class GV:
 
     alert_surf = None
     eq_surf = None
+
+    window_surf = None
     
     font = None
     font_ph = None
@@ -140,7 +145,8 @@ class GV:
     text_px, text_py = None, None
     eq_px, eq_py = None, None
     status_px, status_py = None, None
-
+    window_px, window_py = None, None
+    
     # Locations to blit equipment on the equipment panel
     eq_cent = None
     eq_hands = None

@@ -32,7 +32,7 @@ class Monster(Object):
         self.blocks_movement = True
 
         # Function to call when this monster dies
-        self.death = die_leave_corpse
+        self.death = None
         
         # Field of view map.
         self.fov_map = None
@@ -41,14 +41,17 @@ class Monster(Object):
             self.hp = 30
             self.atk_power = 5
             self.defense = 2
+            self.death = None
         elif name == 'orc':
             self.hp = 10
             self.atk_power = 3
             self.defense = 0
+            self.death = die_leave_corpse
         elif name == 'troll':
             self.hp = 16
             self.atk_power = 4
             self.defense = 1
+            self.death = die_leave_corpse
 
         self.max_hp = self.hp
         self.inventory = []

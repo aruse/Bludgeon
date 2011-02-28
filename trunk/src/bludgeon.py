@@ -83,22 +83,43 @@ def handle_actions():
             char = pygame.key.name(GC.key)
 
             if char == ',':
+                u_took_turn = True
                 for i in GC.items:
                     if i.x == GC.u.x and i.y == GC.u.y:
                         GC.u.pick_up(i)
 
-                u_took_turn = True
             elif char == 'i':
-                item = inventory_menu('Press the key next to an item to use it, or any other to cancel.')
-                if item is not None:
-                    GC.u.use(item)
+                inventory_menu('Press the key next to an item to use it, or any other to cancel.')
+                GC.menu = 'use'
+
             elif char == 'd':
-                item = inventory_menu('Press the key next to an item to drop it, or any other to cancel.')
-                if item is not None:
-                    GC.u.drop(item)
+                inventory_menu('Press the key next to an item to drop it, or any other to cancel.')
+                GC.menu = 'drop'
+
             else:
                 message(pygame.key.name(GC.key) + ' pressed')
-            
+
+    elif GC.state == 'menu' and GC.key:
+        char = pygame.key.name(GC.key)
+        if len(char) == 1:
+            index = ord(char) - ord('a')
+            if index >= 0 and index < len(GC.menu_options):
+                if GC.menu == 'use':
+                    u_took_turn = True
+                    if len(GC.u.inventory) > 0:
+                        item = GC.u.inventory[index]
+                        if item is not None:
+                            GC.u.use(item)
+                elif GC.menu == 'drop':
+                    u_took_turn = True
+                    if len(GC.u.inventory) > 0:
+                        item = GC.u.inventory[index]
+                        if item is not None:
+                            GC.u.drop(item)
+                    
+        GC.state = 'playing' # Exit menu
+
+                
     if u_took_turn:
         GC.fov_recompute = True
         monsters_take_turn()
