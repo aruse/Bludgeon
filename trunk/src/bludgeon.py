@@ -89,9 +89,13 @@ def handle_actions():
 
                 u_took_turn = True
             elif char == 'i':
-                chosen_item = inventory_menu('Press the key next to an item to use it, or any other to cancel.')
-                if chosen_item is not None:
-                    GC.u.use(chosen_item)
+                item = inventory_menu('Press the key next to an item to use it, or any other to cancel.')
+                if item is not None:
+                    GC.u.use(item)
+            elif char == 'd':
+                item = inventory_menu('Press the key next to an item to drop it, or any other to cancel.')
+                if item is not None:
+                    GC.u.drop(item)
             else:
                 message(pygame.key.name(GC.key) + ' pressed')
             

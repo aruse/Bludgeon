@@ -121,7 +121,6 @@ class Monster(Object):
         else:
             self.move(dx, dy)
 
-
     def use(self, item):
         """Use an item."""
         if item.use_function is None:
@@ -129,3 +128,10 @@ class Monster(Object):
         else:
             if item.use_function() != 'cancelled':
                 self.inventory.remove(item)  #destroy after use, unless it was cancelled for some reason
+
+    def drop(self, item):
+        """Drop an item."""
+        item.x, item.y = self.x, self.y
+        self.inventory.remove(item)
+        GC.items.append(item)
+        message('You dropped the ' + item.name + '.')
