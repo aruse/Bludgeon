@@ -26,11 +26,11 @@ class Item(Object):
         # For items which were previously a monster.  Used for resurrection, de-stoning, etc.
         self.prev_monster = prev_monster
 
-        if self.name == 'fizzy':
+        if self.name == 'healing potion':
             self.use_function = cast_heal
-        elif self.name == 'THARR':
+        elif self.name == 'scroll of fireball':
             self.use_function = cast_fireball
-        elif self.name == 'YUM YUM':
+        elif self.name == 'scroll of lightning':
             self.use_function = cast_lightning
-        elif self.name == 'NR 9':
+        elif self.name == 'scroll of confusion':
             self.use_function = cast_confuse

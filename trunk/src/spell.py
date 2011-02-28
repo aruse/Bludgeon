@@ -7,6 +7,7 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
+from ai import *
 
 def cast_heal(item):
     if GC.u.hp == GC.u.max_hp:
@@ -15,7 +16,8 @@ def cast_heal(item):
  
     message('Your wounds start to feel better!', GV.light_violet)
     GC.u.heal(HEAL_AMOUNT)
-
+    return 'success'
+    
 def closest_monster(max_range):
     # find closest enemy, up to a maximum range, and in the player's FOV
     closest_enemy = None
@@ -41,6 +43,7 @@ def cast_lightning(item):
         message('A lighting bolt strikes the ' + target.name + ' with a loud thunder!', GV.light_blue)
         
     target.take_damage(LIGHTNING_DAMAGE)
+    return 'success'
 
     
 def cast_fireball(item):
@@ -48,15 +51,17 @@ def cast_fireball(item):
     #ask the GC.u for a target tile to throw a fireball at
     message('Left-click a target tile for the fireball, or right-click to cancel.', GV.light_cyan)
     GC.state = 'targetting'
-    GC.targetting_function.append(finish_cast_fireball)
+    GC.targetting_function.append(finish_fireball)
     GC.targetting_item = item
     return 'targetting'
     
     
-def finish_cast_fireball(item, x, y):
-    """Finish the casting of a fireball spell after a cell has been selected."""    
+def finish_fireball(item, x, y):
+    """Finish the casting of a fireball spell after a cell has been selected.
+    Return whether or not the fireball was cast.
+    """
     if x is None:
-        return 'cancelled'
+        return False
     message('The fireball explodes, burning everything within ' + str(FIREBALL_RADIUS) + ' tiles!', GV.orange)
  
     for m in GC.monsters + [GC.u]:  #damage every fighter in range, including the GC.u
@@ -64,15 +69,31 @@ def finish_cast_fireball(item, x, y):
             message('The ' + m.name + ' gets burned for ' + str(FIREBALL_DAMAGE) + ' hit points.', GV.orange)
             m.take_damage(FIREBALL_DAMAGE)
 
+    return True
  
 def cast_confuse(item):
     #ask the GC.u for a target to confuse
     message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
-    monster = target_monster(CONFUSE_RANGE)
-    if monster is None: return 'cancelled'
+    GC.state = 'targetting'
+    GC.targetting_function.append(finish_confuse)
+    GC.targetting_item = item
+    return 'targetting'
+
+def finish_confuse(item, x, y):
+    # FIXME: should be able to target myself
+    target = None
+    for m in GC.monsters:
+        if (m.x == x and m.y == y and
+            m.distance(GC.u.x, GC.u.y) <= CONFUSE_RANGE):
+            target = m
+            break
+    
+    if target is None:
+        return False
  
-    #replace the monster's AI with a "confused" one; after some turns it will restore the old AI
-    old_ai = monster.ai
-    monster.ai = ConfusedMonster(old_ai)
-    monster.ai.owner = monster  #tell the new component who owns it
-    message('The eyes of the ' + monster.name + ' look vacant, as he starts to stumble around!', GV.light_green)
+    # replace the monster's AI with a "confused" one; after some turns it will restore the old AI
+    old_ai = target.ai
+    target.ai = ConfusedAI(old_ai)
+    target.ai.owner = target  #tell the new component who owns it
+    message('The eyes of the ' + target.name + ' look vacant, as he starts to stumble around!', GV.light_green)
+    return True

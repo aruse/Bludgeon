@@ -86,7 +86,9 @@ def handle_actions():
         elif GC.key:
             char = pygame.key.name(GC.key)
 
-            if char == ',':
+            if char == '.':
+                u_took_turn = True
+            elif char == ',':
                 u_took_turn = True
                 for i in GC.items:
                     if i.x == GC.u.x and i.y == GC.u.y:
@@ -112,11 +114,14 @@ def handle_actions():
                 if index >= 0 and index < len(GC.menu_options):
                     if GC.menu == 'use':
                         GC.state = 'playing' # Exit menu
-                        u_took_turn = True
                         if len(GC.u.inventory) > 0:
                             item = GC.u.inventory[index]
                             if item is not None:
-                                GC.u.use(item)
+                                if GC.u.use(item) == 'success':
+                                    u_took_turn = True
+                                else:
+                                    u_took_turn = False
+                                
                     elif GC.menu == 'drop':
                         GC.state = 'playing' # Exit menu
                         u_took_turn = True
@@ -137,12 +142,13 @@ def handle_actions():
             # Accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
             if GC.button == BUTTON_L and GC.u.fov_map.lit(x, y):
                 targetting_function = GC.targetting_function.pop(0)
-                targetting_function(GC.targetting_item, x, y)
+                success = targetting_function(GC.targetting_item, x, y)
 
                 # If this targetting is the result of an item use, destroy the item
-                if GC.targetting_item:
+                if GC.targetting_item and success:
                     GC.u.inventory.remove(GC.targetting_item)
                     GC.targetting_item = None
+                    u_took_turn = True
                     
             GC.state = 'playing'
         elif GC.key:
