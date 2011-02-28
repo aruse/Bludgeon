@@ -7,9 +7,8 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-import globals
 
-def cast_heal():
+def cast_heal(item):
     if GC.u.hp == GC.u.max_hp:
         message('You are already at full health.', GV.light_violet)
         return 'cancelled'
@@ -32,7 +31,7 @@ def closest_monster(max_range):
     return closest_enemy
                                                         
     
-def cast_lightning():
+def cast_lightning(item):
     #find closest enemy (inside a maximum range) and damage it
     target = closest_monster(5)
     if target is None:  #no enemy found within maximum range
@@ -44,27 +43,29 @@ def cast_lightning():
     target.take_damage(LIGHTNING_DAMAGE)
 
     
-def cast_fireball():
+def cast_fireball(item):
     """Begin the casting of a fireball spell.  Ask the player to target a cell."""
     #ask the GC.u for a target tile to throw a fireball at
     message('Left-click a target tile for the fireball, or right-click to cancel.', GV.light_cyan)
     GC.state = 'targetting'
-    GC.target_function.append(finish_cast_fireball)
-
+    GC.targetting_function.append(finish_cast_fireball)
+    GC.targetting_item = item
+    return 'targetting'
     
-def finish_cast_fireball(x, y):
+    
+def finish_cast_fireball(item, x, y):
     """Finish the casting of a fireball spell after a cell has been selected."""    
     if x is None:
         return 'cancelled'
     message('The fireball explodes, burning everything within ' + str(FIREBALL_RADIUS) + ' tiles!', GV.orange)
  
-    for m in GC.monsters:  #damage every fighter in range, including the GC.u
+    for m in GC.monsters + [GC.u]:  #damage every fighter in range, including the GC.u
         if m.distance(x, y) <= FIREBALL_RADIUS:
             message('The ' + m.name + ' gets burned for ' + str(FIREBALL_DAMAGE) + ' hit points.', GV.orange)
             m.take_damage(FIREBALL_DAMAGE)
 
  
-def cast_confuse():
+def cast_confuse(item):
     #ask the GC.u for a target to confuse
     message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
     monster = target_monster(CONFUSE_RANGE)

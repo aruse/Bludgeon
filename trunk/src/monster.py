@@ -129,7 +129,8 @@ class Monster(Object):
         if item.use_function is None:
                 message('The ' + item.name + ' cannot be used.')
         else:
-            if item.use_function() != 'cancelled':
+            use_result = item.use_function(item)
+            if use_result != 'cancelled' and use_result != 'targetting':
                 self.inventory.remove(item)  #destroy after use, unless it was cancelled for some reason
 
     def drop(self, item):

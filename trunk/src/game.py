@@ -100,7 +100,8 @@ class GC:
     menu_options = []
 
     # When state is 'targetting', set this to the function to call with the x, y coords targetted
-    target_function = []
+    targetting_function = []
+    targetting_item = None
     
     u_action = None
 

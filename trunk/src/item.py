@@ -26,7 +26,6 @@ class Item(Object):
         # For items which were previously a monster.  Used for resurrection, de-stoning, etc.
         self.prev_monster = prev_monster
 
-        
         if self.name == 'fizzy':
             self.use_function = cast_heal
         elif self.name == 'THARR':

@@ -18,8 +18,6 @@ from ai import *
 from gui import *
 from spell import *
 
-import globals
-
 def impossible(text):
     print 'Impossible area of code reached'
     print text
@@ -138,9 +136,14 @@ def handle_actions():
 
             # Accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
             if GC.button == BUTTON_L and GC.u.fov_map.lit(x, y):
-                target_function = GC.target_function.pop(0)
-                target_function(x, y)
+                targetting_function = GC.targetting_function.pop(0)
+                targetting_function(GC.targetting_item, x, y)
 
+                # If this targetting is the result of an item use, destroy the item
+                if GC.targetting_item:
+                    GC.u.inventory.remove(GC.targetting_item)
+                    GC.targetting_item = None
+                    
             GC.state = 'playing'
         elif GC.key:
             message('Cancelled')
