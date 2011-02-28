@@ -20,7 +20,7 @@ def blocks_movement(map, x, y):
     if map[x][y].blocks_movement:
         return True
 
-    for m in GC.monsters:
+    for m in GC.monsters + [GC.u]:
         if m.x == x and m.y == y and m.blocks_movement:
             return True
 
@@ -47,10 +47,9 @@ def place_objects(map, room):
  
             GC.monsters.append(monster)
 
-    return
-            
     #choose random number of items
-    for i in range(random.randrange(2)):
+    for i in range(4):
+#    for i in range(random.randrange(4)):
         x = random.randrange(room.x1 + 1, room.x2 - 1)
         y = random.randrange(room.y1 + 1, room.y2 - 1)
  
@@ -58,21 +57,13 @@ def place_objects(map, room):
         if not blocks_movement(map, x, y):
             dice = random.randrange(0, 100)
             if dice < 70:
-                #create a healing potion (70% chance)
-                item_component = Item(use_function=cast_heal) 
-                item = Object(x, y, '!', 'healing potion', libtcod.violet, item=item_component)
+                item = Item(x, y, 'fizzy', use_function=cast_heal)
             elif dice < 70+10:
-                #create a lightning bolt scroll (10% chance)
-                item_component = Item(use_function=cast_lightning)
-                item = Object(x, y, '#', 'scroll of lightning bolt', libtcod.light_yellow, item=item_component)
+                item = Item(x, y, 'YUM YUM', use_function=cast_lightning)
             elif dice < 70+10+10:
-                #create a fireball scroll (10% chance)
-                item_component = Item(use_function=cast_fireball) 
-                item = Object(x, y, '#', 'scroll of fireball', libtcod.light_yellow, item=item_component)
+                item = Item(x, y, 'THARR', use_function=cast_fireball)
             else:
-                #create a confuse scroll (10% chance)
-                item_component = Item(use_function=cast_confuse) 
-                item = Object(x, y, '#', 'scroll of confusion', libtcod.light_yellow, item=item_component)
+                item = Item(x, y, 'NR 9', use_function=cast_confuse)
  
             GC.items.append(item)
  

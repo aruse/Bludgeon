@@ -79,7 +79,22 @@ def handle_actions():
         elif GC.key == K_KP3:
             GC.u.try_move(DIRH['dr'])
             u_took_turn = True
-                
+        elif GC.key:
+            char = pygame.key.name(GC.key)
+
+            if char == ',':
+                for i in GC.items:
+                    if i.x == GC.u.x and i.y == GC.u.y:
+                        GC.u.pick_up(i)
+
+                u_took_turn = True
+            elif char == 'i':
+                chosen_item = inventory_menu('Press the key next to an item to use it, or any other to cancel.')
+                if chosen_item is not None:
+                    GC.u.use(chosen_item)
+            else:
+                message(pygame.key.name(GC.key) + ' pressed')
+            
     if u_took_turn:
         GC.fov_recompute = True
         monsters_take_turn()
@@ -150,7 +165,6 @@ def main():
     GV.blank_tile = create_tile(GV.tiles_img, "cmap, wall, dark")
 
     GC.u = Monster(0, 0, 'wizard')
-    GC.monsters.append(GC.u)
     
     # Create a dlevel
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)

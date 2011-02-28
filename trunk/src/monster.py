@@ -15,7 +15,7 @@ from item import *
 
 def die_leave_corpse(monster):
     message(monster.name.capitalize() + ' dies!', GV.red)
-    GC.monsters.pop(GC.monsters.index(monster))
+    GC.monsters.remove(monster)
     corpse = Item(monster.x, monster.y, 'corpse', prev_monster=monster)
     GC.items.append(corpse)
     
@@ -51,7 +51,8 @@ class Monster(Object):
             self.defense = 1
 
         self.max_hp = self.hp
-
+        self.inventory = []
+        
         # FIXME dummy values
         self.mp = 13
         self.max_mp = 25
@@ -62,6 +63,12 @@ class Monster(Object):
         self.hunger = 450
         self.max_hunger = 1000
         
+
+    def pick_up(self, item):
+        self.inventory.append(item)
+        GC.items.remove(item)
+        message('You picked up a ' + item.name + '.', GV.green)
+
     def set_fov_map(self, map):
         self.fov_map = FOVMap(map)
 
@@ -113,3 +120,12 @@ class Monster(Object):
             self.attack(target)
         else:
             self.move(dx, dy)
+
+
+    def use(self, item):
+        """Use an item."""
+        if item.use_function is None:
+                message('The ' + item.name + ' cannot be used.')
+        else:
+            if item.use_function() != 'cancelled':
+                self.inventory.remove(item)  #destroy after use, unless it was cancelled for some reason
