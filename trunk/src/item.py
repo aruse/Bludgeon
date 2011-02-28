@@ -50,15 +50,14 @@ def closest_monster(max_range):
     
 def cast_lightning():
     #find closest enemy (inside a maximum range) and damage it
-    monster = closest_monster(5)
-    if monster is None:  #no enemy found within maximum range
-        message('No enemy is close enough to strike.', GV.red)
-        return 'cancelled'
- 
-    #zap it!
-    message('A lighting bolt strikes the ' + monster.name + ' with a loud thunder! The damage is '
-        + str(LIGHTNING_DAMAGE) + ' hit points.', GV.light_blue)
-    monster.take_damage(LIGHTNING_DAMAGE)
+    target = closest_monster(5)
+    if target is None:  #no enemy found within maximum range
+        target = GC.u
+        message('A lightning bolt arcs out from you and then returns to strike you in the head!', GV.light_blue)
+    else:
+        message('A lighting bolt strikes the ' + target.name + ' with a loud thunder!', GV.light_blue)
+        
+    target.take_damage(LIGHTNING_DAMAGE)
  
 def cast_fireball():
     #ask the GC.u for a target tile to throw a fireball at

@@ -58,13 +58,16 @@ def place_objects(map, room):
             dice = random.randrange(0, 100)
             if dice < 70:
                 item = Item(x, y, 'fizzy', use_function=cast_heal)
-            elif dice < 70+10:
-                item = Item(x, y, 'YUM YUM', use_function=cast_lightning)
-            elif dice < 70+10+10:
-                item = Item(x, y, 'THARR', use_function=cast_fireball)
             else:
-                item = Item(x, y, 'NR 9', use_function=cast_confuse)
- 
+                item = Item(x, y, 'YUM YUM', use_function=cast_lightning)
+                
+                #            elif dice < 70+10:
+#                item = Item(x, y, 'YUM YUM', use_function=cast_lightning)
+#            elif dice < 70+10+10:
+#                item = Item(x, y, 'THARR', use_function=cast_fireball)
+#            else:
+#                item = Item(x, y, 'NR 9', use_function=cast_confuse)
+# 
             GC.items.append(item)
  
 
