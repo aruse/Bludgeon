@@ -16,8 +16,14 @@ from dlevel import *
 from cell import *
 from ai import *
 from gui import *
+from spell import *
 
+import globals
 
+def impossible(text):
+    print 'Impossible area of code reached'
+    print text
+    exit
     
 def handle_events():
     # Handle input events
@@ -31,9 +37,9 @@ def handle_events():
             GC.prev_key = GC.key
             GC.key = None
         elif event.type == MOUSEBUTTONDOWN:
-            pass
+            GC.button = event.button
         elif event.type == MOUSEBUTTONUP:
-            pass
+            GC.button = None
 
         handle_actions()
 
@@ -99,26 +105,50 @@ def handle_actions():
             else:
                 message(pygame.key.name(GC.key) + ' pressed')
 
-    elif GC.state == 'menu' and GC.key:
-        char = pygame.key.name(GC.key)
-        if len(char) == 1:
-            index = ord(char) - ord('a')
-            if index >= 0 and index < len(GC.menu_options):
-                if GC.menu == 'use':
-                    u_took_turn = True
-                    if len(GC.u.inventory) > 0:
-                        item = GC.u.inventory[index]
-                        if item is not None:
-                            GC.u.use(item)
-                elif GC.menu == 'drop':
-                    u_took_turn = True
-                    if len(GC.u.inventory) > 0:
-                        item = GC.u.inventory[index]
-                        if item is not None:
-                            GC.u.drop(item)
-                    
-        GC.state = 'playing' # Exit menu
+    elif GC.state == 'menu':
+        if GC.key:
+            char = pygame.key.name(GC.key)
 
+            if len(char) == 1:
+                index = ord(char) - ord('a')
+                if index >= 0 and index < len(GC.menu_options):
+                    if GC.menu == 'use':
+                        GC.state = 'playing' # Exit menu
+                        u_took_turn = True
+                        if len(GC.u.inventory) > 0:
+                            item = GC.u.inventory[index]
+                            if item is not None:
+                                GC.u.use(item)
+                    elif GC.menu == 'drop':
+                        GC.state = 'playing' # Exit menu
+                        u_took_turn = True
+                        if len(GC.u.inventory) > 0:
+                            item = GC.u.inventory[index]
+                            if item is not None:
+                                GC.u.drop(item)
+                else:
+                    GC.state = 'playing' # Exit menu
+            else:        
+                GC.state = 'playing' # Exit menu
+
+    elif GC.state == 'targetting':
+        if GC.button:
+            x, y = pygame.mouse.get_pos()
+            x, y = mouse_coords_to_map_coords(x, y)
+
+            # Accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
+            if GC.button == BUTTON_L and GC.u.fov_map.lit(x, y):
+                target_function = GC.target_function.pop(0)
+                target_function(x, y)
+
+            GC.state = 'playing'
+        elif GC.key:
+            message('Cancelled')
+            GC.state = 'playing'
+    elif GC.state == 'exit':
+        pass
+    else:
+        impossible('Unknown state: ' + GC.state)
                 
     if u_took_turn:
         GC.fov_recompute = True

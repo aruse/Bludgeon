@@ -9,6 +9,13 @@ from const import *
 from game import *
 
         
+def mouse_coords_to_map_coords(x, y):
+    # Compensate for the relative position of the map surface.
+    y -= GV.map_py
+    # Convert into map coords
+    x /= TILE_PW
+    y /= TILE_PH
+    return x, y
     
 def message(msg, color=GV.default_font_color):
     # Split the message if necessary, among multiple lines

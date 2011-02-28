@@ -64,6 +64,8 @@ class GC:
     key = None       # The key currently held down
     prev_key = None  # The key from last clock cycle
 
+    button = None
+    
     # Number of clock cycles the key has been held down
     key_held = 0
     
@@ -91,11 +93,14 @@ class GC:
     # Whether or not we need to recompute the FOV
     fov_recompute = True
 
-    # State of the game.  Can be one of 'playing', 'exit', or 'menu'
+    # State of the game.  Can be one of 'playing', 'menu', 'targetting', or 'exit'
     state = 'playing'
 
     menu = None
     menu_options = []
+
+    # When state is 'targetting', set this to the function to call with the x, y coords targetted
+    target_function = []
     
     u_action = None
 

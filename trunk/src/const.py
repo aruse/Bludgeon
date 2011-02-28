@@ -6,6 +6,19 @@
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
 
+BUTTON_L = 1
+BUTTON_M = 2
+BUTTON_R = 3
+
+# FIXME: dummy values
+HEAL_AMOUNT = 4
+LIGHTNING_DAMAGE = 20
+LIGHTNING_RANGE = 5
+CONFUSE_RANGE = 8
+CONFUSE_NUM_TURNS = 10
+FIREBALL_RADIUS = 3
+FIREBALL_DAMAGE = 12
+
 
 # Max number of rooms on a single dungeon level
 MAX_ROOMS = 20

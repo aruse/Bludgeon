@@ -8,10 +8,6 @@ from util import *
 # FIXME: temporary
 INVENTORY_WIDTH = 50
 
-BUTTON_L = 1
-BUTTON_M = 2
-BUTTON_R = 3
-
 
 def menu(header, options, width):
     if len(options) > 26:
@@ -54,40 +50,6 @@ def inventory_menu(header):
  
     menu(header, options, INVENTORY_WIDTH)
  
-
-def target_tile(max_range=None):
-    """Return the position of a tile left-clicked in player's FOV (optionally in a range), or (None,None) if right-clicked."""
-    button = None
-    while button is None:
-        #render the screen. this erases the inventory and shows the names of objects under the mouse.
-        view_tick()
-
-        for event in pygame.event.get():
-            if event.type == MOUSEBUTTONDOWN:
-                button = event.button
-                break
-
-    x, y = pygame.mouse.get_pos()
-    x, y = mouse_coords_to_map_coords(x, y)
-
-    if button == BUTTON_R:
-#    or key.vk == libtcod.KEY_ESCAPE:
-        return (None, None)  #cancel if the player right-clicked or pressed Escape
- 
-         #accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
-    if (button == BUTTON_L and GC.u.fov_map.lit(x, y) and
-        (max_range is None or GC.u.distance(x, y) <= max_range)):
-        return (x, y)
-    else:
-        return (None, None)
-
-def mouse_coords_to_map_coords(x, y):
-    # Compensate for the relative position of the map surface.
-    y -= GV.map_py
-    # Convert into map coords
-    x /= TILE_PW
-    y /= TILE_PH
-    return x, y
     
 def tile_under_mouse():
     """Return the name of the top tile under the mouse."""
