@@ -39,8 +39,7 @@ class Cell:
             self.cell_class = 'floor'
 
 #        self.cell_class = tile_class_dict[name]
-        self.tile = create_tile(GV.tiles_img, name)
-        self.gray_tile = create_tile(GV.gray_tiles_img, name)
+        self.tile = GV.tile_dict[name]
         
         
     def dig():

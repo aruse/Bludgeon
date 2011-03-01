@@ -91,20 +91,19 @@ def update_eq_surf():
     """Update the equipment surface."""
     GV.eq_surf.fill(GV.dark_gray)
     GV.eq_surf.blit(GV.tiles_img, GV.eq_head, GV.tile_dict['conical hat'])
-#    GV.eq_surf.blit(create_tile(GV.tiles_img, "conical hat"), GV.eq_head)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "lenses"), GV.eq_eyes)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "oval"), GV.eq_neck)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "runed dagger"), GV.eq_quiver)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "T-shirt"), GV.eq_shirt)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "blue dragon scale mail"), GV.eq_armor)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "faded pall"), GV.eq_cloak)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "athame"), GV.eq_rweap)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "padded gloves"), GV.eq_hands)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "long sword"), GV.eq_lweap)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "obsidian"), GV.eq_rring)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "topaz"), GV.eq_lring)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "combat boots"), GV.eq_boots)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "candle"), GV.eq_light)
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_eyes, GV.tile_dict['lenses'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_neck, GV.tile_dict['oval'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_quiver, GV.tile_dict['runed dagger'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_shirt, GV.tile_dict['T-shirt'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_armor, GV.tile_dict['red dragon scale mail'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_cloak, GV.tile_dict['faded pall'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_rweap, GV.tile_dict['athame'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_hands, GV.tile_dict['riding gloves'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_lweap, GV.tile_dict['long sword'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_rring, GV.tile_dict['diamond'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_lring, GV.tile_dict['wire'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_boots, GV.tile_dict['snow boots'])
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_light, GV.tile_dict['candle'])
 
 
     
@@ -235,13 +234,13 @@ def draw_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.u.fov_map.lit(x, y):
-                GV.map_surf.blit(GC.map[x][y].tile, (x * TILE_PW, y * TILE_PH))
+                GV.map_surf.blit(GV.tiles_img, (x * TILE_PW, y * TILE_PH), GC.map[x][y].tile)
                 GC.map[x][y].explored = True
             else:
                 if GC.map[x][y].explored:
-                    GV.map_surf.blit(GC.map[x][y].gray_tile, (x * TILE_PW, y * TILE_PH))
+                    GV.map_surf.blit(GV.gray_tiles_img, (x * TILE_PW, y * TILE_PH), GC.map[x][y].tile)
                 else:
-                    GV.map_surf.blit(GV.blank_tile, (x * TILE_PW, y * TILE_PH))
+                    GV.map_surf.blit(GV.tiles_img, (x * TILE_PW, y * TILE_PH), GV.blank_tile)
 
     
 def draw_objects():

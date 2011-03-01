@@ -25,8 +25,7 @@ class Object:
         # The category of this Object: human, dwarf, lich, etc.
 #        self.obj_class = mon_class_dict[name]
 
-        self.tile = create_tile(GV.tiles_img, name)
-        self.gray_tile = create_tile(GV.gray_tiles_img, name)
+        self.tile = GV.tile_dict[name]
         
         # Which color to display in text mode
         self.color = None
@@ -97,11 +96,11 @@ class Object:
 
     def draw(self):
         """Draw this Object on the map at the current location."""
-        GV.map_surf.blit(self.tile, (self.x * TILE_PW, self.y * TILE_PH))
+        GV.map_surf.blit(GV.tiles_img, (self.x * TILE_PW, self.y * TILE_PH), self.tile)
  
     def draw_gray(self):
         """Draw this Object on the map at the current location, grayed out."""
-        GV.map_surf.blit(self.gray_tile, (self.x * TILE_PW, self.y * TILE_PH))
+        GV.map_surf.blit(GV.gray_tiles_img, (self.x * TILE_PW, self.y * TILE_PH), self.tile)
 
     def can_move_dir(self, x, y=None):
         """Can the character move in this direction?"""

@@ -70,10 +70,6 @@ def create_tile_dict():
 
     return tile_dict
 
-
-def create_tile(img, name):
-    return img.subsurface(GV.tile_dict[name])
-
 def convert_to_grayscale(surf):
     gray = pygame.Surface(surf.get_size(), 0, 8)
     width, height = surf.get_size()

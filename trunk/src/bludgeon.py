@@ -319,7 +319,7 @@ def main():
     GV.tiles_img = load_image('tiles16.xpm')
     GV.gray_tiles_img = load_image('tiles16_gray.xpm')
     GV.tile_dict = create_tile_dict()
-    GV.blank_tile = create_tile(GV.tiles_img, "cmap, wall, dark")
+    GV.blank_tile = GV.tile_dict['cmap, wall, dark']
 
     GC.u = Player(0, 0, 'wizard')
     
