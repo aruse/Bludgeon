@@ -25,7 +25,6 @@ def save_game(file):
     f = open(file, 'w')
     f.write('GC.random_seed = {0}\n'.format(GC.random_seed))
     f.write('GC.cmd_history = {0}\n'.format(GC.cmd_history))
-    print GC.cmd_history
 #    for var in dir(GC):
 #        print 'GC.{0} = {1}'.format(var, eval('GC.' + var))
 
@@ -37,10 +36,8 @@ def monster_at(x, y):
             return m
 
 def load_game(file):
-    print file
     f = open(file, 'r')
     exec(f.read())
-    print GC.cmd_history
 
 
 def run_history():
@@ -91,16 +88,15 @@ def handle_events():
 
 
 def monsters_take_turn():
-    print 'monsters taking turn'
     for m in GC.monsters:
         if m.ai:
             m.ai.take_turn()
         
 def handle_actions():
     # If an action has already been taken this clock cycle, don't do another one.
-    if GC.action_handled:
+    if GC.action_handled and GC.state != 'playback':
         return
-    
+
     # Whether or not this keypress counts as taking a turn
     u_took_turn = False
         
@@ -178,7 +174,6 @@ def handle_actions():
                             item = GC.u.inventory[index]
                             if item is not None:
                                 if GC.u.use(item) == 'success':
-                                    print "yo"
                                     GC.cmd_history.append(('u', item.oid, None, None))
                                     u_took_turn = True
                                 else:
@@ -223,7 +218,7 @@ def handle_actions():
         pass
     else:
         impossible('Unknown state: ' + GC.state)
-                
+
     if u_took_turn:
         GC.fov_recompute = True
         monsters_take_turn()
@@ -235,11 +230,12 @@ def handle_actions():
 
 def controller_tick(reel=False):
     """Handle all of the controller actions in the game loop."""
-    GC.clock.tick(FRAME_RATE)
 
     if GC.state == 'playback':
+        # Don't call clock.tick() in playback mode in order to make it as fast as possible.
         handle_actions()
     else:
+        GC.clock.tick(FRAME_RATE)
         GC.action_handled = False
         
         # Player takes turn
@@ -258,7 +254,7 @@ def controller_tick(reel=False):
 
     if GC.fov_recompute:
         GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
-
+        GC.fov_recompute = False
 
 
 

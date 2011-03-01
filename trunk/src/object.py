@@ -48,7 +48,6 @@ class Object:
 
     def move_randomly(self):
         dir = random.randrange(len(DIR))
-        print 'rand move: ' + str(self.oid) + ', ' + str(dir)
         if self.can_move_dir(DIR[dir]):
             self.move(DIR[dir])
 

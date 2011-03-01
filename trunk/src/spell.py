@@ -74,7 +74,6 @@ def finish_fireball(item, x=None, y=None):
     return True
  
 def cast_confuse(item, x=None, y=None):
-    print x, y
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
         GC.state = 'targeting'
@@ -85,18 +84,14 @@ def cast_confuse(item, x=None, y=None):
         finish_confuse(item, x, y)
 
 def finish_confuse(item, x, y):
-    print x, y
     # FIXME: should be able to target myself
     target = None
     for m in GC.monsters:
-        print m.oid, m.x, m.y
         if (m.x == x and m.y == y and
             m.distance(GC.u.x, GC.u.y) <= CONFUSE_RANGE):
             target = m
             break
 
-    print target
-    
     if target is None:
         return False
  

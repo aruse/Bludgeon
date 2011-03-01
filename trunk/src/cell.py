@@ -11,7 +11,7 @@ class Cell:
     def __init__(self, name):
         self.name = name
         
-        self.change_tile(name)
+        self.set_tile(name)
 
         # All tiles start unexplored
         self.explored = False
@@ -25,7 +25,7 @@ class Cell:
         self.explored = False
 
 
-    def change_tile(self, name):
+    def set_tile(self, name):
         self.name = name
         
         # FIXME: this is just dummy code.  Need a real database of tiles to load from.
