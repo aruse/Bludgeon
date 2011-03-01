@@ -9,7 +9,7 @@ from game import *
 from util import *
 from ai import *
 
-def cast_heal(item):
+def cast_heal(item, x=None, y=None):
     if GC.u.hp == GC.u.max_hp:
         message('You are already at full health.', GV.light_violet)
         return 'cancelled'
@@ -33,7 +33,7 @@ def closest_monster(max_range):
     return closest_enemy
                                                         
     
-def cast_lightning(item):
+def cast_lightning(item, x=None, y=None):
     #find closest enemy (inside a maximum range) and damage it
     target = closest_monster(5)
     if target is None:  #no enemy found within maximum range
@@ -46,17 +46,19 @@ def cast_lightning(item):
     return 'success'
 
     
-def cast_fireball(item):
+def cast_fireball(item, x=None, y=None):
     """Begin the casting of a fireball spell.  Ask the player to target a cell."""
-    #ask the GC.u for a target tile to throw a fireball at
-    message('Left-click a target tile for the fireball, or right-click to cancel.', GV.light_cyan)
-    GC.state = 'targetting'
-    GC.targetting_function.append(finish_fireball)
-    GC.targetting_item = item
-    return 'targetting'
+    if x == None and y == None:
+        message('Left-click a target tile for the fireball, or right-click to cancel.', GV.light_cyan)
+        GC.state = 'targeting'
+        GC.targeting_function.append(finish_fireball)
+        GC.targeting_item = item
+        return 'targeting'
+    else:
+        finish_fireball(item, x, y)
     
     
-def finish_fireball(item, x, y):
+def finish_fireball(item, x=None, y=None):
     """Finish the casting of a fireball spell after a cell has been selected.
     Return whether or not the fireball was cast.
     """
@@ -71,22 +73,29 @@ def finish_fireball(item, x, y):
 
     return True
  
-def cast_confuse(item):
-    #ask the GC.u for a target to confuse
-    message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
-    GC.state = 'targetting'
-    GC.targetting_function.append(finish_confuse)
-    GC.targetting_item = item
-    return 'targetting'
+def cast_confuse(item, x=None, y=None):
+    print x, y
+    if x == None and y == None:
+        message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
+        GC.state = 'targeting'
+        GC.targeting_function.append(finish_confuse)
+        GC.targeting_item = item
+        return 'targeting'
+    else:
+        finish_confuse(item, x, y)
 
 def finish_confuse(item, x, y):
+    print x, y
     # FIXME: should be able to target myself
     target = None
     for m in GC.monsters:
+        print m.oid, m.x, m.y
         if (m.x == x and m.y == y and
             m.distance(GC.u.x, GC.u.y) <= CONFUSE_RANGE):
             target = m
             break
+
+    print target
     
     if target is None:
         return False

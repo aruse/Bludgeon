@@ -69,7 +69,7 @@ def place_objects(map, room):
  
 
 
-def create_room(map, room):
+def create_rectangular_room(map, room):
     # Punch out the floor tiles
     for x in range(room.x1 + 1, room.x2):
        for y in range(room.y1 + 1, room.y2):
@@ -121,7 +121,7 @@ def gen_connected_rooms():
                 break
  
         if not failed:
-            create_room(map, new_room)
+            create_rectangular_room(map, new_room)
             place_objects(map, new_room)
  
             # First room

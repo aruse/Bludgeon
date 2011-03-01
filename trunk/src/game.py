@@ -93,21 +93,33 @@ class GC:
     # Whether or not we need to recompute the FOV
     fov_recompute = True
 
-    # State of the game.  Can be one of 'playing', 'menu', 'targetting', or 'exit'
+    # State of the game.  Can be one of 'playing', 'menu', 'targeting', or 'exit'
     state = 'playing'
 
     menu = None
     menu_options = []
 
-    # When state is 'targetting', set this to the function to call with the x, y coords targetted
-    targetting_function = []
-    targetting_item = None
+    # When state is 'targeting', set this to the function to call with the x, y coords targetted
+    targeting_function = []
+    targeting_item = None
     
     u_action = None
 
     # Messages to put in the text buffer
     msgs = []
 
+    # The complete history of commands used in this game
+    cmd_history = []
+
+    random_seed = 1
+
+    # Keeps track of the oid of the next object to be createdo
+    oid_seq = 0
+
+    # Mapping of oids to objects
+    obj_dict = {}
+
+    
 class GV:
     """Stores the view state."""
     tiles_img = None

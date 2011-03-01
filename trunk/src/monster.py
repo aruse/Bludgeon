@@ -24,6 +24,7 @@ class Monster(Object):
     
     def __init__(self, x, y, name, ai=None):
         Object.__init__(self, x, y, name)
+
         self.ai = ai
         if self.ai: # Let the AI component access its owner
             self.ai.owner = self
@@ -100,7 +101,54 @@ class Monster(Object):
         if self.hp > self.max_hp:
             self.hp = self.max_hp
 
-        
+
+    def targeted_use(self, item, x, y):
+        """Use an item, targetted on the given coords."""
+        item.use_function(item, x, y)
+        self.inventory.remove(item)
+
+    def use(self, item):
+        """Use an item."""
+        if item.use_function is None:
+                message('The ' + item.name + ' cannot be used.')
+        else:
+            use_result = item.use_function(item)
+            if use_result != 'cancelled' and use_result != 'targeting':
+                self.inventory.remove(item)  #destroy after use, unless it was cancelled for some reason
+            return use_result
+
+    def drop(self, item):
+        """Drop an item."""
+        item.x, item.y = self.x, self.y
+        self.inventory.remove(item)
+        GC.items.append(item)
+        message('You dropped the ' + item.name + '.')
+
+
+class Player(Monster):
+    def __init__(self, x, y, name):
+        Monster.__init__(self, x, y, name)
+
+    def attack(self, target):
+        GC.cmd_history.append(('a', target.oid))
+        Monster.attack(self, target)
+
+    def move(self, dx, dy=None):
+        GC.cmd_history.append(('m', dx, dy))
+        Monster.move(self, dx, dy)
+
+    def pick_up(self, item):
+        GC.cmd_history.append(('p', item.oid))
+        Monster.pick_up(self, item)
+
+    def targeted_use(self, item, x, y):
+        GC.cmd_history.append(('u', item.oid, x, y))
+        Monster.targeted_use(self, item, x, y)
+
+    def drop(self, item):
+        GC.cmd_history.append(('d', item.oid))
+        Monster.drop(self, item)
+
     def try_move(self, dx, dy=None):
         """Try to move dx and dy spaces.  If there's a monster in the way, attack instead."""
         if type(dx) == type(tuple()):
@@ -124,18 +172,3 @@ class Monster(Object):
         else:
             self.move(dx, dy)
 
-    def use(self, item):
-        """Use an item."""
-        if item.use_function is None:
-                message('The ' + item.name + ' cannot be used.')
-        else:
-            use_result = item.use_function(item)
-            if use_result != 'cancelled' and use_result != 'targetting':
-                self.inventory.remove(item)  #destroy after use, unless it was cancelled for some reason
-
-    def drop(self, item):
-        """Drop an item."""
-        item.x, item.y = self.x, self.y
-        self.inventory.remove(item)
-        GC.items.append(item)
-        message('You dropped the ' + item.name + '.')

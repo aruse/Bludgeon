@@ -79,6 +79,7 @@ class FOVMap(object):
 
     def do_fov(self, x, y, radius):
         "Calculate lit squares from the given location and radius"
+        print "doing fov"
         self.flag += 1
         for oct in range(8):
             self._cast_light(x, y, 1, 1.0, 0.0, radius,

@@ -14,6 +14,10 @@ from ai import *
 class Object:
     """Generic object.  Can be sub-classed into players, monsters, items, etc."""
     def __init__(self, x, y, name):
+        self.oid = GC.oid_seq
+        GC.oid_seq += 1
+        GC.obj_dict[self.oid] = self
+
         self.x = x
         self.y = y
         self.name = name
@@ -44,6 +48,7 @@ class Object:
 
     def move_randomly(self):
         dir = random.randrange(len(DIR))
+        print 'rand move: ' + str(self.oid) + ', ' + str(dir)
         if self.can_move_dir(DIR[dir]):
             self.move(DIR[dir])
 
