@@ -20,11 +20,26 @@ from ai import *
 from gui import *
 from spell import *
 
+import pickle
 
 def save_game(file):
     f = open(file, 'w')
-    f.write('GC.random_seed = {0}\n'.format(GC.random_seed))
-    f.write('GC.cmd_history = {0}\n'.format(GC.cmd_history))
+    pickle.dump(GC.dlevel, f)
+    pickle.dump(GC.branch, f)
+    pickle.dump(GC.msgs, f)
+    pickle.dump(GC.oid_seq, f)
+#    pickle.dump(GC.obj_dict, f)
+    pickle.dump(GC.random_seed, f)
+    pickle.dump(GC.random_state, f)
+    pickle.dump(GC.cmd_history, f)
+    pickle.dump(GC.dlevel_dict, f)
+#    pickle.dump(GC.u, f)
+#    pickle.dump(GC.monsters_dict, f)
+#    pickle.dump(GC.items_dict, f)
+    f.close()
+#    f = open(file, 'w')
+#    f.write('GC.random_seed = {0}\n'.format(GC.random_seed))
+#    f.write('GC.cmd_history = {0}\n'.format(GC.cmd_history))
 #    for var in dir(GC):
 #        print 'GC.{0} = {1}'.format(var, eval('GC.' + var))
 
@@ -37,8 +52,9 @@ def monster_at(x, y):
 
 def load_game(file):
     f = open(file, 'r')
-    exec(f.read())
-
+    pickle.load(f)
+#    exec(f.read())
+    f.close()
 
 def run_history():
     old_history = GC.cmd_history

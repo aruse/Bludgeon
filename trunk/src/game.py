@@ -75,12 +75,19 @@ class GC:
     # The map of the current level, a two dimensional array
     map = None
 
-    # A Hash of all levels.  Accessed like dlevel{"Doom"}[1]
-    dlevel = None
+    branch = 'doom'
+    dlevel = 1
+
+    # A Hash of all levels.  Accessed like dlevel{"doom"}[1]
+    dlevel_dict = {}
 
     # The player object
     u = None
 
+    # Dict of all monsters and all items across all levels
+    monsters_dict = {}
+    items_dict = {}
+    
     # List of all characters on the current level
     monsters = []
 
@@ -113,8 +120,8 @@ class GC:
 
     random_seed = 1
 
-    # Keeps track of the oid of the next object to be createdo
-    oid_seq = 0
+    # Keeps track of the oid of the next object to be created
+    oid_seq = 1
 
     # Mapping of oids to objects
     obj_dict = {}
@@ -122,12 +129,6 @@ class GC:
     # The state of the random number generator
     random_state = None
 
-    """The state of the random number generator, used for generating
-    levels.  This state is saved after generating a level and then
-    restored when the next level is to be generated.  That way, levels
-    will always be generated them same, given the same original random
-    seed."""
-    random_levelgen_state = None
     
 class GV:
     """Stores the view state."""

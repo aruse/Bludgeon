@@ -90,7 +90,8 @@ def update_alert_surf():
 def update_eq_surf():
     """Update the equipment surface."""
     GV.eq_surf.fill(GV.dark_gray)
-    GV.eq_surf.blit(create_tile(GV.tiles_img, "conical hat"), GV.eq_head)
+    GV.eq_surf.blit(GV.tiles_img, GV.eq_head, GV.tile_dict['conical hat'])
+#    GV.eq_surf.blit(create_tile(GV.tiles_img, "conical hat"), GV.eq_head)
     GV.eq_surf.blit(create_tile(GV.tiles_img, "lenses"), GV.eq_eyes)
     GV.eq_surf.blit(create_tile(GV.tiles_img, "oval"), GV.eq_neck)
     GV.eq_surf.blit(create_tile(GV.tiles_img, "runed dagger"), GV.eq_quiver)
