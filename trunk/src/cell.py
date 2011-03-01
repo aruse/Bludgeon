@@ -11,20 +11,8 @@ class Cell:
     def __init__(self, name):
         self.name = name
         
-        # FIXME: this is just dummy code.  Need a real database of tiles to load from.
-        if re.findall('wall', name):
-            self.blocks_movement = True
-            self.block_sight = True
-            self.cell_class = 'wall'
-        else:
-            self.blocks_movement = False
-            self.block_sight = False
-            self.cell_class = 'floor'
+        self.change_tile(name)
 
-#        self.cell_class = tile_class_dict[name]
-        self.tile = create_tile(GV.tiles_img, name)
-        self.gray_tile = create_tile(GV.gray_tiles_img, name)
-        
         # All tiles start unexplored
         self.explored = False
                 
@@ -40,6 +28,7 @@ class Cell:
     def change_tile(self, name):
         self.name = name
         
+        # FIXME: this is just dummy code.  Need a real database of tiles to load from.
         if re.findall('wall', name):
             self.blocks_movement = True
             self.block_sight = True
@@ -49,6 +38,7 @@ class Cell:
             self.block_sight = False
             self.cell_class = 'floor'
 
+#        self.cell_class = tile_class_dict[name]
         self.tile = create_tile(GV.tiles_img, name)
         self.gray_tile = create_tile(GV.gray_tiles_img, name)
         
