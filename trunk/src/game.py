@@ -119,6 +119,15 @@ class GC:
     # Mapping of oids to objects
     obj_dict = {}
 
+    # The state of the random number generator
+    random_state = None
+
+    """The state of the random number generator, used for generating
+    levels.  This state is saved after generating a level and then
+    restored when the next level is to be generated.  That way, levels
+    will always be generated them same, given the same original random
+    seed."""
+    random_levelgen_state = None
     
 class GV:
     """Stores the view state."""

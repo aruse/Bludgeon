@@ -9,6 +9,11 @@ from util import *
 INVENTORY_WIDTH = 50
 
 
+def draw_box(x, y, color=GV.white):
+    """Draw a box around the tile at the given coords."""
+    pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_PW, y * TILE_PH, TILE_PW, TILE_PH), 1)
+
+
 def menu(header, options, width):
     if len(options) > 26:
         raise ValueError('Cannot have a menu with more than 26 options.')
@@ -255,6 +260,10 @@ def draw_objects():
 
     # Always draw the player
     GC.u.draw()
+
+def draw_decorations():
+    draw_box(GC.u.x, GC.u.y, GV.white)
+
         
 def view_tick():
     """Handle all of the view actions in the game loop."""
@@ -265,6 +274,7 @@ def view_tick():
     
     draw_map()
     draw_objects()
+    draw_decorations()
 
     # Draw everything
     GV.screen.blit(GV.map_surf, (GV.map_px, GV.map_py))

@@ -100,6 +100,16 @@ def create_v_tunnel(map, y1, y2, x):
         map[x][y].set_tile("cmap, floor of a room")
 
 
+
+def gen_level(type):
+    """Type can be 'connected_rooms'."""
+    # Re-seed the random number generator here.
+    #random.seed(GC.random_seed + branch_num * 1000 + level_depth)
+    map = gen_connected_rooms()
+
+    
+
+
 def gen_connected_rooms():
     map = [[ Cell("cmap, wall, dark") for y in range(MAP_H) ] for x in range(MAP_W)]
     rooms = []
