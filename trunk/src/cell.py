@@ -11,6 +11,7 @@ class Cell:
     def __init__(self, name):
         self.name = name
         
+        # FIXME: this is just dummy code.  Need a real database of tiles to load from.
         if re.findall('wall', name):
             self.blocks_movement = True
             self.block_sight = True
@@ -34,6 +35,23 @@ class Cell:
         self.illumination = None
         
         self.explored = False
+
+
+    def change_tile(self, name):
+        self.name = name
+        
+        if re.findall('wall', name):
+            self.blocks_movement = True
+            self.block_sight = True
+            self.cell_class = 'wall'
+        else:
+            self.blocks_movement = False
+            self.block_sight = False
+            self.cell_class = 'floor'
+
+        self.tile = create_tile(GV.tiles_img, name)
+        self.gray_tile = create_tile(GV.gray_tiles_img, name)
+        
         
     def dig():
         self.blocks_movement = False
