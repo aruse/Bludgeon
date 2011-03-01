@@ -20,25 +20,45 @@ from ai import *
 from gui import *
 from spell import *
 
-import pickle
+simple_save_objs = [
+    'GC.dlevel',
+    'GC.branch',
+    'GC.msgs',
+    'GC.oid_seq',
+    'GC.random_seed',
+    'GC.random_state',
+    'GC.cmd_history',
+    ]
+complex_save_objs = [
+    'GC.u',
+    'GC.map',
+    'GC.monsters',
+    'GC.items',
+    ]
+
+#    'GC.dlevel_dict',
+#    'GC.monsters_dict',
+#    'GC.items_dict',
+
 
 def save_game(file):
     f = open(file, 'w')
-    pickle.dump(GC.dlevel, f)
-    pickle.dump(GC.branch, f)
-    pickle.dump(GC.msgs, f)
-    pickle.dump(GC.oid_seq, f)
-#    pickle.dump(GC.obj_dict, f)
-    pickle.dump(GC.random_seed, f)
-    pickle.dump(GC.random_state, f)
-    pickle.dump(GC.cmd_history, f)
-    pickle.dump(GC.dlevel_dict, f)
-#    pickle.dump(GC.u, f)
-#    pickle.dump(GC.monsters_dict, f)
-#    pickle.dump(GC.items_dict, f)
+
+    for obj in simple_save_objs:
+        f.write('{0} = {1}\n'.format(obj, repr(eval(obj))))
+
+    GC.map[GC.u.x+1][GC.u.y+1].set_tile('cmap, wall, horizontal, mine')
+
+    f.write('map = [')
+
+    for x in range(len(GC.map)):
+        f.write('[')
+        for y in range(len(GC.map[0])):
+            f.write("{{'n': {0}, 'e': {1}}}, ".format(
+                    repr(GC.map[x][y].name),  repr(GC.map[x][y].explored)))
+        f.write('],\n')
+    f.write(']\n')
     f.close()
-#    f = open(file, 'w')
-#    f.write('GC.random_seed = {0}\n'.format(GC.random_seed))
 #    f.write('GC.cmd_history = {0}\n'.format(GC.cmd_history))
 #    for var in dir(GC):
 #        print 'GC.{0} = {1}'.format(var, eval('GC.' + var))
@@ -52,9 +72,15 @@ def monster_at(x, y):
 
 def load_game(file):
     f = open(file, 'r')
-    pickle.load(f)
-#    exec(f.read())
+    exec(f.read())
     f.close()
+
+    # Replace the map structure in the save file with actual cells
+    GC.map = map
+
+    for x in range(len(GC.map)):
+        for y in range(len(GC.map[0])):
+            GC.map[x][y] = Cell(GC.map[x][y]['n'], explored=GC.map[x][y]['e'])
 
 def run_history():
     old_history = GC.cmd_history
@@ -285,11 +311,6 @@ def main():
                       help="save_file FILE", metavar="FILE")
     (options, args) = parser.parse_args()
 
-    if options.save_file:
-        load_game(options.save_file)
-
-    random.seed(GC.random_seed)
-
 
     uname = 'Taimor'
     usex = 'Male'
@@ -321,12 +342,21 @@ def main():
     GV.tile_dict = create_tile_dict()
     GV.blank_tile = GV.tile_dict['cmap, wall, dark']
 
-    GC.u = Player(0, 0, 'wizard')
+
+    if options.save_file:
+        load_game(options.save_file)
+        random.seed(GC.random_seed)
+        GC.u = Player(0, 0, 'wizard')
+    else:
+        GC.u = Player(0, 0, 'wizard')
+        GC.map = gen_connected_rooms()
+
+
+
     
     # Create a dlevel
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
 #    GC.map = gen_perfect_maze(MAP_W, MAP_H)
-    GC.map = gen_connected_rooms()
     GC.u.set_fov_map(GC.map)
 
     
@@ -337,8 +367,8 @@ def main():
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 
-    if options.save_file:
-        run_history()
+#    if options.save_file:
+#        run_history()
     
 #    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 

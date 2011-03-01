@@ -8,13 +8,13 @@ from util import *
 class Cell:
     """Map cell, representing a single location on the map."""
 
-    def __init__(self, name):
+    def __init__(self, name, explored=False):
         self.name = name
         
         self.set_tile(name)
 
         # All tiles start unexplored
-        self.explored = False
+        self.explored = explored
                 
         # Which color to display in text mode
         self.color = None
@@ -22,8 +22,6 @@ class Cell:
         # Value from 0 to 1, indicating degree of illumination.
         self.illumination = None
         
-        self.explored = False
-
 
     def set_tile(self, name):
         self.name = name

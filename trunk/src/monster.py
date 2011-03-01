@@ -22,8 +22,8 @@ def die_leave_corpse(monster):
 class Monster(Object):
     """Anything that moves and acts under its own power.  Players and NPCs count as monsters.  Pretty much any Object that's not an Item."""
     
-    def __init__(self, x, y, name, ai=None):
-        Object.__init__(self, x, y, name)
+    def __init__(self, x, y, name, oid=None, ai=None):
+        Object.__init__(self, x, y, name, oid=oid)
 
         self.ai = ai
         if self.ai: # Let the AI component access its owner
@@ -126,8 +126,8 @@ class Monster(Object):
 
 
 class Player(Monster):
-    def __init__(self, x, y, name):
-        Monster.__init__(self, x, y, name)
+    def __init__(self, x, y, name, oid=None):
+        Monster.__init__(self, x, y, name, oid=oid)
 
     def attack(self, target):
         GC.cmd_history.append(('a', target.oid))

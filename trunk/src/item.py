@@ -18,8 +18,8 @@ from spell import *
 class Item(Object):
     """Anything that can be picked up."""
     
-    def __init__(self, x, y, name, use_function=None, prev_monster=None):
-        Object.__init__(self, x, y, name)
+    def __init__(self, x, y, name, oid=None, use_function=None, prev_monster=None):
+        Object.__init__(self, x, y, name, oid=oid)
         self.blocks_sight = False
         self.blocks_movement = False
 

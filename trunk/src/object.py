@@ -13,9 +13,13 @@ from ai import *
 
 class Object:
     """Generic object.  Can be sub-classed into players, monsters, items, etc."""
-    def __init__(self, x, y, name):
-        self.oid = GC.oid_seq
-        GC.oid_seq += 1
+    def __init__(self, x, y, name, oid=None):
+        if oid:
+            self.oid = oid
+        else:
+            self.oid = GC.oid_seq
+            GC.oid_seq += 1
+
         GC.obj_dict[self.oid] = self
 
         self.x = x
