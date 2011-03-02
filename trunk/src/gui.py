@@ -11,7 +11,7 @@ INVENTORY_WIDTH = 50
 
 def draw_box(x, y, color=GV.white):
     """Draw a box around the tile at the given coords."""
-    pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_PW, y * TILE_PH, TILE_PW, TILE_PH), 1)
+    pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_W, y * TILE_H, TILE_W, TILE_H), 1)
 
 
 def menu(header, options, width):
@@ -25,7 +25,7 @@ def menu(header, options, width):
     height = len(options) + header_height
  
     #create an off-screen console that represents the menu's window
-    GV.window_surf = pygame.Surface((width * GV.font_pw, height * GV.font_ph)).convert()
+    GV.window_surf = pygame.Surface((width * GV.font_w, height * GV.font_h)).convert()
  
     #print the header, with auto-wrap
     write_text(GV.window_surf, header, 0, justify='left')
@@ -39,8 +39,8 @@ def menu(header, options, width):
         y += 1
         letter_index += 1
  
-    GV.window_px = GV.screen_pw / 2 - (width * GV.font_pw) / 2
-    GV.window_py = GV.screen_ph / 2 - (height * GV.font_ph) / 2
+    GV.window_x = GV.screen_w / 2 - (width * GV.font_w) / 2
+    GV.window_y = GV.screen_h / 2 - (height * GV.font_h) / 2
 
     GC.menu_options = options
     GC.state = STATE_MENU
@@ -155,12 +155,12 @@ def write_text(surf, text, line_num, justify='center', column=None, color=GV.def
     
     if column is None:
         # Leave a space of one character on the left and right of the surface
-        left_border = rect.left + GV.font_pw
-        right_border = rect.right - GV.font_pw
+        left_border = rect.left + GV.font_w
+        right_border = rect.right - GV.font_w
         center = rect.width / 2
     else:
-        left_border = rect.left + column * col_width + GV.font_pw
-        right_border = rect.right - ((3 - column) * col_width) - GV.font_pw
+        left_border = rect.left + column * col_width + GV.font_w
+        right_border = rect.right - ((3 - column) * col_width) - GV.font_w
         center = (left_border + right_border) / 2
     
     text_img = GV.font.render(text, antialias, color)
@@ -172,7 +172,7 @@ def write_text(surf, text, line_num, justify='center', column=None, color=GV.def
     else: # justify == 'center':
         textpos.centerx = center
 
-    textpos.top = surf.get_rect().top + line_num * GV.font_ph
+    textpos.top = surf.get_rect().top + line_num * GV.font_h
     surf.blit(text_img, textpos)
 
 
@@ -180,9 +180,9 @@ def render_bar(surf, x, y, length, value, max_value, bar_color, background_color
     # Render a bar (HP, experience, etc).
     bar_length = int(float(value) / max_value * length)
  
-    surf.fill(background_color, rect=pygame.Rect(x, y, length, GV.font_ph - 1))
+    surf.fill(background_color, rect=pygame.Rect(x, y, length, GV.font_h - 1))
     if bar_length > 0:
-        surf.fill(bar_color, rect=pygame.Rect(x, y, bar_length, GV.font_ph - 1))
+        surf.fill(bar_color, rect=pygame.Rect(x, y, bar_length, GV.font_h - 1))
  
     
 def update_status_surf():
@@ -196,31 +196,31 @@ def update_status_surf():
 
     write_text(surf, 'HP', 3, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 3 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             rect.top + 3 * GV.font_h, rect.width *.75 - GV.font_w,
              GC.u.hp, GC.u.max_hp, GV.hp_bar_color, GV.hp_bar_bg_color)
     write_text(surf, str(GC.u.hp) + ' / ' + str(GC.u.max_hp), 3, justify='center', column=2)
     
     write_text(surf, 'MP', 4, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 4 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             rect.top + 4 * GV.font_h, rect.width *.75 - GV.font_w,
              GC.u.mp, GC.u.max_mp, GV.mp_bar_color, GV.mp_bar_bg_color)
     write_text(surf, str(GC.u.mp) + ' / ' + str(GC.u.max_mp), 4, justify='center', column=2)
 
     write_text(surf, 'XP', 5, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 5 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             rect.top + 5 * GV.font_h, rect.width *.75 - GV.font_w,
              GC.u.xp, GC.u.xp_next_level, GV.xp_bar_color, GV.xp_bar_bg_color)
     write_text(surf, str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), 5, justify='center', column=2)
 
     write_text(surf, 'Weight', 6, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 6 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             rect.top + 6 * GV.font_h, rect.width *.75 - GV.font_w,
              GC.u.weight, GC.u.burdened, GV.gray, GV.darker_gray)
     write_text(surf, str(GC.u.weight) + ' / ' + str(GC.u.burdened), 6, justify='center', column=2)
 
     write_text(surf, 'Hunger', 7, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 7 * GV.font_ph, rect.width *.75 - GV.font_pw,
+             rect.top + 7 * GV.font_h, rect.width *.75 - GV.font_w,
              GC.u.hunger, GC.u.max_hunger, GV.gray, GV.darker_gray)
     write_text(surf, str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), 7, justify='center', column=2)
     
@@ -260,9 +260,9 @@ def update_text_surf():
     """Update the text buffer."""
     GV.text_surf.fill(GV.text_bg_color)
 
-    y = GV.text_ph
+    y = GV.text_h
     for (line, color) in reversed(GC.msgs):
-        text_img = wordwrap(line, GV.text_pw, True, color)
+        text_img = wordwrap(line, GV.text_w, True, color)
         textpos = text_img.get_rect()
         y -= textpos.height
 
@@ -270,11 +270,11 @@ def update_text_surf():
         # multi-line text at the top of the surface.  However, there's no 
         # need for it to get so negative that it would be rendering text
         # completely off the top.
-        if y < -GV.text_ph:
+        if y < -GV.text_h:
             break
 
         textpos.top = y
-        textpos.left = GV.text_surf.get_rect().left + GV.font_pw
+        textpos.left = GV.text_surf.get_rect().left + GV.font_w
         GV.text_surf.blit(text_img, textpos)
 
 
@@ -282,13 +282,13 @@ def render_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.u.fov_map.lit(x, y):
-                GV.map_surf.blit(GV.tiles_img, (x * TILE_PW, y * TILE_PH), GC.map[x][y].tile)
+                GV.map_surf.blit(GV.tiles_img, (x * TILE_W, y * TILE_H), GC.map[x][y].tile)
                 GC.map[x][y].explored = True
             else:
                 if GC.map[x][y].explored:
-                    GV.map_surf.blit(GV.gray_tiles_img, (x * TILE_PW, y * TILE_PH), GC.map[x][y].tile)
+                    GV.map_surf.blit(GV.gray_tiles_img, (x * TILE_W, y * TILE_H), GC.map[x][y].tile)
                 else:
-                    GV.map_surf.blit(GV.tiles_img, (x * TILE_PW, y * TILE_PH), GV.blank_tile)
+                    GV.map_surf.blit(GV.tiles_img, (x * TILE_W, y * TILE_H), GV.blank_tile)
 
     
 def render_objects():
@@ -325,14 +325,14 @@ def view_tick():
     render_decorations()
 
     # Draw everything
-    GV.screen.blit(GV.map_surf, (GV.map_px, GV.map_py))
-    GV.screen.blit(GV.alert_surf, (GV.alert_px, GV.alert_py))
-    GV.screen.blit(GV.eq_surf, (GV.eq_px, GV.eq_py))
-    GV.screen.blit(GV.status_surf, (GV.status_px, GV.status_py))
-    GV.screen.blit(GV.text_surf, (GV.text_px, GV.text_py))
+    GV.screen.blit(GV.map_surf, (GV.map_x, GV.map_y))
+    GV.screen.blit(GV.alert_surf, (GV.alert_x, GV.alert_y))
+    GV.screen.blit(GV.eq_surf, (GV.eq_x, GV.eq_y))
+    GV.screen.blit(GV.status_surf, (GV.status_x, GV.status_y))
+    GV.screen.blit(GV.text_surf, (GV.text_x, GV.text_y))
 
     if GC.state == STATE_MENU:
-        GV.screen.blit(GV.window_surf, (GV.window_px, GV.window_py))
+        GV.screen.blit(GV.window_surf, (GV.window_x, GV.window_y))
     else:
         render_tooltips()
 

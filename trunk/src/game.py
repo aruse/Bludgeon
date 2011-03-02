@@ -5,56 +5,56 @@ from const import *
 
 def init_gv():
     GV.font = pygame.font.SysFont('Arial', FONT_SIZE)
-    GV.font_ph = GV.font.get_height()
-    GV.font_pw = GV.font.size('X')[0]
+    GV.font_h = GV.font.get_height()
+    GV.font_w = GV.font.size('X')[0]
 
     # Size of the map surface
-    GV.map_pw = MAP_W * TILE_PW
-    GV.map_ph = MAP_H * TILE_PH
+    GV.map_w = MAP_W * TILE_W
+    GV.map_h = MAP_H * TILE_H
 
     # Size of the alert surface
-    GV.alert_pw = MAP_W * TILE_PW
-    GV.alert_ph = GV.font_ph
+    GV.alert_w = MAP_W * TILE_W
+    GV.alert_h = GV.font_h
     
     # Size of the status panel
-    GV.status_pw = STATUS_W * GV.font_pw
-    GV.status_ph = STATUS_H * GV.font_ph
+    GV.status_w = STATUS_W * GV.font_w
+    GV.status_h = STATUS_H * GV.font_h
 
     # Size of the equipment panel
-    GV.eq_pw = EQ_W * TILE_PW
-    GV.eq_ph = GV.status_ph
+    GV.eq_w = EQ_W * TILE_W
+    GV.eq_h = GV.status_h
 
     # Size of the text buffer
-    GV.text_pw = GV.map_pw - (GV.eq_pw + GV.status_pw)
-    GV.text_ph = GV.status_ph
+    GV.text_w = GV.map_w - (GV.eq_w + GV.status_w)
+    GV.text_h = GV.status_h
 
     # Size of the full game window
-    GV.screen_pw = GV.map_pw
-    GV.screen_ph = GV.map_ph + GV.status_ph
+    GV.screen_w = GV.map_w
+    GV.screen_h = GV.map_h + GV.status_h
 
     # Locations to blit the various surfaces
-    GV.map_px, GV.map_py = 0, GV.text_ph + GV.alert_ph
-    GV.alert_px, GV.alert_py = 0, GV.text_ph
-    GV.text_px, GV.text_py = 0, 0
-    GV.eq_px, GV.eq_py = GV.text_pw, 0
-    GV.status_px, GV.status_py = GV.eq_px + GV.eq_pw, 0
+    GV.map_x, GV.map_y = 0, GV.text_h + GV.alert_h
+    GV.alert_x, GV.alert_y = 0, GV.text_h
+    GV.text_x, GV.text_y = 0, 0
+    GV.eq_x, GV.eq_y = GV.text_w, 0
+    GV.status_x, GV.status_y = GV.eq_x + GV.eq_w, 0
 
     # Locations to blit equipment on the equipment panel
-    GV.eq_cent = (GV.eq_pw / 2.0 - TILE_PW / 2, GV.eq_ph / 2 - TILE_PW / 2)
+    GV.eq_cent = (GV.eq_w / 2.0 - TILE_W / 2, GV.eq_h / 2 - TILE_W / 2)
     GV.eq_hands = GV.eq_cent
-    GV.eq_rweap = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1])
-    GV.eq_lweap = (GV.eq_cent[0] + TILE_PW, GV.eq_cent[1])
-    GV.eq_rring = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1] + TILE_PH)
-    GV.eq_lring = (GV.eq_cent[0] + TILE_PW, GV.eq_cent[1] + TILE_PH)
-    GV.eq_boots = (GV.eq_cent[0], GV.eq_cent[1] + TILE_PH * 2)
-    GV.eq_armor = (GV.eq_cent[0], GV.eq_cent[1] - TILE_PH)
-    GV.eq_shirt = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1] - TILE_PH)
-    GV.eq_cloak = (GV.eq_cent[0] + TILE_PW, GV.eq_cent[1] - TILE_PH)
-    GV.eq_neck = (GV.eq_cent[0], GV.eq_cent[1] - TILE_PH * 2)
-    GV.eq_eyes = (GV.eq_cent[0] - TILE_PW, GV.eq_cent[1] - TILE_PH * 2)
-    GV.eq_quiver = (GV.eq_cent[0] + TILE_PW * 2, GV.eq_cent[1] - TILE_PH * 3)
-    GV.eq_light = (GV.eq_cent[0] - TILE_PW * 2, GV.eq_cent[1] - TILE_PH * 3)
-    GV.eq_head = (GV.eq_cent[0], GV.eq_cent[1] - TILE_PH * 3)
+    GV.eq_rweap = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1])
+    GV.eq_lweap = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1])
+    GV.eq_rring = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1] + TILE_H)
+    GV.eq_lring = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1] + TILE_H)
+    GV.eq_boots = (GV.eq_cent[0], GV.eq_cent[1] + TILE_H * 2)
+    GV.eq_armor = (GV.eq_cent[0], GV.eq_cent[1] - TILE_H)
+    GV.eq_shirt = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1] - TILE_H)
+    GV.eq_cloak = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1] - TILE_H)
+    GV.eq_neck = (GV.eq_cent[0], GV.eq_cent[1] - TILE_H * 2)
+    GV.eq_eyes = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1] - TILE_H * 2)
+    GV.eq_quiver = (GV.eq_cent[0] + TILE_W * 2, GV.eq_cent[1] - TILE_H * 3)
+    GV.eq_light = (GV.eq_cent[0] - TILE_W * 2, GV.eq_cent[1] - TILE_H * 3)
+    GV.eq_head = (GV.eq_cent[0], GV.eq_cent[1] - TILE_H * 3)
 
 
 class GC:
@@ -155,27 +155,28 @@ class GV:
     window_surf = None
     
     font = None
-    font_ph = None
+    font_h = None
     
     # What to blit over an area that's not visible
     blank_tile = None
     
-    map_pw, map_ph = None, None
-    alert_pw, alert_ph = None, None
-    status_pw, status_ph = None, None
-    eq_pw, eq_ph = None, None
-    text_pw, text_ph = None, None
-    screen_pw, screen_ph = None, None
+    # Pixel size of various surfaces
+    map_w, map_h = None, None
+    alert_w, alert_h = None, None
+    status_w, status_h = None, None
+    eq_w, eq_h = None, None
+    text_w, text_h = None, None
+    screen_w, screen_h = None, None
 
-    # Locations to blit the various surfaces
-    map_px, map_py = None, None
-    alert_px, alert_py = None, None
-    text_px, text_py = None, None
-    eq_px, eq_py = None, None
-    status_px, status_py = None, None
-    window_px, window_py = None, None
+    # Pixel locations to blit the various surfaces
+    map_x, map_y = None, None
+    alert_x, alert_y = None, None
+    text_x, text_y = None, None
+    eq_x, eq_y = None, None
+    status_x, status_y = None, None
+    window_x, window_y = None, None
     
-    # Locations to blit equipment on the equipment panel
+    # Cell locations to blit equipment on the equipment panel
     eq_cent = None
     eq_hands = None
     eq_rweap = None

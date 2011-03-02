@@ -1,7 +1,5 @@
 # Constant declarations.  Every other module needs to import this file.
 
-# When measurements are given in tiles, use X, Y, W, H to indicate position and size
-# When measurements are given in pixels, use PX, PY, PW, PH to indicate position and size
 
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
@@ -30,9 +28,11 @@ ROOM_MIN_SIZE = 5
 FONT_SIZE = 12
 STATUS_H, STATUS_W = 18, 40
 
-TILE_PW = 16
-TILE_PH = 16
+# Tile size, in pixels
+TILE_W = 16
+TILE_H = 16
 
+# Surface sizes, in cells
 EQ_W = 7
 EQ_H = STATUS_H
 

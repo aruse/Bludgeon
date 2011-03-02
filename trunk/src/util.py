@@ -11,10 +11,10 @@ from game import *
         
 def mouse_coords_to_map_coords(x, y):
     # Compensate for the relative position of the map surface.
-    y -= GV.map_py
+    y -= GV.map_y
     # Convert into map coords
-    x /= TILE_PW
-    y /= TILE_PH
+    x /= TILE_W
+    y /= TILE_H
     return x, y
     
 def message(msg, color=GV.default_font_color):
@@ -60,9 +60,9 @@ def create_tile_dict():
 
     for line in map:
         (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
-        x = (int(loc) % 38) * TILE_PW
-        y = (int(loc) / 38) * TILE_PH        
-        tile_dict[name] = pygame.Rect(x, y, TILE_PW, TILE_PH)
+        x = (int(loc) % 38) * TILE_W
+        y = (int(loc) / 38) * TILE_H        
+        tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
 
     return tile_dict
 

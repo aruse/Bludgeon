@@ -344,13 +344,13 @@ def main():
 
        
     init_gv()
-    GV.screen = pygame.display.set_mode((GV.screen_pw, GV.screen_ph))
+    GV.screen = pygame.display.set_mode((GV.screen_w, GV.screen_h))
 
-    GV.map_surf = pygame.Surface((GV.map_pw, GV.map_ph)).convert()
-    GV.alert_surf = pygame.Surface((GV.alert_pw, GV.alert_ph)).convert()
-    GV.text_surf = pygame.Surface((GV.text_pw, GV.text_ph)).convert()
-    GV.eq_surf = pygame.Surface((GV.eq_pw, GV.eq_ph)).convert()
-    GV.status_surf = pygame.Surface((GV.status_pw, GV.status_ph)).convert()
+    GV.map_surf = pygame.Surface((GV.map_w, GV.map_h)).convert()
+    GV.alert_surf = pygame.Surface((GV.alert_w, GV.alert_h)).convert()
+    GV.text_surf = pygame.Surface((GV.text_w, GV.text_h)).convert()
+    GV.eq_surf = pygame.Surface((GV.eq_w, GV.eq_h)).convert()
+    GV.status_surf = pygame.Surface((GV.status_w, GV.status_h)).convert()
 
     # Set the system icon
     system_icon = load_image('icon.xpm')

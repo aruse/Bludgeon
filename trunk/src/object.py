@@ -100,11 +100,11 @@ class Object:
 
     def draw(self):
         """Draw this Object on the map at the current location."""
-        GV.map_surf.blit(GV.tiles_img, (self.x * TILE_PW, self.y * TILE_PH), self.tile)
+        GV.map_surf.blit(GV.tiles_img, (self.x * TILE_W, self.y * TILE_H), self.tile)
  
     def draw_gray(self):
         """Draw this Object on the map at the current location, grayed out."""
-        GV.map_surf.blit(GV.gray_tiles_img, (self.x * TILE_PW, self.y * TILE_PH), self.tile)
+        GV.map_surf.blit(GV.gray_tiles_img, (self.x * TILE_W, self.y * TILE_H), self.tile)
 
     def can_move_dir(self, x, y=None):
         """Can the character move in this direction?"""
