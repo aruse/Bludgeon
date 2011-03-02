@@ -78,7 +78,7 @@ class GC:
     branch = 'doom'
     dlevel = 1
 
-    # A Hash of all levels.  Accessed like dlevel{"doom"}[1]
+    # A Hash of all levels.  Accessed like dlevel['doom'][1]
     dlevel_dict = {}
 
     # The player object

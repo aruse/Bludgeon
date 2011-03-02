@@ -58,7 +58,25 @@ def save_game(file):
                     repr(GC.map[x][y].name),  repr(GC.map[x][y].explored)))
         f.write('],\n')
     f.write(']\n')
+
+
+    # For references to Objects, just save the oid
+    f.write(repr([m.oid for m in GC.monsters]) + '\n')
+    f.write(repr([m.oid for m in GC.items]) + '\n')
+
+# Uncomment to work out save files
+#    f.write('objects = [')
+#    
+#
+#    for oid, o in GC.obj_dict.iter:
+#        if oid == GC.u.oid:
+#            continue
+#        elif 
+#    f.write(']\n')
+
+
     f.close()
+
 #    f.write('GC.cmd_history = {0}\n'.format(GC.cmd_history))
 #    for var in dir(GC):
 #        print 'GC.{0} = {1}'.format(var, eval('GC.' + var))
@@ -75,12 +93,15 @@ def load_game(file):
     exec(f.read())
     f.close()
 
-    # Replace the map structure in the save file with actual cells
+    # Replace the map structure in the save file with actual cells.
     GC.map = map
 
     for x in range(len(GC.map)):
         for y in range(len(GC.map[0])):
             GC.map[x][y] = Cell(GC.map[x][y]['n'], explored=GC.map[x][y]['e'])
+
+    # Replace oids with references to the actual objects.
+
 
 def run_history():
     old_history = GC.cmd_history
@@ -307,8 +328,8 @@ def main():
     pygame.display.set_caption('{0} {1}'.format(GAME_NAME, VERSION))
 
     parser = optparse.OptionParser()
-    parser.add_option("-s", "--input", dest="save_file", default='',
-                      help="save_file FILE", metavar="FILE")
+    parser.add_option('-s', '--input', dest='save_file', default='',
+                      help='save_file FILE', metavar='FILE')
     (options, args) = parser.parse_args()
 
 
@@ -361,7 +382,7 @@ def main():
 
     
 
-    message("Welcome, {0}!".format(uname), GV.gold)
+    message('Welcome, {0}!'.format(uname), GV.gold)
 
 
     # Have to call this once to before drawing the initial screen.

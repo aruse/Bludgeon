@@ -34,7 +34,7 @@ class FOVMap(object):
             self.light[x][y] = self.flag
 
     def _cast_light(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):
-        "Recursive lightcasting function"
+        """Recursive lightcasting function"""
         if start < end:
             return
         radius_squared = radius * radius
@@ -78,7 +78,7 @@ class FOVMap(object):
                 break
 
     def do_fov(self, x, y, radius):
-        "Calculate lit squares from the given location and radius"
+        """Calculate lit squares from the given location and radius"""
         self.flag += 1
         for oct in range(8):
             self._cast_light(x, y, 1, 1.0, 0.0, radius,
