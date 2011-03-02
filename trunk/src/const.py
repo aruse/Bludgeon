@@ -60,7 +60,7 @@ TORCH_RADIUS = 10
 MAX_ROOM_MONSTERS = 3
 MAX_ROOM_ITEMS = 2
 
-MAX_MSGS = STATUS_H
+MAX_MSGS = 100
 
 # Up, down, left, right, upleft, upright, downleft, downright
 DIR = ((0, -1),

@@ -20,13 +20,23 @@ def mouse_coords_to_map_coords(x, y):
 def message(msg, color=GV.default_font_color):
     # Split the message if necessary, among multiple lines
     # FIXME: This should wrap based on the current size of the text buffer, not at a blind 60 characters.
+
+    if len(GC.msgs) >= MAX_MSGS:
+        GC.msgs.pop(0)
+
+    GC.msgs.append((msg, color))
+
+
+    return
+
+
     lines = textwrap.wrap(msg, 60)
 
     for line in lines:
-        if len(GC.msgs) == MAX_MSGS:
-            GC.msgs.pop()
+        if len(GC.msgs) >= MAX_MSGS:
+            GC.msgs.pop(0)
 
-        GC.msgs.insert(0, (line, color))
+        GC.msgs.append((line, color))
 
 def load_image(name):
     """ Load image and return image object"""

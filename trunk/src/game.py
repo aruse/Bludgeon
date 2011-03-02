@@ -267,7 +267,7 @@ class GV:
     silver = (203, 203, 203)
     gold = (255, 255, 102)
 
-    text_bg_color = black
+    text_bg_color = dark_gray
     if sum(text_bg_color) < sum(white):
         default_font_color = white
     else:

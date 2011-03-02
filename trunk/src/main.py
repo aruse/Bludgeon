@@ -384,6 +384,7 @@ def main():
     
 
     message('Welcome, {0}!'.format(uname), GV.gold)
+    message("This is a really really really long line designed to test word-wrapping.  Juliet is sitting on my lap and purring and she's all furry and stuff and I like it when she does that and I'm going to be going to the gym soon and squatting.  Can't Wait!".format(uname), GV.gold)
 
 
     # Have to call this once to before drawing the initial screen.

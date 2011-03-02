@@ -76,6 +76,45 @@ def tile_under_mouse():
     else:
         return None
 
+
+def wordwrap(text, w, antialias, color):
+    """Return a surface with the rendered text on it, wordwrapped to fit the given pixel width."""
+
+    lines = []
+    line = ""
+    words = text.split(' ')
+
+    for word in words:
+        test_line = line + word + " "
+
+        if GV.font.size(test_line)[0] < w:
+            line = test_line
+        else:
+            lines.append(line)
+            line = word + " "
+
+    lines.append(line)
+
+
+    rendered_lines = []
+    total_h = 0
+    for line in lines:
+        text_img = GV.font.render(line, antialias, color)
+        rendered_lines.append(text_img)
+        total_h += text_img.get_height()
+
+    final_surf = pygame.Surface((w, total_h)).convert()
+    final_surf.fill(GV.text_bg_color)
+    y = 0
+    for line in rendered_lines:
+        final_surf.blit(line, (0, y))
+        y += line.get_height()
+
+    return final_surf
+
+def render_tooltips():
+    pass
+
 def update_alert_surf():
     GV.alert_surf.fill(GV.black)
     name = tile_under_mouse()
@@ -137,7 +176,7 @@ def write_text(surf, text, line_num, justify='center', column=None, color=GV.def
     surf.blit(text_img, textpos)
 
 
-def draw_bar(surf, x, y, length, value, max_value, bar_color, background_color):
+def render_bar(surf, x, y, length, value, max_value, bar_color, background_color):
     # Render a bar (HP, experience, etc).
     bar_length = int(float(value) / max_value * length)
  
@@ -156,31 +195,31 @@ def update_status_surf():
     write_text(surf, 'Dungeons of Doom, Level 1', 1.5, justify='center')
 
     write_text(surf, 'HP', 3, justify='left', column=0)
-    draw_bar(surf, rect.width / 4,
+    render_bar(surf, rect.width / 4,
              rect.top + 3 * GV.font_ph, rect.width *.75 - GV.font_pw,
              GC.u.hp, GC.u.max_hp, GV.hp_bar_color, GV.hp_bar_bg_color)
     write_text(surf, str(GC.u.hp) + ' / ' + str(GC.u.max_hp), 3, justify='center', column=2)
     
     write_text(surf, 'MP', 4, justify='left', column=0)
-    draw_bar(surf, rect.width / 4,
+    render_bar(surf, rect.width / 4,
              rect.top + 4 * GV.font_ph, rect.width *.75 - GV.font_pw,
              GC.u.mp, GC.u.max_mp, GV.mp_bar_color, GV.mp_bar_bg_color)
     write_text(surf, str(GC.u.mp) + ' / ' + str(GC.u.max_mp), 4, justify='center', column=2)
 
     write_text(surf, 'XP', 5, justify='left', column=0)
-    draw_bar(surf, rect.width / 4,
+    render_bar(surf, rect.width / 4,
              rect.top + 5 * GV.font_ph, rect.width *.75 - GV.font_pw,
              GC.u.xp, GC.u.xp_next_level, GV.xp_bar_color, GV.xp_bar_bg_color)
     write_text(surf, str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), 5, justify='center', column=2)
 
     write_text(surf, 'Weight', 6, justify='left', column=0)
-    draw_bar(surf, rect.width / 4,
+    render_bar(surf, rect.width / 4,
              rect.top + 6 * GV.font_ph, rect.width *.75 - GV.font_pw,
              GC.u.weight, GC.u.burdened, GV.gray, GV.darker_gray)
     write_text(surf, str(GC.u.weight) + ' / ' + str(GC.u.burdened), 6, justify='center', column=2)
 
     write_text(surf, 'Hunger', 7, justify='left', column=0)
-    draw_bar(surf, rect.width / 4,
+    render_bar(surf, rect.width / 4,
              rect.top + 7 * GV.font_ph, rect.width *.75 - GV.font_pw,
              GC.u.hunger, GC.u.max_hunger, GV.gray, GV.darker_gray)
     write_text(surf, str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), 7, justify='center', column=2)
@@ -221,16 +260,21 @@ def update_text_surf():
     """Update the text buffer."""
     GV.text_surf.fill(GV.text_bg_color)
 
-    i = MAX_MSGS - 1
-    for (line, color) in GC.msgs:
-        text_img = GV.font.render(line, True, color)
+    y = GV.text_ph
+    for (line, color) in reversed(GC.msgs):
+#        text_img = GV.font.render(line, True, color)
+        text_img = wordwrap(line, GV.text_pw, True, color)
         textpos = text_img.get_rect()
-        textpos.left = GV.text_surf.get_rect().left + GV.font_pw
-        textpos.top = i * GV.font_ph
-        GV.text_surf.blit(text_img, textpos)
-        i -= 1
+        y -= textpos.height
 
-def draw_map():
+        if y < 0:
+            break
+
+        textpos.top = y
+        textpos.left = GV.text_surf.get_rect().left + GV.font_pw
+        GV.text_surf.blit(text_img, textpos)
+
+def render_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.u.fov_map.lit(x, y):
@@ -243,7 +287,7 @@ def draw_map():
                     GV.map_surf.blit(GV.tiles_img, (x * TILE_PW, y * TILE_PH), GV.blank_tile)
 
     
-def draw_objects():
+def render_objects():
     for item in GC.items:
         if GC.u.fov_map.lit(item.x, item.y):
             item.draw()
@@ -261,7 +305,7 @@ def draw_objects():
     # Always draw the player
     GC.u.draw()
 
-def draw_decorations():
+def render_decorations():
     draw_box(GC.u.x, GC.u.y, GV.white)
 
         
@@ -272,9 +316,9 @@ def view_tick():
     update_status_surf()
     update_alert_surf()
     
-    draw_map()
-    draw_objects()
-    draw_decorations()
+    render_map()
+    render_objects()
+    render_decorations()
 
     # Draw everything
     GV.screen.blit(GV.map_surf, (GV.map_px, GV.map_py))
@@ -285,5 +329,7 @@ def view_tick():
 
     if GC.state == 'menu':
         GV.screen.blit(GV.window_surf, (GV.window_px, GV.window_py))
+    else:
+        render_tooltips()
 
     pygame.display.flip()
