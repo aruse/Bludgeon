@@ -49,7 +49,7 @@ def cast_lightning(item, x=None, y=None):
 def cast_fireball(item, x=None, y=None):
     """Begin the casting of a fireball spell.  Ask the player to target a cell."""
     if x == None and y == None:
-        message('Left-click a target tile for the fireball, or right-click to cancel.', GV.light_cyan)
+        message('Left-click a target for the fireball, or right-click to cancel.', GV.light_cyan)
         GC.state = STATE_TARGETING
         GC.targeting_function.append(finish_fireball)
         GC.targeting_item = item
@@ -64,7 +64,7 @@ def finish_fireball(item, x=None, y=None):
     """
     if x is None:
         return False
-    message('The fireball explodes, burning everything within ' + str(FIREBALL_RADIUS) + ' tiles!', GV.orange)
+    message('The fireball explodes, burning everything within ' + str(FIREBALL_RADIUS) + ' spaces!', GV.orange)
  
     for m in GC.monsters + [GC.u]:  #damage every fighter in range, including the GC.u
         if m.distance(x, y) <= FIREBALL_RADIUS:

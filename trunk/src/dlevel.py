@@ -38,7 +38,7 @@ def place_objects(map, room):
         x = random.randrange(room.x1 + 1, room.x2 - 1)
         y = random.randrange(room.y1 + 1, room.y2 - 1)
  
-        #only place it if the tile is not blocked
+        #only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
             if random.randrange(0, 100) < 80:  #80% chance of getting an orc
                 monster = Monster(x, y, 'orc', ai=StupidAI())
@@ -47,13 +47,12 @@ def place_objects(map, room):
  
             GC.monsters.append(monster)
 
-    #choose random number of items
-    for i in range(4):
-#    for i in range(random.randrange(4)):
+    # Choose random number of items
+    for i in range(random.randrange(8)):
         x = random.randrange(room.x1 + 1, room.x2 - 1)
         y = random.randrange(room.y1 + 1, room.y2 - 1)
  
-        #only place it if the tile is not blocked
+        # Only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
             dice = random.randrange(0, 100)
             if dice < 40:

@@ -10,7 +10,7 @@ INVENTORY_WIDTH = 50
 
 
 def draw_box(x, y, color=GV.white):
-    """Draw a box around the tile at the given coords."""
+    """Draw a box around the cell at the given coords."""
     pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_W, y * TILE_H, TILE_W, TILE_H), 1)
 
 
@@ -27,7 +27,7 @@ def menu(header, options, width):
     #create an off-screen console that represents the menu's window
     GV.window_surf = pygame.Surface((width * GV.font_w, height * GV.font_h)).convert()
  
-    #print the header, with auto-wrap
+    # print the header, with auto-wrap
     write_text(GV.window_surf, header, 0, justify='left')
  
     #print all the options
