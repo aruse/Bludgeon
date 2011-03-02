@@ -50,7 +50,7 @@ def cast_fireball(item, x=None, y=None):
     """Begin the casting of a fireball spell.  Ask the player to target a cell."""
     if x == None and y == None:
         message('Left-click a target tile for the fireball, or right-click to cancel.', GV.light_cyan)
-        GC.state = 'targeting'
+        GC.state = STATE_TARGETING
         GC.targeting_function.append(finish_fireball)
         GC.targeting_item = item
         return 'targeting'
@@ -76,7 +76,7 @@ def finish_fireball(item, x=None, y=None):
 def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
-        GC.state = 'targeting'
+        GC.state = STATE_TARGETING
         GC.targeting_function.append(finish_confuse)
         GC.targeting_item = item
         return 'targeting'

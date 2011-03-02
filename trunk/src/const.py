@@ -83,3 +83,11 @@ DIRH = {'u': (0, -1),
         'dl': (-1, 1),
         'dr': (1, 1)
         }
+
+
+# Game state
+STATE_PLAYING = 1
+STATE_MENU = 2
+STATE_TARGETING = 3
+STATE_EXIT = 4
+STATE_PLAYBACK = 5

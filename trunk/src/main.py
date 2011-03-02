@@ -104,7 +104,7 @@ def load_game(file):
 def run_history():
     old_history = GC.cmd_history
     GC.cmd_history = []
-    GC.state = 'playback'
+    GC.state = STATE_PLAYBACK
 
     for cmd in old_history:
         print 'Running ' + str(cmd)
@@ -122,7 +122,7 @@ def run_history():
         controller_tick()
         view_tick()
 
-    GC.state = 'playing'
+    GC.state = STATE_PLAYING
 
 def impossible(text):
     print 'Impossible area of code reached'
@@ -133,7 +133,7 @@ def handle_events():
     # Handle input events
     for event in pygame.event.get():
         if event.type == QUIT:
-            GC.state = 'exit'
+            GC.state = STATE_EXIT
         elif event.type == KEYDOWN:
             GC.prev_key = GC.key
             GC.key = event.key
@@ -155,16 +155,16 @@ def monsters_take_turn():
         
 def handle_actions():
     # If an action has already been taken this clock cycle, don't do another one.
-    if GC.action_handled and GC.state != 'playback':
+    if GC.action_handled and GC.state != STATE_PLAYBACK:
         return
 
     # Whether or not this keypress counts as taking a turn
     u_took_turn = False
         
-    if GC.state == 'playing':
+    if GC.state == STATE_PLAYING:
         # Exit the game
         if GC.key == K_ESCAPE:
-            GC.state = 'exit'
+            GC.state = STATE_EXIT
         elif GC.key == K_UP or GC.key == K_KP8:
             GC.u.try_move(DIRH['u'])
             u_took_turn = True
@@ -222,7 +222,7 @@ def handle_actions():
             else:
                 message(pygame.key.name(GC.key) + ' pressed')
 
-    elif GC.state == 'menu':
+    elif GC.state == STATE_MENU:
         if GC.key:
             char = pygame.key.name(GC.key)
 
@@ -230,7 +230,7 @@ def handle_actions():
                 index = ord(char) - ord('a')
                 if index >= 0 and index < len(GC.menu_options):
                     if GC.menu == 'use':
-                        GC.state = 'playing' # Exit menu
+                        GC.state = STATE_PLAYING # Exit menu
                         if len(GC.u.inventory) > 0:
                             item = GC.u.inventory[index]
                             if item is not None:
@@ -241,18 +241,18 @@ def handle_actions():
                                     u_took_turn = False
                                 
                     elif GC.menu == 'drop':
-                        GC.state = 'playing' # Exit menu
+                        GC.state = STATE_PLAYING # Exit menu
                         u_took_turn = True
                         if len(GC.u.inventory) > 0:
                             item = GC.u.inventory[index]
                             if item is not None:
                                 GC.u.drop(item)
                 else:
-                    GC.state = 'playing' # Exit menu
+                    GC.state = STATE_PLAYING # Exit menu
             else:        
-                GC.state = 'playing' # Exit menu
+                GC.state = STATE_PLAYING # Exit menu
 
-    elif GC.state == 'targeting':
+    elif GC.state == STATE_TARGETING:
         if GC.button:
             x, y = pygame.mouse.get_pos()
             x, y = mouse_coords_to_map_coords(x, y)
@@ -269,13 +269,13 @@ def handle_actions():
                     GC.targeting_item = None
                     u_took_turn = True
                     
-            GC.state = 'playing'
+            GC.state = STATE_PLAYING
         elif GC.key:
             message('Cancelled')
-            GC.state = 'playing'
-    elif GC.state == 'playback':
+            GC.state = STATE_PLAYING
+    elif GC.state == STATE_PLAYBACK:
         u_took_turn = True
-    elif GC.state == 'exit':
+    elif GC.state == STATE_EXIT:
         pass
     else:
         impossible('Unknown state: ' + GC.state)
@@ -292,7 +292,7 @@ def handle_actions():
 def controller_tick(reel=False):
     """Handle all of the controller actions in the game loop."""
 
-    if GC.state == 'playback':
+    if GC.state == STATE_PLAYBACK:
         # Don't call clock.tick() in playback mode in order to make it as fast as possible.
         handle_actions()
     else:
@@ -396,6 +396,6 @@ def main():
 #    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 
     # Main loop
-    while GC.state != 'exit':
+    while GC.state != STATE_EXIT:
         controller_tick()
         view_tick()

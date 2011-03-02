@@ -100,8 +100,8 @@ class GC:
     # Whether or not we need to recompute the FOV
     fov_recompute = True
 
-    # State of the game.  Can be one of 'playing', 'menu', 'targeting', or 'exit'
-    state = 'playing'
+    # State of the game.
+    state = STATE_PLAYING
 
     menu = None
     menu_options = []

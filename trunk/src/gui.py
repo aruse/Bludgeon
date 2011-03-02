@@ -43,7 +43,7 @@ def menu(header, options, width):
     GV.window_py = GV.screen_ph / 2 - (height * GV.font_ph) / 2
 
     GC.menu_options = options
-    GC.state = 'menu'
+    GC.state = STATE_MENU
  
 def inventory_menu(header):
     inv = GC.u.inventory
@@ -262,7 +262,6 @@ def update_text_surf():
 
     y = GV.text_ph
     for (line, color) in reversed(GC.msgs):
-#        text_img = GV.font.render(line, True, color)
         text_img = wordwrap(line, GV.text_pw, True, color)
         textpos = text_img.get_rect()
         y -= textpos.height
@@ -332,7 +331,7 @@ def view_tick():
     GV.screen.blit(GV.status_surf, (GV.status_px, GV.status_py))
     GV.screen.blit(GV.text_surf, (GV.text_px, GV.text_py))
 
-    if GC.state == 'menu':
+    if GC.state == STATE_MENU:
         GV.screen.blit(GV.window_surf, (GV.window_px, GV.window_py))
     else:
         render_tooltips()
