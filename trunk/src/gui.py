@@ -267,12 +267,17 @@ def update_text_surf():
         textpos = text_img.get_rect()
         y -= textpos.height
 
-        if y < 0:
+        # y needs to be able to go negative in order to properly render 
+        # multi-line text at the top of the surface.  However, there's no 
+        # need for it to get so negative that it would be rendering text
+        # completely off the top.
+        if y < -GV.text_ph:
             break
 
         textpos.top = y
         textpos.left = GV.text_surf.get_rect().left + GV.font_pw
         GV.text_surf.blit(text_img, textpos)
+
 
 def render_map():
     for x in range(MAP_W):
