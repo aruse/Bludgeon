@@ -1,3 +1,7 @@
+tile 977 "healing potion"
+tile 1010 "scroll of lightning"
+tile 1010 "scroll of fireball"
+tile 1010 "scroll of confusion"
 tile 0 "giant ant"
 tile 1 "giant tick"
 tile 2 "killer bee"

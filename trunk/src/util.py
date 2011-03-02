@@ -30,7 +30,7 @@ def message(msg, color=GV.default_font_color):
 
 def load_image(name):
     """ Load image and return image object"""
-    fullname = os.path.join('../images', name)
+    fullname = os.path.join('images', name)
     try:
         image = pygame.image.load(fullname)
         if image.get_alpha() is None:
@@ -60,7 +60,7 @@ def create_tile_dict():
     tile_dict = {}
 
     # Read in tile mapping document, line-by-line, and build a dictionary pointing to coordinates of the graphic
-    map = open('../data/tiles.map')
+    map = open('data/tiles.map')
 
     for line in map:
         (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]

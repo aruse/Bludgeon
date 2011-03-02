@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (c) 2011, Andy Ruse
 
 import os
@@ -370,7 +368,10 @@ def main():
         GC.u = Player(0, 0, 'wizard')
     else:
         GC.u = Player(0, 0, 'wizard')
-        GC.map = gen_connected_rooms()
+        GC.dlevel = 1
+        GC.dlevel_dict['doom'] = []
+        GC.dlevel_dict['doom'].append(gen_connected_rooms())
+        GC.map = GC.dlevel_dict['doom'][0]
 
 
 
@@ -397,6 +398,3 @@ def main():
     while GC.state != 'exit':
         controller_tick()
         view_tick()
-    
-if __name__ == '__main__':
-    main()
