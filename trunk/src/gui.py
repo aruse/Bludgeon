@@ -65,29 +65,39 @@ def draw_box(x, y, color=GV.white):
 
 
 def menu(header, options, w):
+    padding = BORDER_W + PADDING
+
     # Create the header, with wordwrap
     text_img = wordwrap_img(header, w * GV.font_w, True, GV.default_font_color, justify='left')
 
-    header_h = text_img.get_height() / GV.font_h
+    header_h = text_img.get_height() / float(GV.font_h)
     h = len(options) + header_h
 
     # Create a new surface on which to draw the menu
-    GV.dialog_surf = pygame.Surface((w * GV.font_w, h * GV.font_h),
+    surf_w = w * GV.font_w + padding * 2
+    surf_h = h * GV.font_h + padding * 2
+    GV.dialog_surf = pygame.Surface((surf_w, surf_h),
                                     ).convert()
-    GV.dialog_surf.fill(GV.black)
+    GV.dialog_surf.fill(GV.darker_gray)
     
     # Blit the header
-    GV.dialog_surf.blit(text_img, (0, 0))
+    GV.dialog_surf.blit(text_img, (BORDER_W + PADDING, BORDER_W + PADDING))
 
     # Blit all the options
-    y = header_h
+    y = header_h + padding / float(GV.font_h)
     letter_index = ord('a')
     for option in options:
         text = '(' + chr(letter_index) + ') ' + option
-        write_text(GV.dialog_surf, text, y, justify='left')
+        write_text(GV.dialog_surf, text, y,
+                   justify='left', padding=padding)
         y += 1
         letter_index += 1
- 
+
+    # Make it pretty
+    add_surface_border(GV.dialog_surf)
+    GV.dialog_surf.set_colorkey(GV.floor_blue)
+#    GV.dialog_surf.set_alpha(TOOLTIP_ALPHA)
+
     GV.dialog_rect.w, GV.dialog_rect.h = w, h
     set_dialog_size()
 
@@ -106,7 +116,7 @@ def inventory_menu(header):
  
     
 def object_under_mouse():
-    """Return the name of the top tile under the mouse."""
+    """Return the top object under the mouse."""
     x, y = pygame.mouse.get_pos()
     x, y = mouse_coords_to_map_coords(x, y)
 
@@ -173,15 +183,15 @@ def wordwrap_img(text, w, antialias, color, justify='left'):
 def add_surface_border(surf):
     rect = surf.get_rect()
 
-    left_x, right_x = 0, rect.w - TILE_W
-    top_y, bottom_y = 0, rect.h - TILE_H
+    left_x, right_x = 0, rect.w - BORDER_W
+    top_y, bottom_y = 0, rect.h - BORDER_W
     
-    for x in range(1, rect.w / TILE_W):
-        surf.blit(GV.tiles_img, (x * TILE_W, top_y), GV.tile_dict['explosion, fiery, top center'])
-        surf.blit(GV.tiles_img, (x * TILE_W, bottom_y), GV.tile_dict['explosion, fiery, bottom center'])
-    for y in range(1, rect.h / TILE_H):
-        surf.blit(GV.tiles_img, (left_x, y * TILE_H), GV.tile_dict['explosion, fiery, middle left'])
-        surf.blit(GV.tiles_img, (right_x, y * TILE_H), GV.tile_dict['explosion, fiery, middle right'])
+    for x in range(1, rect.w / BORDER_W):
+        surf.blit(GV.tiles_img, (x * BORDER_W, top_y), GV.tile_dict['explosion, fiery, top center'])
+        surf.blit(GV.tiles_img, (x * BORDER_W, bottom_y), GV.tile_dict['explosion, fiery, bottom center'])
+    for y in range(1, rect.h / BORDER_W):
+        surf.blit(GV.tiles_img, (left_x, y * BORDER_W), GV.tile_dict['explosion, fiery, middle left'])
+        surf.blit(GV.tiles_img, (right_x, y * BORDER_W), GV.tile_dict['explosion, fiery, middle right'])
     
     surf.blit(GV.tiles_img, (left_x, top_y), GV.tile_dict['explosion, fiery, top left'])
     surf.blit(GV.tiles_img, (right_x, top_y), GV.tile_dict['explosion, fiery, top right'])
@@ -192,9 +202,6 @@ def add_surface_border(surf):
 def render_tooltips():
     obj = object_under_mouse()
     if obj:
-        border_w = TILE_W
-        padding_w = 3
-
         if obj.__class__.__name__ == 'Monster':
             hp_bar = True
         else:
@@ -203,37 +210,37 @@ def render_tooltips():
         bar_len = 100
 
         text_img = GV.font.render('You see: ' + obj.name, True, GV.white)
-        textpos = text_img.get_rect()
+        text_rect = text_img.get_rect()
 
-        if hp_bar and textpos.w < bar_len:
+        if hp_bar and text_rect.w < bar_len:
             surf_w = bar_len
         else:
-            surf_w = textpos.w
+            surf_w = text_rect.w
 
-        surf_w += padding_w * 2 + border_w * 2
+        surf_w += PADDING * 2 + BORDER_W * 2
 
-        surf_h = textpos.h + padding_w * 2 + border_w * 2
+        surf_h = text_rect.h + PADDING * 2 + BORDER_W * 2
         if hp_bar:
             surf_h += GV.font_h
 
         tooltip_surf = pygame.Surface((surf_w, surf_h)).convert()
         tooltip_surf.fill(GV.black)
 
-        textpos.centerx = surf_w / 2
-        textpos.top = border_w + padding_w
-        tooltip_surf.blit(text_img, textpos)
+        text_rect.centerx = surf_w / 2
+        text_rect.top = BORDER_W + PADDING
+        tooltip_surf.blit(text_img, text_rect)
 
         if hp_bar:
             render_bar(tooltip_surf,
-                       border_w + padding_w,
-                       border_w + padding_w + textpos.h,
+                       BORDER_W + PADDING,
+                       BORDER_W + PADDING + text_rect.h,
                        bar_len, obj.hp, obj.max_hp,
                        GV.hp_bar_color, GV.hp_bar_bg_color)
             hp_img = GV.font.render(str(obj.hp) + ' / ' + str(obj.max_hp),
                                       True, GV.white)
             hp_rect = hp_img.get_rect()
-            hp_rect.centerx = border_w + padding_w + bar_len / 2
-            hp_rect.top = border_w + padding_w + textpos.h
+            hp_rect.centerx = BORDER_W + PADDING + bar_len / 2
+            hp_rect.top = BORDER_W + PADDING + text_rect.h
             tooltip_surf.blit(hp_img, hp_rect)
 
 
@@ -286,7 +293,7 @@ def update_eq_surf():
 
 
     
-def write_text(surf, text, line_num, justify='left', column=None, color=GV.default_font_color, antialias=True):
+def write_text(surf, text, line_num, justify='left', column=None, color=GV.default_font_color, antialias=True, padding=0):
     """Output text to the surface.
     Column can be one of (None, 0, 1, 2, 3)"""
     rect = surf.get_rect()
@@ -304,16 +311,16 @@ def write_text(surf, text, line_num, justify='left', column=None, color=GV.defau
         center = (left_border + right_border) / 2
     
     text_img = GV.font.render(text, antialias, color)
-    textpos = text_img.get_rect()
+    text_rect = text_img.get_rect()
     if justify == 'left':
-        textpos.left = left_border
+        text_rect.left = left_border + padding
     elif justify == 'right':
-        textpos.right = right_border
+        text_rect.right = right_border + padding
     else: # justify == 'center':
-        textpos.centerx = center
+        text_rect.centerx = center
 
-    textpos.top = surf.get_rect().top + line_num * GV.font_h
-    surf.blit(text_img, textpos)
+    text_rect.top = surf.get_rect().top + line_num * GV.font_h
+    surf.blit(text_img, text_rect)
 
 
 def render_bar(surf, x, y, length, value, max_value, bar_color, background_color):
@@ -413,8 +420,8 @@ def update_log_surf():
     y = GV.log_rect.h
     for (line, color) in reversed(GC.msgs):
         text_img = wordwrap_img(line, GV.log_rect.w - GV.font_w, True, color, justify='left')
-        textpos = text_img.get_rect()
-        y -= textpos.h
+        text_rect = text_img.get_rect()
+        y -= text_rect.h
 
         # y needs to be able to go negative in order to properly render 
         # multi-line text at the top of the surface.  However, there's no 
@@ -423,9 +430,9 @@ def update_log_surf():
         if y < -GV.log_rect.h:
             break
 
-        textpos.top = y
-        textpos.left = GV.log_surf.get_rect().left + GV.font_w
-        GV.log_surf.blit(text_img, textpos)
+        text_rect.top = y
+        text_rect.left = GV.log_surf.get_rect().left + GV.font_w
+        GV.log_surf.blit(text_img, text_rect)
 
 
 def render_map():

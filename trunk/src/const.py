@@ -39,6 +39,10 @@ MIN_LOG_W = 200
 # Minimum height of the mapview, in pixels
 MIN_MAPVIEW_H = 150
 
+# Width of the border and padding for pop-over surfaces
+BORDER_W = TILE_W
+PADDING = 3
+
 
 GAME_TITLE = GAME_NAME + ' ' + VERSION
 
