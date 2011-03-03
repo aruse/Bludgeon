@@ -24,19 +24,19 @@ def init_gv():
     GV.eq_w = EQ_W * TILE_W
     GV.eq_h = GV.status_h
 
-    # Size of the text buffer
-    GV.text_w = GV.map_w - (GV.eq_w + GV.status_w)
-    GV.text_h = GV.status_h
+    # Size of the log window
+    GV.log_w = GV.map_w - (GV.eq_w + GV.status_w)
+    GV.log_h = GV.status_h
 
     # Size of the full game window
     GV.screen_w = GV.map_w
     GV.screen_h = GV.map_h + GV.status_h
 
     # Locations to blit the various surfaces
-    GV.map_x, GV.map_y = 0, GV.text_h + GV.alert_h
-    GV.alert_x, GV.alert_y = 0, GV.text_h
-    GV.text_x, GV.text_y = 0, 0
-    GV.eq_x, GV.eq_y = GV.text_w, 0
+    GV.map_x, GV.map_y = 0, GV.log_h + GV.alert_h
+    GV.alert_x, GV.alert_y = 0, GV.log_h
+    GV.log_x, GV.log_y = 0, 0
+    GV.eq_x, GV.eq_y = GV.log_w, 0
     GV.status_x, GV.status_y = GV.eq_x + GV.eq_w, 0
 
     # Locations to blit equipment on the equipment panel
@@ -112,7 +112,7 @@ class GC:
     
     u_action = None
 
-    # Messages to put in the text buffer
+    # Messages to put in the log window
     msgs = []
 
     # The complete history of commands used in this game
@@ -146,8 +146,8 @@ class GV:
     # pygame Surface for the character stats
     status_surf = None
 
-    # pygame Surface for the text buffer
-    text_surf = None
+    # pygame Surface for the log window
+    log_surf = None
 
     alert_surf = None
     eq_surf = None
@@ -165,13 +165,13 @@ class GV:
     alert_w, alert_h = None, None
     status_w, status_h = None, None
     eq_w, eq_h = None, None
-    text_w, text_h = None, None
+    log_w, log_h = None, None
     screen_w, screen_h = None, None
 
     # Pixel locations to blit the various surfaces
     map_x, map_y = None, None
     alert_x, alert_y = None, None
-    text_x, text_y = None, None
+    log_x, log_y = None, None
     eq_x, eq_y = None, None
     status_x, status_y = None, None
     window_x, window_y = None, None
@@ -268,8 +268,8 @@ class GV:
     silver = (203, 203, 203)
     gold = (255, 255, 102)
 
-    text_bg_color = dark_gray
-    if sum(text_bg_color) < sum(white):
+    log_bg_color = dark_gray
+    if sum(log_bg_color) < sum(white):
         default_font_color = white
     else:
         default_font_color = black

@@ -25,8 +25,10 @@ def menu(header, options, width):
     height = len(options) + header_height
 
     # Create an off-screen console that represents the menu's window
-    GV.window_surf = pygame.Surface((width * GV.font_w, height * GV.font_h)).convert()
-
+    GV.window_surf = pygame.Surface((width * GV.font_w, height * GV.font_h),
+                                    ).convert()
+    GV.window_surf.fill(GV.black)
+    
     # Blit the header
     GV.window_surf.blit(text_img, (0, 0))
 
@@ -199,7 +201,7 @@ def update_status_surf():
     """Update the status surface."""
     surf = GV.status_surf
     rect = surf.get_rect()
-    surf.fill(GV.text_bg_color)
+    surf.fill(GV.log_bg_color)
     y = 0.5
     
     write_text(surf, 'Taimor the Human Male Apprentice (Chaotic)', 0.5, justify='center')
@@ -276,13 +278,13 @@ def update_status_surf():
     write_text(surf, 'Hallucinating Sick Invisible', y, justify='left')
 
 
-def update_text_surf():
-    """Update the text buffer."""
-    GV.text_surf.fill(GV.text_bg_color)
+def update_log_surf():
+    """Update the log window."""
+    GV.log_surf.fill(GV.log_bg_color)
 
-    y = GV.text_h
+    y = GV.log_h
     for (line, color) in reversed(GC.msgs):
-        text_img = wordwrap_img(line, GV.text_w - GV.font_w, True, color, justify='left')
+        text_img = wordwrap_img(line, GV.log_w - GV.font_w, True, color, justify='left')
         textpos = text_img.get_rect()
         y -= textpos.height
 
@@ -290,12 +292,12 @@ def update_text_surf():
         # multi-line text at the top of the surface.  However, there's no 
         # need for it to get so negative that it would be rendering text
         # completely off the top.
-        if y < -GV.text_h:
+        if y < -GV.log_h:
             break
 
         textpos.top = y
-        textpos.left = GV.text_surf.get_rect().left + GV.font_w
-        GV.text_surf.blit(text_img, textpos)
+        textpos.left = GV.log_surf.get_rect().left + GV.font_w
+        GV.log_surf.blit(text_img, textpos)
 
 
 def render_map():
@@ -335,7 +337,7 @@ def render_decorations():
         
 def view_tick():
     """Handle all of the view actions in the game loop."""
-    update_text_surf()
+    update_log_surf()
     update_eq_surf()
     update_status_surf()
     update_alert_surf()
@@ -349,7 +351,7 @@ def view_tick():
     GV.screen.blit(GV.alert_surf, (GV.alert_x, GV.alert_y))
     GV.screen.blit(GV.eq_surf, (GV.eq_x, GV.eq_y))
     GV.screen.blit(GV.status_surf, (GV.status_x, GV.status_y))
-    GV.screen.blit(GV.text_surf, (GV.text_x, GV.text_y))
+    GV.screen.blit(GV.log_surf, (GV.log_x, GV.log_y))
 
     if GC.state == ST_MENU:
         GV.screen.blit(GV.window_surf, (GV.window_x, GV.window_y))
