@@ -547,7 +547,6 @@ def view_tick():
     GV.screen.blit(GV.log_surf, GV.log_rect)
     GV.screen.blit(GV.eq_surf, GV.eq_rect)
     GV.screen.blit(GV.status_surf, GV.status_rect)
-    center_map()
 
     # Need to fill the mapview area with black because the piece of the
     # map that we draw may not fill up the whole area.

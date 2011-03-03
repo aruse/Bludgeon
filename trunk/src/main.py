@@ -397,6 +397,8 @@ def main():
 #    if options.save_file:
 #        run_history()
     
+        
+    center_map()
 
     # Main loop
     while GC.state != ST_EXIT:

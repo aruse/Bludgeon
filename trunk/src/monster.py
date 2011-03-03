@@ -12,6 +12,7 @@ from fov import *
 from ai import *
 from object import *                    
 from item import *
+from gui import *
 
 def die_leave_corpse(monster):
     message(monster.name.capitalize() + ' dies!', GV.red)
@@ -66,7 +67,6 @@ class Monster(Object):
         self.burdened = 1000
         self.hunger = 450
         self.max_hunger = 1000
-        
 
     def pick_up(self, item):
         self.inventory.append(item)
@@ -136,6 +136,7 @@ class Player(Monster):
     def move(self, dx, dy=None):
         GC.cmd_history.append(('m', dx, dy))
         Monster.move(self, dx, dy)
+        center_map()
 
     def pick_up(self, item):
         GC.cmd_history.append(('p', item.oid))
