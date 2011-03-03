@@ -105,7 +105,7 @@ def inventory_menu(header):
     menu(header, options, INVENTORY_W)
  
     
-def tile_under_mouse():
+def object_under_mouse():
     """Return the name of the top tile under the mouse."""
     x, y = pygame.mouse.get_pos()
     x, y = mouse_coords_to_map_coords(x, y)
@@ -115,11 +115,11 @@ def tile_under_mouse():
     
         for m in GC.monsters + [GC.u]:
             if m.x == x and m.y == y:
-                return m.name
+                return m
 
         for i in GC.items:
             if i.x == x and i.y == y:
-                return i.name
+                return i
     else:
         return None
 
@@ -190,19 +190,52 @@ def add_surface_border(surf):
 
 
 def render_tooltips():
-    name = tile_under_mouse()
-    if name:
-        text_img = GV.font.render('You see: ' + tile_under_mouse(), True, GV.white)
+    obj = object_under_mouse()
+    if obj:
+        border_w = TILE_W
+        padding_w = 3
+
+        if obj.__class__.__name__ == 'Monster':
+            hp_bar = True
+        else:
+            hp_bar = False
+
+        bar_len = 100
+
+        text_img = GV.font.render('You see: ' + obj.name, True, GV.white)
         textpos = text_img.get_rect()
 
-        tooltip_surf = pygame.Surface((textpos.w + TILE_W * 2, textpos.h + TILE_H * 2),
-                                      ).convert()
-#        tooltip_surf = pygame.Surface((textpos.w + TILE_W * 2, textpos.h + TILE_H * 2),
-#                                      SRCALPHA, 30).convert_alpha()
+        if hp_bar and textpos.w < bar_len:
+            surf_w = bar_len
+        else:
+            surf_w = textpos.w
+
+        surf_w += padding_w * 2 + border_w * 2
+
+        surf_h = textpos.h + padding_w * 2 + border_w * 2
+        if hp_bar:
+            surf_h += GV.font_h
+
+        tooltip_surf = pygame.Surface((surf_w, surf_h)).convert()
         tooltip_surf.fill(GV.black)
-        textpos.left = TILE_W
-        textpos.top = TILE_H
+
+        textpos.centerx = surf_w / 2
+        textpos.top = border_w + padding_w
         tooltip_surf.blit(text_img, textpos)
+
+        if hp_bar:
+            render_bar(tooltip_surf,
+                       border_w + padding_w,
+                       border_w + padding_w + textpos.h,
+                       bar_len, obj.hp, obj.max_hp,
+                       GV.hp_bar_color, GV.hp_bar_bg_color)
+            hp_img = GV.font.render(str(obj.hp) + ' / ' + str(obj.max_hp),
+                                      True, GV.white)
+            hp_rect = hp_img.get_rect()
+            hp_rect.centerx = border_w + padding_w + bar_len / 2
+            hp_rect.top = border_w + padding_w + textpos.h
+            tooltip_surf.blit(hp_img, hp_rect)
+
 
         rect = tooltip_surf.get_rect()
         x, rect.bottom = pygame.mouse.get_pos()
