@@ -1,5 +1,4 @@
-# Constant declarations.  Every other module needs to import this file.
-
+# Constant declarations.
 
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
@@ -29,15 +28,12 @@ FONT_SIZE = 12
 STATUS_H, STATUS_W = 18, 40
 
 # Tile size, in pixels
-TILE_W = 16
-TILE_H = 16
+TILE_W, TILE_H = 16, 16
 
 # Surface sizes, in cells
-EQ_W = 7
-EQ_H = STATUS_H
-
-MAP_W = 60
-MAP_H = 25
+EQ_W, EQ_H = 7, STATUS_H
+#MAP_W, MAP_H = 120, 50
+MAP_W, MAP_H = 60, 25
 
 
 GAME_TITLE = GAME_NAME + ' ' + VERSION

@@ -20,16 +20,21 @@ def init_gv():
     GV.eq_w = EQ_W * TILE_W
     GV.eq_h = GV.status_h
 
+    # Size of the full game window
+    GV.screen_w = int(GV.map_w * .7)
+    GV.screen_h = int(GV.map_h * .7) + GV.status_h
+
     # Size of the log window
-    GV.log_w = GV.map_w - (GV.eq_w + GV.status_w)
+    GV.log_w = GV.screen_w - (GV.eq_w + GV.status_w)
     GV.log_h = GV.status_h
 
-    # Size of the full game window
-    GV.screen_w = GV.map_w
-    GV.screen_h = GV.map_h + GV.status_h
+    # The map window size.  Maybe be smaller than the actual map size.
+    GV.map_window_w = GV.screen_w
+    GV.map_window_h = GV.screen_h - GV.status_h
 
     # Locations to blit the various surfaces
     GV.map_x, GV.map_y = 0, GV.log_h
+    GV.map_window_x, GV.map_window_y = 0, GV.log_h
     GV.log_x, GV.log_y = 0, 0
     GV.eq_x, GV.eq_y = GV.log_w, 0
     GV.status_x, GV.status_y = GV.eq_x + GV.eq_w, 0
@@ -156,13 +161,16 @@ class GV:
     
     # Pixel size of various surfaces
     map_w, map_h = None, None
+    map_rect = None
     status_w, status_h = None, None
     eq_w, eq_h = None, None
     log_w, log_h = None, None
     screen_w, screen_h = None, None
+    map_window_w, map_window_h = None, None
 
     # Pixel locations to blit the various surfaces
     map_x, map_y = None, None
+    map_window_x, map_window_y = None, None
     log_x, log_y = None, None
     eq_x, eq_y = None, None
     status_x, status_y = None, None

@@ -1,5 +1,7 @@
 # Copyright (c) 2011, Andy Ruse
 
+# Setup of game objects and main game loop.
+
 import os
 import time
 import optparse
@@ -212,7 +214,7 @@ def handle_actions():
                     message('Nothing to pick up!')
 
             elif char == 'i':
-                inventory_menu('Press the key next to an item to use it, or any other to cancel.  blah blah blah really long text that needs to wordwrap blah blah this computer cat keyboard monitor mouse dog book water bottle etc lamp cieling wall floor sheet window etc dungeon stuff stuff stuff.')
+                inventory_menu('Press the key next to an item to use it, or any other to cancel.  blah blah blah really long text that needs to wordwrap blah blah this computer cat keyboard monitor mouse dog book water bottle etc lamp ceiling wall floor sheet window etc dungeon stuff stuff stuff.')
 #                inventory_menu('Press the key next to an item to use it, or any other to cancel.')
                 GC.menu = 'use'
 
@@ -348,6 +350,7 @@ def main():
     GV.screen = pygame.display.set_mode((GV.screen_w, GV.screen_h))
 
     GV.map_surf = pygame.Surface((GV.map_w, GV.map_h)).convert()
+    GV.map_rect = GV.map_surf.get_rect()
     GV.log_surf = pygame.Surface((GV.log_w, GV.log_h)).convert()
     GV.eq_surf = pygame.Surface((GV.eq_w, GV.eq_h)).convert()
     GV.status_surf = pygame.Surface((GV.status_w, GV.status_h)).convert()
@@ -384,12 +387,12 @@ def main():
     
 
     message('Welcome, {0}!'.format(uname), GV.gold)
-    message("This is a really really really long line designed to test word-wrapping.  Juliet is sitting on my lap and purring and she's all furry and stuff and I like it when she does that and I'm going to be going to the gym soon and squatting.  Can't Wait!".format(uname), GV.gold)
+    message("This is a really really really long line designed to test word-wrapping.  Blah blah blah really long text that needs to wordwrap blah blah this computer cat keyboard monitor mouse dog book water bottle etc lamp ceiling wall floor sheet window etc dungeon stuff stuff stuff.".format(uname), GV.gold)
 
 
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
-
+    center_map()
 #    if options.save_file:
 #        run_history()
     
