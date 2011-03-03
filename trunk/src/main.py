@@ -382,7 +382,6 @@ def main():
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
 #    GC.map = gen_perfect_maze(MAP_W, MAP_H)
     GC.u.set_fov_map(GC.map)
-
     
 
     message('Welcome, {0}!'.format(uname), GV.gold)
@@ -394,9 +393,9 @@ def main():
 #    if options.save_file:
 #        run_history()
     
-#    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 
     # Main loop
     while GC.state != ST_EXIT:
+        print GC.u.fov_map.lit(GC.u.x, GC.u.y), GC.u.fov_map.lit(GC.u.x+1, GC.u.y)
         controller_tick()
         view_tick()

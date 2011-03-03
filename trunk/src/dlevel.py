@@ -48,7 +48,7 @@ def place_objects(map, room):
             GC.monsters.append(monster)
 
     # Choose random number of items
-    for i in range(random.randrange(28)):
+    for i in range(random.randrange(8)):
         x = random.randrange(room.x1 + 1, room.x2 - 1)
         y = random.randrange(room.y1 + 1, room.y2 - 1)
  

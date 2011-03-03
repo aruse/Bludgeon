@@ -84,4 +84,7 @@ class FOVMap(object):
             self._cast_light(x, y, 1, 1.0, 0.0, radius,
                              self.mult[0][oct], self.mult[1][oct],
                              self.mult[2][oct], self.mult[3][oct], 0)
+        # This is necessary because the algorithm doesn't recognise the
+        # starting square as being in the FOV.
+        self.set_lit(x, y)
         
