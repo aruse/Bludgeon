@@ -1,4 +1,4 @@
-"""AI routines.  Can be assigned to Monster objects to tell them how to behave."""
+# AI routines.  Can be assigned to Monster objects to tell them how to behave.
 
 from const import *
 from game import *
@@ -20,18 +20,23 @@ class StupidAI:
 
 
 class ConfusedAI:
-    """AI for a temporarily confused monster (reverts to previous AI after a while)."""
+    """AI for a temporarily confused monster (reverts to previous AI
+    after a while).
+    """
     def __init__(self, old_ai, num_turns=CONFUSE_NUM_TURNS):
         self.old_ai = old_ai
         self.num_turns = num_turns
  
     def take_turn(self):
-        if self.num_turns > 0:  #still confused...
-            # move in a random direction, and decrease the number of turns confused
+        if self.num_turns > 0:
+            # Move in a random direction, and decrease the number of
+            # turns confused
             self.owner.move_randomly()
             self.num_turns -= 1
  
-        else:  #restore the previous AI (this one will be deleted because it's not referenced anymore)
+        else:
+            # Restore the previous AI
             self.owner.ai = self.old_ai
-            message('The ' + self.owner.name + ' is no longer confused!', GV.red)
+            message('The ' + self.owner.name + ' is no longer confused!',
+                    GV.red)
  

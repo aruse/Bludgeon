@@ -47,7 +47,8 @@ def init_gv():
     move_surface_locations()
 
     # Locations to blit equipment on the equipment panel
-    eq_cent = (int(GV.eq_rect.w / 2.0 - TILE_W / 2), int(GV.eq_rect.h / 2.0 - TILE_W / 2))
+    eq_cent = (int(GV.eq_rect.w / 2.0 - TILE_W / 2),
+               int(GV.eq_rect.h / 2.0 - TILE_W / 2))
     GV.eq_hands = (eq_cent[0], eq_cent[1])
     GV.eq_hands = (eq_cent[0], GV.eq_rect.y + TILE_H / 2 + 3 * TILE_H)
     GV.eq_rweap = (GV.eq_hands[0] - TILE_W, GV.eq_hands[1])
@@ -114,7 +115,8 @@ class GC:
     menu = None
     menu_options = []
 
-    # When state is 'targeting', set this to the function to call with the x, y coords targetted
+    # When state is 'targeting', set this to the function to call with
+    # default_fontthe x, y coords targetted
     targeting_function = []
     targeting_item = None
     

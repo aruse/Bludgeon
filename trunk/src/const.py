@@ -98,3 +98,9 @@ ST_PLAYBACK = 5
 
 # Transparency of tooltip popups, 0-255
 TOOLTIP_ALPHA = 190
+
+# Text
+USE_HEADER = ('Press the key next to an item to use it, '
+              'or any other to cancel.')
+DELETE_HEADER = ('Press the key next to an item to use it, '
+                 'or any other to cancel.')

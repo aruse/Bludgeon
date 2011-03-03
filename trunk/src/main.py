@@ -158,7 +158,8 @@ def monsters_take_turn():
             m.ai.take_turn()
         
 def handle_actions():
-    # If an action has already been taken this clock cycle, don't do another one.
+    # If an action has already been taken this clock cycle, don't do
+    # another one.
     if GC.action_handled and GC.state != ST_PLAYBACK:
         return
 
@@ -216,12 +217,11 @@ def handle_actions():
                     message('Nothing to pick up!')
 
             elif char == 'i':
-                inventory_menu('Press the key next to an item to use it, or any other to cancel.  blah blah blah really long text that needs to wordwrap blah blah this computer cat keyboard monitor mouse dog book water bottle etc lamp ceiling wall floor sheet window etc dungeon stuff stuff stuff.')
-#                inventory_menu('Press the key next to an item to use it, or any other to cancel.')
+                inventory_menu(USE_HEADER)
                 GC.menu = 'use'
 
             elif char == 'd':
-                inventory_menu('Press the key next to an item to drop it, or any other to cancel.')
+                inventory_menu(DELETE_HEADER)
                 GC.menu = 'drop'
 
             else:
@@ -240,7 +240,9 @@ def handle_actions():
                             item = GC.u.inventory[index]
                             if item is not None:
                                 if GC.u.use(item) == 'success':
-                                    GC.cmd_history.append(('u', item.oid, None, None))
+                                    GC.cmd_history.append(('u',
+                                                           item.oid,
+                                                           None, None))
                                     u_took_turn = True
                                 else:
                                     u_took_turn = False
@@ -262,12 +264,14 @@ def handle_actions():
             x, y = pygame.mouse.get_pos()
             x, y = mouse_coords_to_map_coords(x, y)
 
-            # Accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
+            # Accept the target if the player clicked in FOV, and in
+            # case a range is specified, if it's in that range
             if GC.button == BUTTON_L and GC.u.fov_map.lit(x, y):
                 targeting_function = GC.targeting_function.pop(0)
                 success = targeting_function(GC.targeting_item, x, y)
 
-                # If this targeting is the result of an item use, destroy the item
+                # If this targeting is the result of an item use,
+                # destroy the item
                 if GC.targeting_item and success:
                     GC.cmd_history.append(('u', GC.targeting_item.oid, x, y))
                     GC.u.inventory.remove(GC.targeting_item)
@@ -298,7 +302,8 @@ def controller_tick(reel=False):
     """Handle all of the controller actions in the game loop."""
 
     if GC.state == ST_PLAYBACK:
-        # Don't call clock.tick() in playback mode in order to make it as fast as possible.
+        # Don't call clock.tick() in playback mode in order to make it
+        # as fast as possible.
         handle_actions()
     else:
         GC.clock.tick(FRAME_RATE)
@@ -325,7 +330,8 @@ def controller_tick(reel=False):
 
 
 def main():
-    # Initializing these modules separately instead of calling pygame.init() is WAY faster.
+    # Initializing these modules separately instead of calling
+    # pygame.init() is WAY faster.
     pygame.display.init()
     pygame.font.init()
     pygame.display.set_caption('{0} {1}'.format(GAME_NAME, VERSION))
@@ -341,7 +347,8 @@ def main():
     urace = 'Human'
     urole = 'Wizard'
     
-    pygame.display.set_caption('{0} - {1} the {2} {3} {4}'.format(GAME_TITLE, uname, usex, urace, urole))
+    pygame.display.set_caption('{0} - {1} the {2} {3} {4}'.format(
+            GAME_TITLE, uname, usex, urace, urole))
 
     
     # Prepare game objects
@@ -349,11 +356,13 @@ def main():
 
        
     init_gv()
-    GV.screen = pygame.display.set_mode((GV.screen_rect.w, GV.screen_rect.h), pygame.RESIZABLE)
+    GV.screen = pygame.display.set_mode(
+        (GV.screen_rect.w, GV.screen_rect.h), pygame.RESIZABLE)
 
     GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
     GV.eq_surf = pygame.Surface((GV.eq_rect.w, GV.eq_rect.h)).convert()
-    GV.status_surf = pygame.Surface((GV.status_rect.w, GV.status_rect.h)).convert()
+    GV.status_surf = pygame.Surface(
+        (GV.status_rect.w, GV.status_rect.h)).convert()
     GV.map_surf = pygame.Surface((GV.map_rect.w, GV.map_rect.h)).convert()
 
     # Set the system icon
@@ -389,8 +398,6 @@ def main():
     
 
     message('Welcome, {0}!'.format(uname), GV.gold)
-    message("This is a really really really long line designed to test word-wrapping.  Blah blah blah really long text that needs to wordwrap blah blah this computer cat keyboard monitor mouse dog book water bottle etc lamp ceiling wall floor sheet window etc dungeon stuff stuff stuff.".format(uname), GV.gold)
-
 
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)

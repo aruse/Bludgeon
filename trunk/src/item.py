@@ -18,12 +18,14 @@ from spell import *
 class Item(Object):
     """Anything that can be picked up."""
     
-    def __init__(self, x, y, name, oid=None, use_function=None, prev_monster=None):
+    def __init__(self, x, y, name, oid=None, use_function=None,
+                 prev_monster=None):
         Object.__init__(self, x, y, name, oid=oid)
         self.blocks_sight = False
         self.blocks_movement = False
 
-        # For items which were previously a monster.  Used for resurrection, de-stoning, etc.
+        # For items which were previously a monster.  Used for
+        # resurrection, de-stoning, etc.
         self.prev_monster = prev_monster
 
         if self.name == 'healing potion':

@@ -47,7 +47,8 @@ def load_sound(name):
 def create_tile_dict():
     tile_dict = {}
 
-    # Read in tile mapping document, line-by-line, and build a dictionary pointing to coordinates of the graphic
+    # Read in tile mapping document, line-by-line, and build a
+    # dictionary pointing to coordinates of the graphic
     map = open('data/tiles.map')
 
     for line in map:

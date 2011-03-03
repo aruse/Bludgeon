@@ -19,37 +19,43 @@ def cast_heal(item, x=None, y=None):
     return 'success'
     
 def closest_monster(max_range):
-    # find closest enemy, up to a maximum range, and in the player's FOV
+    # Find closest enemy, up to a maximum range and in the player's FOV
     closest_enemy = None
-    closest_dist = max_range + 1  #start with (slightly more than) maximum range
+    # Start just out of max range
+    closest_dist = max_range + 1
 
     for m in GC.monsters:
         if m != GC.u and GC.u.fov_map.lit(m.x, m.y):
-            # calculate distance between this object and the player
             dist = GC.u.distance_to(m)
-            if dist < closest_dist:  #it's closer, so remember it
+            if dist < closest_dist:
                 closest_enemy = m
                 closest_dist = dist
+
     return closest_enemy
                                                         
     
 def cast_lightning(item, x=None, y=None):
-    #find closest enemy (inside a maximum range) and damage it
     target = closest_monster(5)
-    if target is None:  #no enemy found within maximum range
+
+    if target is None:
         target = GC.u
-        message('A lightning bolt arcs out from you and then returns to strike you in the head!', GV.light_blue)
+        message('A lightning bolt arcs out from you and then returns to '
+                'strike you in the head!', GV.light_blue)
     else:
-        message('A lighting bolt strikes the ' + target.name + ' with a loud thunder!', GV.light_blue)
+        message('A lighting bolt strikes the ' + target.name
+                + ' with a loud thunder!', GV.light_blue)
         
     target.take_damage(LIGHTNING_DAMAGE)
     return 'success'
 
     
 def cast_fireball(item, x=None, y=None):
-    """Begin the casting of a fireball spell.  Ask the player to target a cell."""
+    """Begin the casting of a fireball spell.  Ask the player to
+    target a cell.
+    """
     if x == None and y == None:
-        message('Left-click a target for the fireball, or right-click to cancel.', GV.light_cyan)
+        message('Left-click a target for the fireball, or right-click to '
+                'cancel.', GV.light_cyan)
         GC.state = ST_TARGETING
         GC.targeting_function.append(finish_fireball)
         GC.targeting_item = item
@@ -64,18 +70,21 @@ def finish_fireball(item, x=None, y=None):
     """
     if x is None:
         return False
-    message('The fireball explodes, burning everything within ' + str(FIREBALL_RADIUS) + ' spaces!', GV.orange)
+    message('The fireball explodes, burning everything within '
+            + str(FIREBALL_RADIUS) + ' spaces!', GV.orange)
  
-    for m in GC.monsters + [GC.u]:  #damage every fighter in range, including the GC.u
+    for m in GC.monsters + [GC.u]:
         if m.distance(x, y) <= FIREBALL_RADIUS:
-            message('The ' + m.name + ' gets burned for ' + str(FIREBALL_DAMAGE) + ' hit points.', GV.orange)
+            message('The ' + m.name + ' gets burned for '
+                    + str(FIREBALL_DAMAGE) + ' hit points.', GV.orange)
             m.take_damage(FIREBALL_DAMAGE)
 
     return True
  
 def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
-        message('Left-click an enemy to confuse it, or right-click to cancel.', GV.light_cyan)
+        message('Left-click an enemy to confuse it, or right-click to '
+                'cancel.', GV.light_cyan)
         GC.state = ST_TARGETING
         GC.targeting_function.append(finish_confuse)
         GC.targeting_item = item
@@ -95,9 +104,10 @@ def finish_confuse(item, x, y):
     if target is None:
         return False
  
-    # replace the monster's AI with a "confused" one; after some turns it will restore the old AI
+    # Replace the monster's AI with a confused one
     old_ai = target.ai
     target.ai = ConfusedAI(old_ai)
     target.ai.owner = target  #tell the new component who owns it
-    message('The eyes of the ' + target.name + ' look vacant, as he starts to stumble around!', GV.light_green)
+    message('The eyes of the ' + target.name
+            + ' look vacant, as he starts to stumble around!', GV.light_green)
     return True

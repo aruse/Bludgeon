@@ -26,7 +26,8 @@ class Cell:
     def set_tile(self, name):
         self.name = name
         
-        # FIXME: this is just dummy code.  Need a real database of tiles to load from.
+        # FIXME: this is just dummy code.
+        # Need a real database of tiles to load from.
         if re.findall('wall', name):
             self.blocks_movement = True
             self.block_sight = True

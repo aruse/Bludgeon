@@ -12,7 +12,9 @@ from fov import *
 from ai import *
 
 class Object:
-    """Generic object.  Can be sub-classed into players, monsters, items, etc."""
+    """Generic object.  Can be sub-classed into players, monsters,
+    items, etc.
+    """
     def __init__(self, x, y, name, oid=None):
         if oid:
             self.oid = oid
@@ -81,7 +83,8 @@ class Object:
 
         if self.can_move_dir(x, y):
             self.move(x, y)
-        # If we can't move in the direction we want to, then try to move vertically or horizontally
+        # If we can't move in the direction we want to, then try to
+        # move vertically or horizontally
         else:
             if self.can_move_dir(x, 0):
                 self.move(x, 0)
@@ -100,11 +103,13 @@ class Object:
 
     def draw(self):
         """Draw this Object on the map at the current location."""
-        GV.map_surf.blit(GV.tiles_img, (self.x * TILE_W, self.y * TILE_H), self.tile)
+        GV.map_surf.blit(GV.tiles_img, (self.x * TILE_W, self.y * TILE_H),
+                         self.tile)
  
     def draw_gray(self):
         """Draw this Object on the map at the current location, grayed out."""
-        GV.map_surf.blit(GV.gray_tiles_img, (self.x * TILE_W, self.y * TILE_H), self.tile)
+        GV.map_surf.blit(GV.gray_tiles_img, (self.x * TILE_W, self.y * TILE_H),
+                         self.tile)
 
     def can_move_dir(self, x, y=None):
         """Can the character move in this direction?"""

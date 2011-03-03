@@ -1,6 +1,5 @@
-"""Routines for calculating field of view (FOV).
-Based on Bjorn Bergstrom's recursive shadowcasting algorithm
-(http://roguebasin.roguelikedevelopment.org/index.php?title=FOV_using_recursive_shadowcasting)"""
+# Routines for calculating field of view (FOV).
+# Based on Bjorn Bergstrom's recursive shadowcasting algorithm
 
 class FOVMap(object):
     # Multipliers for transforming coordinates to other octants:
@@ -49,7 +48,8 @@ class FOVMap(object):
                 X, Y = cx + dx * xx + dy * xy, cy + dx * yx + dy * yy
                 # l_slope and r_slope store the slopes of the left and right
                 # Extremities of the square we're considering:
-                l_slope, r_slope = (dx - 0.5) / (dy + 0.5), (dx + 0.5) / (dy - 0.5)
+                l_slope = (dx - 0.5) / (dy + 0.5)
+                r_slope = (dx + 0.5) / (dy - 0.5)
                 if start < r_slope:
                     continue
                 elif end > l_slope:

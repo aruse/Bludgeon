@@ -21,7 +21,10 @@ def die_leave_corpse(monster):
     GC.items.append(corpse)
     
 class Monster(Object):
-    """Anything that moves and acts under its own power.  Players and NPCs count as monsters.  Pretty much any Object that's not an Item."""
+    """Anything that moves and acts under its own power.  Players and
+    NPCs count as monsters.  Pretty much any Object that's not an
+    Item.
+    """
     
     def __init__(self, x, y, name, oid=None, ai=None):
         Object.__init__(self, x, y, name, oid=oid)
@@ -81,11 +84,12 @@ class Monster(Object):
         damage = self.atk_power - target.defense
  
         if damage > 0:
-            message(self.name.capitalize() + ' attacks ' + target.name +
-                    ' for ' + str(damage) + ' hit points.')
+            message(self.name.capitalize() + ' attacks ' + target.name
+                    + ' for ' + str(damage) + ' hit points.')
             target.take_damage(damage)
         else:
-            message(self.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!')
+            message(self.name.capitalize() + ' attacks ' + target.name
+                    + ' but it has no effect!')
  
     def take_damage(self, damage):
         if damage > 0:
@@ -114,7 +118,8 @@ class Monster(Object):
         else:
             use_result = item.use_function(item)
             if use_result != 'cancelled' and use_result != 'targeting':
-                self.inventory.remove(item)  #destroy after use, unless it was cancelled for some reason
+                # Destroy after use, but only if it was actually used.
+                self.inventory.remove(item)
             return use_result
 
     def drop(self, item):
@@ -151,7 +156,9 @@ class Player(Monster):
         Monster.drop(self, item)
 
     def try_move(self, dx, dy=None):
-        """Try to move dx and dy spaces.  If there's a monster in the way, attack instead."""
+        """Try to move dx and dy spaces.  If there's a monster in the
+        way, attack instead.
+        """
         if type(dx) == type(tuple()):
             dx, dy = dx[0], dx[1]
 
