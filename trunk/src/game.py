@@ -101,7 +101,7 @@ class GC:
     fov_recompute = True
 
     # State of the game.
-    state = STATE_PLAYING
+    state = ST_PLAYING
 
     menu = None
     menu_options = []

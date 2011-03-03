@@ -18,19 +18,19 @@ def menu(header, options, width):
     if len(options) > 26:
         raise ValueError('Cannot have a menu with more than 26 options.')
  
-    #calculate total height for the header (after auto-wrap) and one line per option
-#    header_height = libtcod.console_height_left_rect(con, 0, 0, width, SCREEN_HEIGHT, header)
-    # FIXME: wordwrap the header
-    header_height = 1
+    # Create the header, with wordwrap
+    text_img = wordwrap_img(header, width * GV.font_w, True, GV.default_font_color, justify='left')
+
+    header_height = text_img.get_height() / GV.font_h
     height = len(options) + header_height
- 
-    #create an off-screen console that represents the menu's window
+
+    # Create an off-screen console that represents the menu's window
     GV.window_surf = pygame.Surface((width * GV.font_w, height * GV.font_h)).convert()
- 
-    # print the header, with auto-wrap
-    write_text(GV.window_surf, header, 0, justify='left')
- 
-    #print all the options
+
+    # Blit the header
+    GV.window_surf.blit(text_img, (0, 0))
+
+    # Blit all the options
     y = header_height
     letter_index = ord('a')
     for option in options:
@@ -43,7 +43,7 @@ def menu(header, options, width):
     GV.window_y = GV.screen_h / 2 - (height * GV.font_h) / 2
 
     GC.menu_options = options
-    GC.state = STATE_MENU
+    GC.state = ST_MENU
  
 def inventory_menu(header):
     inv = GC.u.inventory
@@ -77,7 +77,7 @@ def tile_under_mouse():
         return None
 
 
-def wordwrap(text, w, antialias, color):
+def wordwrap_img(text, w, antialias, color, justify='left'):
     """Return a surface with the rendered text on it, wordwrapped to fit the given pixel width."""
 
     lines = []
@@ -103,11 +103,21 @@ def wordwrap(text, w, antialias, color):
         rendered_lines.append(text_img)
         total_h += text_img.get_height()
 
-    final_surf = pygame.Surface((w, total_h)).convert()
-    final_surf.fill(GV.text_bg_color)
+    # This surface needs to have a transparent background
+    # like all of the surfaces in rendered_lines.
+    final_surf = pygame.Surface((w, total_h), SRCALPHA,
+                                rendered_lines[0]).convert_alpha()
+
     y = 0
     for line in rendered_lines:
-        final_surf.blit(line, (0, y))
+        if justify == 'left':
+            x = 0
+        elif justify == 'right':
+            x = w - line.get_width()
+        else: # justify == 'center'
+            x = w / 2 - line.get_width() / 2
+
+        final_surf.blit(line, (x, y))
         y += line.get_height()
 
     return final_surf
@@ -146,7 +156,7 @@ def update_eq_surf():
 
 
     
-def write_text(surf, text, line_num, justify='center', column=None, color=GV.default_font_color, antialias=True):
+def write_text(surf, text, line_num, justify='left', column=None, color=GV.default_font_color, antialias=True):
     """Output text to the surface.
     Column can be one of (None, 0, 1, 2, 3)"""
     rect = surf.get_rect()
@@ -190,70 +200,80 @@ def update_status_surf():
     surf = GV.status_surf
     rect = surf.get_rect()
     surf.fill(GV.text_bg_color)
+    y = 0.5
     
-    write_text(surf, 'Andy the Human Male Apprentice (Chaotic)', 0.5, justify='center')
+    write_text(surf, 'Taimor the Human Male Apprentice (Chaotic)', 0.5, justify='center')
+    y += 1
     write_text(surf, 'Dungeons of Doom, Level 1', 1.5, justify='center')
-
-    write_text(surf, 'HP', 3, justify='left', column=0)
+    y += 1.5
+    write_text(surf, 'HP', y, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 3 * GV.font_h, rect.width *.75 - GV.font_w,
+             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
              GC.u.hp, GC.u.max_hp, GV.hp_bar_color, GV.hp_bar_bg_color)
-    write_text(surf, str(GC.u.hp) + ' / ' + str(GC.u.max_hp), 3, justify='center', column=2)
-    
-    write_text(surf, 'MP', 4, justify='left', column=0)
+    write_text(surf, str(GC.u.hp) + ' / ' + str(GC.u.max_hp), y, justify='center', column=2)
+    y += 1
+    write_text(surf, 'MP', y, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 4 * GV.font_h, rect.width *.75 - GV.font_w,
+             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
              GC.u.mp, GC.u.max_mp, GV.mp_bar_color, GV.mp_bar_bg_color)
-    write_text(surf, str(GC.u.mp) + ' / ' + str(GC.u.max_mp), 4, justify='center', column=2)
-
-    write_text(surf, 'XP', 5, justify='left', column=0)
+    write_text(surf, str(GC.u.mp) + ' / ' + str(GC.u.max_mp), y, justify='center', column=2)
+    y += 1
+    write_text(surf, 'XP', y, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 5 * GV.font_h, rect.width *.75 - GV.font_w,
+             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
              GC.u.xp, GC.u.xp_next_level, GV.xp_bar_color, GV.xp_bar_bg_color)
-    write_text(surf, str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), 5, justify='center', column=2)
-
-    write_text(surf, 'Weight', 6, justify='left', column=0)
+    write_text(surf, str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), y, justify='center', column=2)
+    y += 1
+    write_text(surf, 'Weight', y, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 6 * GV.font_h, rect.width *.75 - GV.font_w,
+             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
              GC.u.weight, GC.u.burdened, GV.gray, GV.darker_gray)
-    write_text(surf, str(GC.u.weight) + ' / ' + str(GC.u.burdened), 6, justify='center', column=2)
-
-    write_text(surf, 'Hunger', 7, justify='left', column=0)
+    write_text(surf, str(GC.u.weight) + ' / ' + str(GC.u.burdened), y, justify='center', column=2)
+    y += 1
+    write_text(surf, 'Hunger', y, justify='left', column=0)
     render_bar(surf, rect.width / 4,
-             rect.top + 7 * GV.font_h, rect.width *.75 - GV.font_w,
+             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
              GC.u.hunger, GC.u.max_hunger, GV.gray, GV.darker_gray)
-    write_text(surf, str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), 7, justify='center', column=2)
-    
-    write_text(surf, 'Str', 8, justify='right', column=0)
-    write_text(surf, 'Con', 9, justify='right', column=0)
-    write_text(surf, 'Dex', 10, justify='right', column=0)
-    write_text(surf, 'Int', 11, justify='right', column=0)
-    write_text(surf, 'Wis', 12, justify='right', column=0)
-    write_text(surf, 'Cha', 13, justify='right', column=0)
-    write_text(surf, str(18), 8, justify='left', column=1)
-    write_text(surf, str(18), 9, justify='left', column=1)
-    write_text(surf, str(18), 10, justify='left', column=1)
-    write_text(surf, str(18), 11, justify='left', column=1)
-    write_text(surf, str(18), 12, justify='left', column=1)
-    write_text(surf, str(18), 13, justify='left', column=1)
+    write_text(surf, str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), y, justify='center', column=2)
+    y += 1
+    write_text(surf, 'Str', y, justify='right', column=0)
+    write_text(surf, str(18), y, justify='left', column=1)
+    write_text(surf, 'AC', y, justify='right', column=2)
+    write_text(surf, str(18), y, justify='left', column=3)
+    y += 1    
+    write_text(surf, 'Con', y, justify='right', column=0)
+    write_text(surf, str(18), y, justify='left', column=1)
+    write_text(surf, 'Gold', y, justify='right', column=2)
+    write_text(surf, str(18), y, justify='left', column=3)
+    y += 1    
+    write_text(surf, 'Dex', y, justify='right', column=0)
+    write_text(surf, str(18), y, justify='left', column=1)
+    write_text(surf, 'Level', y, justify='right', column=2)
+    write_text(surf, str(18), y, justify='left', column=3)
+    y += 1    
+    write_text(surf, 'Int', y, justify='right', column=0)
+    write_text(surf, str(18), y, justify='left', column=1)
+    write_text(surf, 'Time', y, justify='right', column=2)
+    write_text(surf, str(18), y, justify='left', column=3)
+    y += 1    
+    write_text(surf, 'Wis', y, justify='right', column=0)
+    write_text(surf, str(18), y, justify='left', column=1)
+    write_text(surf, 'Score', y, justify='right', column=2)
+    write_text(surf, str(18), y, justify='left', column=3)
+    y += 1    
+    write_text(surf, 'Cha', y, justify='right', column=0)
+    write_text(surf, str(18), y, justify='left', column=1)
+    write_text(surf, 'Weap Skill', y, justify='right', column=2)
+    write_text(surf, str(18), y, justify='left', column=3)
 
-    write_text(surf, 'AC', 8, justify='right', column=2)
-    write_text(surf, 'Gold', 9, justify='right', column=2)
-    write_text(surf, 'Level', 10, justify='right', column=2)
-    write_text(surf, 'Time', 11, justify='right', column=2)
-    write_text(surf, 'Score', 12, justify='right', column=2)
-    write_text(surf, 'Weap Skill', 13, justify='right', column=2)
-    write_text(surf, str(18), 8, justify='left', column=3)
-    write_text(surf, str(18), 9, justify='left', column=3)
-    write_text(surf, str(18), 10, justify='left', column=3)
-    write_text(surf, str(18), 11, justify='left', column=3)
-    write_text(surf, str(18), 12, justify='left', column=3)
-    write_text(surf, str(18), 13, justify='left', column=3)
-
-    write_text(surf, 'Weapon Damage 3d8 + ' + str(6), 14, justify='left')
-    write_text(surf, 'Weapon Range ' + str(5), 15, justify='left')
-    write_text(surf, 'Hungry Burdened Afraid', 16, justify='left')
-    write_text(surf, 'Hallucinating Sick Invisible', 17, justify='left')
+    y += 1    
+    write_text(surf, 'Weapon Damage 3d8 + ' + str(6), y, justify='left')
+    y += 1    
+    write_text(surf, 'Weapon Range ' + str(5), y, justify='left')
+    y += 1    
+    write_text(surf, 'Hungry Burdened Afraid', y, justify='left')
+    y += 1    
+    write_text(surf, 'Hallucinating Sick Invisible', y, justify='left')
 
 
 def update_text_surf():
@@ -262,7 +282,7 @@ def update_text_surf():
 
     y = GV.text_h
     for (line, color) in reversed(GC.msgs):
-        text_img = wordwrap(line, GV.text_w, True, color)
+        text_img = wordwrap_img(line, GV.text_w - GV.font_w, True, color, justify='left')
         textpos = text_img.get_rect()
         y -= textpos.height
 
@@ -331,7 +351,7 @@ def view_tick():
     GV.screen.blit(GV.status_surf, (GV.status_x, GV.status_y))
     GV.screen.blit(GV.text_surf, (GV.text_x, GV.text_y))
 
-    if GC.state == STATE_MENU:
+    if GC.state == ST_MENU:
         GV.screen.blit(GV.window_surf, (GV.window_x, GV.window_y))
     else:
         render_tooltips()
