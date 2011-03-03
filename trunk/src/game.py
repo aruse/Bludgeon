@@ -3,6 +3,16 @@ from pygame.locals import *
 
 from const import *
 
+def move_surface_locations():
+    """Set the x,y coords for each of the game's surfaces."""
+    GV.map_rect.x, GV.map_rect.y = 0, GV.log_rect.h
+    GV.mapview_rect.x, GV.mapview_rect.y = 0, GV.log_rect.h
+    GV.log_rect.x, GV.log_rect.y = 0, 0
+    GV.eq_rect.x, GV.eq_rect.y = GV.log_rect.w, 0
+    GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
+
+
+
 def init_gv():
     GV.font = pygame.font.SysFont('Arial', FONT_SIZE)
     GV.font_h = GV.font.get_height()
@@ -35,11 +45,7 @@ def init_gv():
     GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h
 
     # Locations to blit the various surfaces
-    GV.map_rect.x, GV.map_rect.y = 0, GV.log_rect.h
-    GV.mapview_rect.x, GV.mapview_rect.y = 0, GV.log_rect.h
-    GV.log_rect.x, GV.log_rect.y = 0, 0
-    GV.eq_rect.x, GV.eq_rect.y = GV.log_rect.w, 0
-    GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
+    move_surface_locations()
 
     # Locations to blit equipment on the equipment panel
     eq_cent = (int(GV.eq_rect.w / 2.0 - TILE_W / 2), int(GV.eq_rect.h / 2.0 - TILE_W / 2))

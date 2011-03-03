@@ -60,9 +60,9 @@ def create_tile_dict():
 
 def convert_to_grayscale(surf):
     gray = pygame.Surface(surf.get_size(), 0, 8)
-    width, height = surf.get_size()
-    for x in range(width):
-        for y in range(height):
+    w, h = surf.get_size()
+    for x in range(w):
+        for y in range(h):
             red, green, blue, alpha = surf.get_at((x, y))
             average = (red + green + blue) // 3
             gs_color = (average, average, average, alpha)

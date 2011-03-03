@@ -6,7 +6,17 @@ from game import *
 from util import *
 
 # FIXME: temporary
-INVENTORY_WIDTH = 50
+INVENTORY_W = 50
+
+
+def resize_window():
+    """Set the rect dimensions for the window surface."""
+    GV.window_rect.x = GV.screen_rect.w / 2 - (GV.window_rect.w * GV.font_w) / 2
+    GV.window_rect.y = GV.screen_rect.h / 2 - (GV.window_rect.h * GV.font_h) / 2
+    if GV.window_rect.x < 0:
+        GV.window_rect.x = 0
+    if GV.window_rect.y < 0:
+        GV.window_rect.y = 0
 
 
 def mouse_coords_to_map_coords(x, y):
@@ -28,15 +38,15 @@ def draw_box(x, y, color=GV.white):
     pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_W, y * TILE_H, TILE_W, TILE_H), 1)
 
 
-def menu(header, options, width):
+def menu(header, options, w):
     # Create the header, with wordwrap
-    text_img = wordwrap_img(header, width * GV.font_w, True, GV.default_font_color, justify='left')
+    text_img = wordwrap_img(header, w * GV.font_w, True, GV.default_font_color, justify='left')
 
-    header_height = text_img.get_height() / GV.font_h
-    height = len(options) + header_height
+    header_h = text_img.get_height() / GV.font_h
+    h = len(options) + header_h
 
     # Create an off-screen console that represents the menu's window
-    GV.window_surf = pygame.Surface((width * GV.font_w, height * GV.font_h),
+    GV.window_surf = pygame.Surface((w * GV.font_w, h * GV.font_h),
                                     ).convert()
     GV.window_surf.fill(GV.black)
     
@@ -44,7 +54,7 @@ def menu(header, options, width):
     GV.window_surf.blit(text_img, (0, 0))
 
     # Blit all the options
-    y = header_height
+    y = header_h
     letter_index = ord('a')
     for option in options:
         text = '(' + chr(letter_index) + ') ' + option
@@ -52,8 +62,8 @@ def menu(header, options, width):
         y += 1
         letter_index += 1
  
-    GV.window_rect.x = GV.screen_rect.w / 2 - (width * GV.font_w) / 2
-    GV.window_rect.y = GV.screen_rect.h / 2 - (height * GV.font_h) / 2
+    GV.window_rect.w, GV.window_rect.h = w, h
+    resize_window()
 
     GC.menu_options = options
     GC.state = ST_MENU
@@ -66,7 +76,7 @@ def inventory_menu(header):
     else:
         options = [i.name for i in inv]
  
-    menu(header, options, INVENTORY_WIDTH)
+    menu(header, options, INVENTORY_W)
  
     
 def tile_under_mouse():
@@ -222,16 +232,16 @@ def write_text(surf, text, line_num, justify='left', column=None, color=GV.defau
     Column can be one of (None, 0, 1, 2, 3)"""
     rect = surf.get_rect()
 
-    col_width = rect.width / 4
+    col_w = rect.w / 4
     
     if column is None:
         # Leave a space of one character on the left and right of the surface
         left_border = rect.left + GV.font_w
         right_border = rect.right - GV.font_w
-        center = rect.width / 2
+        center = rect.w / 2
     else:
-        left_border = rect.left + column * col_width + GV.font_w
-        right_border = rect.right - ((3 - column) * col_width) - GV.font_w
+        left_border = rect.left + column * col_w + GV.font_w
+        right_border = rect.right - ((3 - column) * col_w) - GV.font_w
         center = (left_border + right_border) / 2
     
     text_img = GV.font.render(text, antialias, color)
@@ -268,32 +278,32 @@ def update_status_surf():
     write_text(surf, 'Dungeons of Doom, Level 1', 1.5, justify='center')
     y += 1.5
     write_text(surf, 'HP', y, justify='left', column=0)
-    render_bar(surf, rect.width / 4,
-             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
+    render_bar(surf, rect.w / 4,
+             rect.top + y * GV.font_h, rect.w * .75 - GV.font_w,
              GC.u.hp, GC.u.max_hp, GV.hp_bar_color, GV.hp_bar_bg_color)
     write_text(surf, str(GC.u.hp) + ' / ' + str(GC.u.max_hp), y, justify='center', column=2)
     y += 1
     write_text(surf, 'MP', y, justify='left', column=0)
-    render_bar(surf, rect.width / 4,
-             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
+    render_bar(surf, rect.w / 4,
+             rect.top + y * GV.font_h, rect.w * .75 - GV.font_w,
              GC.u.mp, GC.u.max_mp, GV.mp_bar_color, GV.mp_bar_bg_color)
     write_text(surf, str(GC.u.mp) + ' / ' + str(GC.u.max_mp), y, justify='center', column=2)
     y += 1
     write_text(surf, 'XP', y, justify='left', column=0)
-    render_bar(surf, rect.width / 4,
-             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
+    render_bar(surf, rect.w / 4,
+             rect.top + y * GV.font_h, rect.w * .75 - GV.font_w,
              GC.u.xp, GC.u.xp_next_level, GV.xp_bar_color, GV.xp_bar_bg_color)
     write_text(surf, str(GC.u.xp) + ' / ' + str(GC.u.xp_next_level), y, justify='center', column=2)
     y += 1
     write_text(surf, 'Weight', y, justify='left', column=0)
-    render_bar(surf, rect.width / 4,
-             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
+    render_bar(surf, rect.w / 4,
+             rect.top + y * GV.font_h, rect.w * .75 - GV.font_w,
              GC.u.weight, GC.u.burdened, GV.gray, GV.darker_gray)
     write_text(surf, str(GC.u.weight) + ' / ' + str(GC.u.burdened), y, justify='center', column=2)
     y += 1
     write_text(surf, 'Hunger', y, justify='left', column=0)
-    render_bar(surf, rect.width / 4,
-             rect.top + y * GV.font_h, rect.width * .75 - GV.font_w,
+    render_bar(surf, rect.w / 4,
+             rect.top + y * GV.font_h, rect.w * .75 - GV.font_w,
              GC.u.hunger, GC.u.max_hunger, GV.gray, GV.darker_gray)
     write_text(surf, str(GC.u.hunger) + ' / ' + str(GC.u.max_hunger), y, justify='center', column=2)
     y += 1
@@ -345,7 +355,7 @@ def update_log_surf():
     for (line, color) in reversed(GC.msgs):
         text_img = wordwrap_img(line, GV.log_rect.w - GV.font_w, True, color, justify='left')
         textpos = text_img.get_rect()
-        y -= textpos.height
+        y -= textpos.h
 
         # y needs to be able to go negative in order to properly render 
         # multi-line text at the top of the surface.  However, there's no 

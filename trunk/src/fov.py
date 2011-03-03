@@ -12,10 +12,10 @@ class FOVMap(object):
             ]
     def __init__(self, map):
         self.data = map
-        self.width, self.height = len(map), len(map[0])
+        self.w, self.h = len(map), len(map[0])
         self.light = []
-        for i in range(self.width):
-            self.light.append([0] * self.height)
+        for i in range(self.w):
+            self.light.append([0] * self.h)
         self.flag = 1
 
     def square(self, x, y):
@@ -23,14 +23,14 @@ class FOVMap(object):
 
     def blocked(self, x, y):
         return (x < 0 or y < 0
-                or x >= self.width or y >= self.height
+                or x >= self.w or y >= self.h
                 or self.data[x][y].block_sight)
 
     def lit(self, x, y):
         return self.light[x][y] == self.flag
 
     def set_lit(self, x, y):
-        if 0 <= x < self.width and 0 <= y < self.height:
+        if 0 <= x < self.w and 0 <= y < self.h:
             self.light[x][y] = self.flag
 
     def _cast_light(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):

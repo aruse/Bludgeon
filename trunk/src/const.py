@@ -34,6 +34,11 @@ TILE_W, TILE_H = 16, 16
 EQ_W, EQ_H = 7, STATUS_H
 MAP_W, MAP_H = 120, 50
 
+# Minimum width of the log surface, in pixels
+MIN_LOG_W = 200
+# Minimum height of the mapview, in pixels
+MIN_MAPVIEW_H = 150
+
 
 GAME_TITLE = GAME_NAME + ' ' + VERSION
 
