@@ -13,6 +13,5 @@ class Room:
  
     def intersect(self, room):
         """Returns whether or not this room intersects another one."""
-        return (self.x1 <= room.x2 and self.x2 >= room.x1 and
-                self.y1 <= room.y2 and self.y2 >= room.y1)
- 
+        return (self.x1 <= room.x2 and self.x2 >= room.x1
+                and self.y1 <= room.y2 and self.y2 >= room.y1)

@@ -173,11 +173,11 @@ def gen_perfect_maze(w, h):
     # knocking down walls as you go.  If you've been to a wall
     # previously, backtrack.
     cur_cell = [random.randrange(w - 1), random.randrange(h - 1)]
-    if(map[cur_cell[0]][cur_cell[1]].cell_class == 'wall'):
+    if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
         cur_cell[0] += 1
-    if(map[cur_cell[0]][cur_cell[1]].cell_class == 'wall'):
+    if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
         cur_cell[1] += 1
-    if(map[cur_cell[0]][cur_cell[1]].cell_class == 'wall'):
+    if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
         cur_cell[0] -= 1
 
     visited_cells = 1
@@ -352,12 +352,12 @@ def update_wall_tiles(map):
                         wall_tile = 'cmap, wall, vertical'
                         if (x > 0 and map[x - 1][y].cell_class == 'wall'
                             and x < MAP_W - 1
-                            and map[x + 1][y].cell_class == 'wall':
+                            and map[x + 1][y].cell_class == 'wall'):
                             wall_tile = 'cmap, wall, tee up'
                         elif x > 0 and map[x - 1][y].cell_class == 'wall':
                             wall_tile = 'cmap, wall, bottom right corner'
                         elif (x < MAP_W - 1
-                              and map[x + 1][y].cell_class == 'wall':
+                              and map[x + 1][y].cell_class == 'wall'):
                             wall_tile = 'cmap, wall, bottom left corner'
                         
                 if y < MAP_H - 1 and map[x][y + 1].cell_class == 'wall':

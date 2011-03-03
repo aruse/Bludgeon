@@ -96,8 +96,8 @@ def finish_confuse(item, x, y):
     # FIXME: should be able to target myself
     target = None
     for m in GC.monsters:
-        if (m.x == x and m.y == y and
-            m.distance(GC.u.x, GC.u.y) <= CONFUSE_RANGE):
+        if (m.x == x and m.y == y
+            and m.distance(GC.u.x, GC.u.y) <= CONFUSE_RANGE):
             target = m
             break
 

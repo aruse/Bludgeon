@@ -99,6 +99,10 @@ ST_PLAYBACK = 5
 # Transparency of tooltip popups, 0-255
 TOOLTIP_ALPHA = 190
 
+# Minimum width of the inventory window, in pixels.
+MIN_INVENTORY_W = 300
+
+
 # Text
 USE_HEADER = ('Press the key next to an item to use it, '
               'or any other to cancel.')
