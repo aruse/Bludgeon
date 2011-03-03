@@ -9,6 +9,20 @@ from util import *
 INVENTORY_WIDTH = 50
 
 
+def mouse_coords_to_map_coords(x, y):
+    # Compensate for the relative position of the map surface.
+    x -= GV.map_rect.x
+    y -= GV.map_rect.y
+    # Convert into map coords
+    x /= TILE_W
+    y /= TILE_H
+
+    if x < 0 or x > MAP_W - 1:
+        x = None
+    if y < 0 or y > MAP_H - 1:
+        y = None
+    return x, y
+
 def draw_box(x, y, color=GV.white):
     """Draw a box around the cell at the given coords."""
     pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_W, y * TILE_H, TILE_W, TILE_H), 1)
@@ -418,25 +432,27 @@ def view_tick():
     render_decorations()
 
 
-    # Draw everything
-    GV.screen.blit(GV.log_surf, (GV.log_rect.x, GV.log_rect.y))
-    GV.screen.blit(GV.eq_surf, (GV.eq_rect.x, GV.eq_rect.y))
-    GV.screen.blit(GV.status_surf, (GV.status_rect.x, GV.status_rect.y))
+    # Draw all of the game surfaces on to the screen
+    GV.screen.blit(GV.log_surf, GV.log_rect)
+    GV.screen.blit(GV.eq_surf, GV.eq_rect)
+    GV.screen.blit(GV.status_surf, GV.status_rect)
     center_map()
+
+    # Need to fill the mapview area with black because the piece of the
+    # map that we draw may not fill up the whole area.
     GV.screen.fill(GV.black, GV.mapview_rect)
-    GV.screen.blit(GV.map_surf, (GV.mapview_rect.x, GV.mapview_rect.y),
+
+    # Partition off a piece of the map_surf and blits it on to the screen
+    # at the location specified by the mapview_rect
+    GV.screen.blit(GV.map_surf, GV.mapview_rect,
                    Rect(GV.mapview_rect.x - GV.map_rect.x,
                         GV.mapview_rect.y - GV.map_rect.y,
                         GV.mapview_rect.w,
                         GV.mapview_rect.h))
 
-
-
-#    GV.screen.blit(GV.map_surf, GV.map_rect)
-
     if GC.state == ST_MENU:
         GV.screen.blit(GV.window_surf, (GV.window_rect.x, GV.window_rect.y))
-    if GC.state != ST_MENU:
+    else:
         render_tooltips()
 
     pygame.display.flip()

@@ -30,7 +30,7 @@ def init_gv():
 
     # The mapview size.  May be smaller or larger than the actual map size.
     # This is the location on the screen where the map or a piece thereof
-    # is drawn.
+    # is drawn.  It's not an actual surface, but a logical rectangle.
     GV.mapview_rect.w = GV.screen_rect.w
     GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h
 
@@ -140,34 +140,28 @@ class GV:
     tile_dict = None
     glyph_dict = None
 
-    screen = None
-    
-    # pygame Surface for the current level
-    map_surf = None
-    
-    # pygame Surface for the character stats
-    status_surf = None
+    screen = None       # Root Surface
+    log_surf = None     # Surface for the game log text
+    eq_surf = None      # Surface to show player's equipment
+    status_surf = None  # Surface for the character stats
+    map_surf = None     # Surface for the current level map
+    window_surf = None  # Surface for pop-over windows
 
-    # Messages in the game log to be output to the log surface.
-    log_surf = None
+    # Rects for the various surfaces
+    log_rect = Rect(0, 0, 0, 0)
+    eq_rect = Rect(0, 0, 0, 0)
+    status_rect = Rect(0, 0, 0, 0)
+    map_rect = Rect(0, 0, 0, 0)
+    screen_rect = Rect(0, 0, 0, 0)
 
-    eq_surf = None
+    mapview_rect = Rect(0, 0, 0, 0)
 
-    window_surf = None
-    
     font = None
     font_h = None
     
     # What to blit over an area that's not visible
     blank_tile = None
     
-    # Pixel size of various surfaces
-    map_rect = Rect(0, 0, 0, 0)
-    status_rect = Rect(0, 0, 0, 0)
-    eq_rect = Rect(0, 0, 0, 0)
-    log_rect = Rect(0, 0, 0, 0)
-    screen_rect = Rect(0, 0, 0, 0)
-    mapview_rect = Rect(0, 0, 0, 0)
     
     # Cell locations to blit equipment on the equipment panel
     eq_cent = None

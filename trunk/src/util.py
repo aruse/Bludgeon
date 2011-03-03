@@ -8,21 +8,7 @@ from pygame.locals import *
 from const import *
 from game import *
 
-        
-def mouse_coords_to_map_coords(x, y):
-    # Compensate for the relative position of the map surface.
-    x -= GV.map_rect.x
-    y -= GV.map_rect.y
-    # Convert into map coords
-    x /= TILE_W
-    y /= TILE_H
 
-    if x < 0 or x > MAP_W - 1:
-        x = None
-    if y < 0 or y > MAP_H - 1:
-        y = None
-    return x, y
-    
 def message(msg, color=GV.default_font_color):
     if len(GC.msgs) >= MAX_MSGS:
         GC.msgs.pop(0)
