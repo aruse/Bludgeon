@@ -73,8 +73,6 @@ def tile_under_mouse():
         for i in GC.items:
             if i.x == x and i.y == y:
                 return i.name
-
-        return GC.map[x][y].name
     else:
         return None
 
@@ -124,18 +122,47 @@ def wordwrap_img(text, w, antialias, color, justify='left'):
 
     return final_surf
 
-def render_tooltips():
-    pass
 
-def update_alert_surf():
-    GV.alert_surf.fill(GV.black)
+def add_window_border(surf):
+    rect = surf.get_rect()
+
+    left_x, right_x = 0, rect.w - TILE_W
+    top_y, bottom_y = 0, rect.h - TILE_H
+    
+    for x in range(1, rect.w / TILE_W):
+        surf.blit(GV.tiles_img, (x * TILE_W, top_y), GV.tile_dict['explosion, fiery, top center'])
+        surf.blit(GV.tiles_img, (x * TILE_W, bottom_y), GV.tile_dict['explosion, fiery, bottom center'])
+    for y in range(1, rect.h / TILE_H):
+        surf.blit(GV.tiles_img, (left_x, y * TILE_H), GV.tile_dict['explosion, fiery, middle left'])
+        surf.blit(GV.tiles_img, (right_x, y * TILE_H), GV.tile_dict['explosion, fiery, middle right'])
+    
+    surf.blit(GV.tiles_img, (left_x, top_y), GV.tile_dict['explosion, fiery, top left'])
+    surf.blit(GV.tiles_img, (right_x, top_y), GV.tile_dict['explosion, fiery, top right'])
+    surf.blit(GV.tiles_img, (left_x, bottom_y), GV.tile_dict['explosion, fiery, bottom left'])
+    surf.blit(GV.tiles_img, (right_x, bottom_y), GV.tile_dict['explosion, fiery, bottom right'])
+
+
+def render_tooltips():
     name = tile_under_mouse()
     if name:
-        text_img = GV.font.render('You see: ' + tile_under_mouse(), True, GV.gold)
+        text_img = GV.font.render('You see: ' + tile_under_mouse(), True, GV.white)
         textpos = text_img.get_rect()
-        textpos.centerx = GV.alert_surf.get_rect().width / 2
-        textpos.top = 0
-        GV.alert_surf.blit(text_img, textpos)
+
+        tooltip_surf = pygame.Surface((textpos.w + TILE_W * 2, textpos.h + TILE_H * 2),
+                                      ).convert()
+#        tooltip_surf = pygame.Surface((textpos.w + TILE_W * 2, textpos.h + TILE_H * 2),
+#                                      SRCALPHA, 30).convert_alpha()
+        tooltip_surf.fill(GV.black)
+        textpos.left = TILE_W
+        textpos.top = TILE_H
+        tooltip_surf.blit(text_img, textpos)
+
+        rect = tooltip_surf.get_rect()
+        rect.left, rect.bottom = pygame.mouse.get_pos()
+        add_window_border(tooltip_surf)
+        tooltip_surf.set_colorkey(GV.floor_blue)
+        tooltip_surf.set_alpha(TOOLTIP_ALPHA)
+        GV.screen.blit(tooltip_surf, rect)
 
 
 def update_eq_surf():
@@ -340,22 +367,21 @@ def view_tick():
     update_log_surf()
     update_eq_surf()
     update_status_surf()
-    update_alert_surf()
     
     render_map()
     render_objects()
     render_decorations()
 
+
     # Draw everything
     GV.screen.blit(GV.map_surf, (GV.map_x, GV.map_y))
-    GV.screen.blit(GV.alert_surf, (GV.alert_x, GV.alert_y))
     GV.screen.blit(GV.eq_surf, (GV.eq_x, GV.eq_y))
     GV.screen.blit(GV.status_surf, (GV.status_x, GV.status_y))
     GV.screen.blit(GV.log_surf, (GV.log_x, GV.log_y))
 
     if GC.state == ST_MENU:
         GV.screen.blit(GV.window_surf, (GV.window_x, GV.window_y))
-    else:
+    if GC.state != ST_MENU:
         render_tooltips()
 
     pygame.display.flip()

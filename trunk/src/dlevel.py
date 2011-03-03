@@ -77,11 +77,9 @@ def create_rectangular_room(map, room):
     # Add wall tiles surrounding the room
     for x in range(room.x1 + 1, room.x2):
         map[x][room.y1].set_tile('cmap, wall, horizontal')
-    for x in range(room.x1 + 1, room.x2):
         map[x][room.y2].set_tile('cmap, wall, horizontal')
     for y in range(room.y1 + 1, room.y2):
         map[room.x1][y].set_tile('cmap, wall, vertical')
-    for y in range(room.y1 + 1, room.y2):
         map[room.x2][y].set_tile('cmap, wall, vertical')
 
     # Add corner tiles

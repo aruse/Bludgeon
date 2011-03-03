@@ -348,7 +348,6 @@ def main():
     GV.screen = pygame.display.set_mode((GV.screen_w, GV.screen_h))
 
     GV.map_surf = pygame.Surface((GV.map_w, GV.map_h)).convert()
-    GV.alert_surf = pygame.Surface((GV.alert_w, GV.alert_h)).convert()
     GV.log_surf = pygame.Surface((GV.log_w, GV.log_h)).convert()
     GV.eq_surf = pygame.Surface((GV.eq_w, GV.eq_h)).convert()
     GV.status_surf = pygame.Surface((GV.status_w, GV.status_h)).convert()

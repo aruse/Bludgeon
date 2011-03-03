@@ -12,10 +12,6 @@ def init_gv():
     GV.map_w = MAP_W * TILE_W
     GV.map_h = MAP_H * TILE_H
 
-    # Size of the alert surface
-    GV.alert_w = MAP_W * TILE_W
-    GV.alert_h = GV.font_h
-    
     # Size of the status panel
     GV.status_w = STATUS_W * GV.font_w
     GV.status_h = STATUS_H * GV.font_h
@@ -33,8 +29,7 @@ def init_gv():
     GV.screen_h = GV.map_h + GV.status_h
 
     # Locations to blit the various surfaces
-    GV.map_x, GV.map_y = 0, GV.log_h + GV.alert_h
-    GV.alert_x, GV.alert_y = 0, GV.log_h
+    GV.map_x, GV.map_y = 0, GV.log_h
     GV.log_x, GV.log_y = 0, 0
     GV.eq_x, GV.eq_y = GV.log_w, 0
     GV.status_x, GV.status_y = GV.eq_x + GV.eq_w, 0
@@ -149,7 +144,6 @@ class GV:
     # pygame Surface for the log window
     log_surf = None
 
-    alert_surf = None
     eq_surf = None
 
     window_surf = None
@@ -162,7 +156,6 @@ class GV:
     
     # Pixel size of various surfaces
     map_w, map_h = None, None
-    alert_w, alert_h = None, None
     status_w, status_h = None, None
     eq_w, eq_h = None, None
     log_w, log_h = None, None
@@ -170,7 +163,6 @@ class GV:
 
     # Pixel locations to blit the various surfaces
     map_x, map_y = None, None
-    alert_x, alert_y = None, None
     log_x, log_y = None, None
     eq_x, eq_y = None, None
     status_x, status_y = None, None
@@ -267,6 +259,7 @@ class GV:
 
     silver = (203, 203, 203)
     gold = (255, 255, 102)
+    floor_blue = (71, 108, 108)
 
     log_bg_color = dark_gray
     if sum(log_bg_color) < sum(white):

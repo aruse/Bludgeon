@@ -91,3 +91,6 @@ ST_MENU = 2
 ST_TARGETING = 3
 ST_EXIT = 4
 ST_PLAYBACK = 5
+
+# Transparency of tooltip popups, 0-255
+TOOLTIP_ALPHA = 190
