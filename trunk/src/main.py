@@ -147,30 +147,7 @@ def handle_events():
         elif event.type == MOUSEBUTTONUP:
             GC.button = None
         elif event.type == pygame.VIDEORESIZE:
-            w, h = event.w, event.h
-
-            if w < MIN_LOG_W + GV.eq_rect.w + GV.status_rect.w:
-                w = MIN_LOG_W + GV.eq_rect.w + GV.status_rect.w
-            if h < GV.status_rect.h + MIN_MAPVIEW_H:
-                h = GV.status_rect.h + MIN_MAPVIEW_H
-
-            # Resize the main screen
-            GV.screen_rect.w, GV.screen_rect.h = w, h
-            GV.screen = pygame.display.set_mode((GV.screen_rect.w, GV.screen_rect.h), pygame.RESIZABLE)
-
-            # Resize the mapview
-            GV.mapview_rect.w, GV.mapview_rect.h = GV.screen_rect.w, GV.screen_rect.h - GV.status_rect.h
-
-            # Resize the log surface
-            GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
-            GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
-
-            # Window surface
-            resize_window()
-
-            # Move the surfaces to their new locations
-            move_surface_locations()
-            
+            handle_resize(event.w, event.h)
 
         handle_actions()
 

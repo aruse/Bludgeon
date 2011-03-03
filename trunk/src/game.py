@@ -12,7 +12,6 @@ def move_surface_locations():
     GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
 
 
-
 def init_gv():
     GV.font = pygame.font.SysFont('Arial', FONT_SIZE)
     GV.font_h = GV.font.get_height()
@@ -152,7 +151,7 @@ class GV:
     eq_surf = None      # Surface to show player's equipment
     status_surf = None  # Surface for the character stats
     map_surf = None     # Surface for the current level map
-    window_surf = None  # Surface for pop-over windows
+    dialog_surf = None  # Surface for pop-up dialogs
 
     # Rects for the various surfaces
     log_rect = Rect(0, 0, 0, 0)
@@ -160,7 +159,7 @@ class GV:
     status_rect = Rect(0, 0, 0, 0)
     map_rect = Rect(0, 0, 0, 0)
     screen_rect = Rect(0, 0, 0, 0)
-    window_rect = Rect(0, 0, 0, 0)
+    dialog_rect = Rect(0, 0, 0, 0)
 
     mapview_rect = Rect(0, 0, 0, 0)
 

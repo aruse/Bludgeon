@@ -9,14 +9,40 @@ from util import *
 INVENTORY_W = 50
 
 
-def resize_window():
-    """Set the rect dimensions for the window surface."""
-    GV.window_rect.x = GV.screen_rect.w / 2 - (GV.window_rect.w * GV.font_w) / 2
-    GV.window_rect.y = GV.screen_rect.h / 2 - (GV.window_rect.h * GV.font_h) / 2
-    if GV.window_rect.x < 0:
-        GV.window_rect.x = 0
-    if GV.window_rect.y < 0:
-        GV.window_rect.y = 0
+def handle_resize(w, h):
+    """Shuffles surfaces around to their correct places when the game
+    is resized."""
+    if w < MIN_LOG_W + GV.eq_rect.w + GV.status_rect.w:
+        w = MIN_LOG_W + GV.eq_rect.w + GV.status_rect.w
+    if h < GV.status_rect.h + MIN_MAPVIEW_H:
+        h = GV.status_rect.h + MIN_MAPVIEW_H
+
+    # Resize the main screen
+    GV.screen_rect.w, GV.screen_rect.h = w, h
+    GV.screen = pygame.display.set_mode((GV.screen_rect.w, GV.screen_rect.h), pygame.RESIZABLE)
+
+    # Resize the mapview
+    GV.mapview_rect.w, GV.mapview_rect.h = GV.screen_rect.w, GV.screen_rect.h - GV.status_rect.h
+
+    # Resize the log surface
+    GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
+    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
+
+    # Resize the dialog surface
+    set_dialog_size()
+
+    # Move the surfaces to their new locations
+    move_surface_locations()
+
+
+def set_dialog_size():
+    """Set the rect dimensions for the dialog surface."""
+    GV.dialog_rect.x = GV.screen_rect.w / 2 - (GV.dialog_rect.w * GV.font_w) / 2
+    GV.dialog_rect.y = GV.screen_rect.h / 2 - (GV.dialog_rect.h * GV.font_h) / 2
+    if GV.dialog_rect.x < 0:
+        GV.dialog_rect.x = 0
+    if GV.dialog_rect.y < 0:
+        GV.dialog_rect.y = 0
 
 
 def mouse_coords_to_map_coords(x, y):
@@ -45,25 +71,25 @@ def menu(header, options, w):
     header_h = text_img.get_height() / GV.font_h
     h = len(options) + header_h
 
-    # Create an off-screen console that represents the menu's window
-    GV.window_surf = pygame.Surface((w * GV.font_w, h * GV.font_h),
+    # Create a new surface on which to draw the menu
+    GV.dialog_surf = pygame.Surface((w * GV.font_w, h * GV.font_h),
                                     ).convert()
-    GV.window_surf.fill(GV.black)
+    GV.dialog_surf.fill(GV.black)
     
     # Blit the header
-    GV.window_surf.blit(text_img, (0, 0))
+    GV.dialog_surf.blit(text_img, (0, 0))
 
     # Blit all the options
     y = header_h
     letter_index = ord('a')
     for option in options:
         text = '(' + chr(letter_index) + ') ' + option
-        write_text(GV.window_surf, text, y, justify='left')
+        write_text(GV.dialog_surf, text, y, justify='left')
         y += 1
         letter_index += 1
  
-    GV.window_rect.w, GV.window_rect.h = w, h
-    resize_window()
+    GV.dialog_rect.w, GV.dialog_rect.h = w, h
+    set_dialog_size()
 
     GC.menu_options = options
     GC.state = ST_MENU
@@ -144,7 +170,7 @@ def wordwrap_img(text, w, antialias, color, justify='left'):
     return final_surf
 
 
-def add_window_border(surf):
+def add_surface_border(surf):
     rect = surf.get_rect()
 
     left_x, right_x = 0, rect.w - TILE_W
@@ -188,7 +214,7 @@ def render_tooltips():
         else:
             rect.left = x
 
-        add_window_border(tooltip_surf)
+        add_surface_border(tooltip_surf)
         tooltip_surf.set_colorkey(GV.floor_blue)
         tooltip_surf.set_alpha(TOOLTIP_ALPHA)
         GV.screen.blit(tooltip_surf, rect)
@@ -471,7 +497,7 @@ def view_tick():
                         GV.mapview_rect.h))
 
     if GC.state == ST_MENU:
-        GV.screen.blit(GV.window_surf, GV.window_rect)
+        GV.screen.blit(GV.dialog_surf, GV.dialog_rect)
     else:
         render_tooltips()
 
