@@ -347,13 +347,13 @@ def main():
 
        
     init_gv()
-    GV.screen = pygame.display.set_mode((GV.screen_w, GV.screen_h))
+    GV.screen = pygame.display.set_mode((GV.screen_rect.w, GV.screen_rect.h))
 
-    GV.map_surf = pygame.Surface((GV.map_w, GV.map_h)).convert()
+    GV.map_surf = pygame.Surface((GV.map_rect.w, GV.map_rect.h)).convert()
     GV.map_rect = GV.map_surf.get_rect()
-    GV.log_surf = pygame.Surface((GV.log_w, GV.log_h)).convert()
-    GV.eq_surf = pygame.Surface((GV.eq_w, GV.eq_h)).convert()
-    GV.status_surf = pygame.Surface((GV.status_w, GV.status_h)).convert()
+    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
+    GV.eq_surf = pygame.Surface((GV.eq_rect.w, GV.eq_rect.h)).convert()
+    GV.status_surf = pygame.Surface((GV.status_rect.w, GV.status_rect.h)).convert()
 
     # Set the system icon
     system_icon = load_image('icon.xpm')
@@ -392,7 +392,6 @@ def main():
 
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
-    center_map()
 #    if options.save_file:
 #        run_history()
     

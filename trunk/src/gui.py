@@ -41,8 +41,8 @@ def menu(header, options, width):
         y += 1
         letter_index += 1
  
-    GV.window_x = GV.screen_w / 2 - (width * GV.font_w) / 2
-    GV.window_y = GV.screen_h / 2 - (height * GV.font_h) / 2
+    GV.window_rect.x = GV.screen_rect.w / 2 - (width * GV.font_w) / 2
+    GV.window_rect.y = GV.screen_rect.h / 2 - (height * GV.font_h) / 2
 
     GC.menu_options = options
     GC.state = ST_MENU
@@ -62,8 +62,8 @@ def tile_under_mouse():
     """Return the name of the top tile under the mouse."""
     x, y = pygame.mouse.get_pos()
     x, y = mouse_coords_to_map_coords(x, y)
-    
-    if x > 0 and y > 0 and (
+
+    if x is not None and y is not None and (
         GC.u.fov_map.lit(x, y) or GC.map[x][y].explored):
     
         for m in GC.monsters + [GC.u]:
@@ -162,7 +162,7 @@ def render_tooltips():
 
         # The lower left corner of the tooltip is next to the mouse, unless
         # doing so would print the tooltip off the right side of the screen.
-        if x + rect.w > GV.screen_w:
+        if x + rect.w > GV.screen_rect.w:
             rect.right = x
         else:
             rect.left = x
@@ -314,12 +314,12 @@ def update_status_surf():
 
 
 def update_log_surf():
-    """Update the log window."""
+    """Update the log surface."""
     GV.log_surf.fill(GV.log_bg_color)
 
-    y = GV.log_h
+    y = GV.log_rect.h
     for (line, color) in reversed(GC.msgs):
-        text_img = wordwrap_img(line, GV.log_w - GV.font_w, True, color, justify='left')
+        text_img = wordwrap_img(line, GV.log_rect.w - GV.font_w, True, color, justify='left')
         textpos = text_img.get_rect()
         y -= textpos.height
 
@@ -327,7 +327,7 @@ def update_log_surf():
         # multi-line text at the top of the surface.  However, there's no 
         # need for it to get so negative that it would be rendering text
         # completely off the top.
-        if y < -GV.log_h:
+        if y < -GV.log_rect.h:
             break
 
         textpos.top = y
@@ -346,7 +346,6 @@ def render_map():
                     GV.map_surf.blit(GV.gray_tiles_img, (x * TILE_W, y * TILE_H), GC.map[x][y].tile)
                 else:
                     GV.map_surf.blit(GV.tiles_img, (x * TILE_W, y * TILE_H), GV.blank_tile)
-
     
 def render_objects():
     for item in GC.items:
@@ -371,24 +370,38 @@ def render_decorations():
 
 
 def center_map_x():
-    """Moves the map surface to that the player appears horizontally at the
-    center of the screen.
-    """
-    GV.map_x = ((GV.map_window_w / 2)
-                - (GC.u.x * TILE_W)
-                + GV.map_window_x)
+    """Helper function for center_map().  Handles the horizontal coordinate."""
+    if GV.map_rect.w < GV.mapview_rect.w:
+        GV.map_rect.x = GV.mapview_rect.w / 2 - GV.map_rect.w / 2  + GV.mapview_rect.x
+    else:
+        GV.map_rect.x = ((GV.mapview_rect.w / 2)
+                    - (GC.u.x * TILE_W)
+                    + GV.mapview_rect.x)
+
+        if GV.map_rect.x > GV.mapview_rect.x:
+            GV.map_rect.x = GV.mapview_rect.x
+        if GV.map_rect.x < GV.mapview_rect.w - GV.map_rect.w + GV.mapview_rect.x:
+            GV.map_rect.x = GV.mapview_rect.w - GV.map_rect.w + GV.mapview_rect.x
 
 def center_map_y():
-    """Moves the map surface to that the player appears vertically at the
-    center of the screen.
-    """
-    GV.map_y = ((GV.map_window_h / 2)
-                - (GC.u.y * TILE_H)
-                + GV.map_window_y)
+    """Helper function for center_map().  Handles the vertical coordinate."""
+    if GV.map_rect.h < GV.mapview_rect.h:
+        GV.map_rect.y = GV.mapview_rect.h / 2 - GV.map_rect.h / 2 + GV.mapview_rect.y
+    else:
+        GV.map_rect.y = ((GV.mapview_rect.h / 2)
+                    - (GC.u.y * TILE_H)
+                    + GV.mapview_rect.y)
+
+        if GV.map_rect.y > GV.mapview_rect.y:
+            GV.map_rect.y = GV.mapview_rect.y
+        if GV.map_rect.y < GV.mapview_rect.h - GV.map_rect.h + GV.mapview_rect.y:
+            GV.map_rect.y = GV.mapview_rect.h - GV.map_rect.h + GV.mapview_rect.y
+
 
 def center_map():
-    """Moves the map surface so that the player appears at the
-    center of the screen.
+    """Moves the map surface so that the player appears at the center of the 
+    mapview.  If the map surface is smaller than the mapview, center the map
+    inside of the mapviewinstead.
     """
     center_map_x()
     center_map_y()
@@ -406,63 +419,23 @@ def view_tick():
 
 
     # Draw everything
-    GV.screen.blit(GV.log_surf, (GV.log_x, GV.log_y))
-    GV.screen.blit(GV.eq_surf, (GV.eq_x, GV.eq_y))
-    GV.screen.blit(GV.status_surf, (GV.status_x, GV.status_y))
-
-    u_pix_x = GC.u.x * TILE_W + GV.map_x - GV.map_window_x
-    u_pix_y = GC.u.y * TILE_H + GV.map_y - GV.map_window_y
-
-    print 'map coords: ', GV.map_x, GV.map_y
-    print 'map size: ', GV.map_w, GV.map_h
-    print 'window coords: ', GV.map_window_x, GV.map_window_y
-    print 'window size: ', GV.map_window_w, GV.map_window_h
-    
-
-    if (GV.map_x < GV.map_window_x
-        and GV.map_x > GV.map_window_w - GV.map_w):
-        center_map_x()
-
-#    if (GV.map_x < GV.map_window_x or
-#        GV.map_x > GV.map_window_w - GV.map_w):
-#        center_map_x()
-
-    if u_pix_y <= TILE_H:
-        center_map_y()
-    if u_pix_y >= GV.map_window_h - TILE_H:
-        center_map_y()
-
-
-#    if u_pix_x <= TILE_W:
-#        center_map_x()
-#    if u_pix_x >= GV.map_window_w - TILE_W:
-#        center_map_x()
-#    if u_pix_y <= TILE_H:
-#        center_map_y()
-#    if u_pix_y >= GV.map_window_h - TILE_H:
-#        center_map_y()
-#            
-
-#    if GC.u.x * TILE_W + GV.map_x - GV.map_window_x <= TILE_W:
-#        center_map()
-#    if GC.u.x * TILE_W + GV.map_x - GV.map_window_x >= TILE_W:
-#        
-#
-#    if GC.u.y * TILE_H + GV.map_y - GV.map_window_y <= TILE_H :
-#        center_map()
-#
-#    GV.screen.blit(GV.map_surf, (GV.map_x, GV.map_y))
-        
-    GV.screen.fill(GV.black, Rect(GV.map_window_x, GV.map_window_y, GV.map_window_w, GV.map_window_h))
-    GV.screen.blit(GV.map_surf, (GV.map_window_x, GV.map_window_y),
-                   Rect(GV.map_window_x - GV.map_x, GV.map_window_y - GV.map_y, GV.map_window_w, GV.map_window_h))
+    GV.screen.blit(GV.log_surf, (GV.log_rect.x, GV.log_rect.y))
+    GV.screen.blit(GV.eq_surf, (GV.eq_rect.x, GV.eq_rect.y))
+    GV.screen.blit(GV.status_surf, (GV.status_rect.x, GV.status_rect.y))
+    center_map()
+    GV.screen.fill(GV.black, GV.mapview_rect)
+    GV.screen.blit(GV.map_surf, (GV.mapview_rect.x, GV.mapview_rect.y),
+                   Rect(GV.mapview_rect.x - GV.map_rect.x,
+                        GV.mapview_rect.y - GV.map_rect.y,
+                        GV.mapview_rect.w,
+                        GV.mapview_rect.h))
 
 
 
 #    GV.screen.blit(GV.map_surf, GV.map_rect)
 
     if GC.state == ST_MENU:
-        GV.screen.blit(GV.window_surf, (GV.window_x, GV.window_y))
+        GV.screen.blit(GV.window_surf, (GV.window_rect.x, GV.window_rect.y))
     if GC.state != ST_MENU:
         render_tooltips()
 

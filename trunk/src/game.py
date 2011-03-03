@@ -9,38 +9,40 @@ def init_gv():
     GV.font_w = GV.font.size('X')[0]
 
     # Size of the map surface
-    GV.map_w = MAP_W * TILE_W
-    GV.map_h = MAP_H * TILE_H
+    GV.map_rect.w = MAP_W * TILE_W
+    GV.map_rect.h = MAP_H * TILE_H
 
     # Size of the status panel
-    GV.status_w = STATUS_W * GV.font_w
-    GV.status_h = STATUS_H * GV.font_h
+    GV.status_rect.w = STATUS_W * GV.font_w
+    GV.status_rect.h = STATUS_H * GV.font_h
 
     # Size of the equipment panel
-    GV.eq_w = EQ_W * TILE_W
-    GV.eq_h = GV.status_h
+    GV.eq_rect.w = EQ_W * TILE_W
+    GV.eq_rect.h = GV.status_rect.h
 
-    # Size of the full game window
-    GV.screen_w = int(GV.map_w * .7)
-    GV.screen_h = int(GV.map_h * .7) + GV.status_h
+    # Size of the full game screen
+    GV.screen_rect.w = int(GV.map_rect.w * .8)
+    GV.screen_rect.h = int(GV.map_rect.h * .8) + GV.status_rect.h
 
-    # Size of the log window
-    GV.log_w = GV.screen_w - (GV.eq_w + GV.status_w)
-    GV.log_h = GV.status_h
+    # Size of the log surface
+    GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
+    GV.log_rect.h = GV.status_rect.h
 
-    # The map window size.  Maybe be smaller than the actual map size.
-    GV.map_window_w = GV.screen_w
-    GV.map_window_h = GV.screen_h - GV.status_h
+    # The mapview size.  May be smaller or larger than the actual map size.
+    # This is the location on the screen where the map or a piece thereof
+    # is drawn.
+    GV.mapview_rect.w = GV.screen_rect.w
+    GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h
 
     # Locations to blit the various surfaces
-    GV.map_x, GV.map_y = 0, GV.log_h
-    GV.map_window_x, GV.map_window_y = 0, GV.log_h
-    GV.log_x, GV.log_y = 0, 0
-    GV.eq_x, GV.eq_y = GV.log_w, 0
-    GV.status_x, GV.status_y = GV.eq_x + GV.eq_w, 0
+    GV.map_rect.x, GV.map_rect.y = 0, GV.log_rect.h
+    GV.mapview_rect.x, GV.mapview_rect.y = 0, GV.log_rect.h
+    GV.log_rect.x, GV.log_rect.y = 0, 0
+    GV.eq_rect.x, GV.eq_rect.y = GV.log_rect.w, 0
+    GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
 
     # Locations to blit equipment on the equipment panel
-    GV.eq_cent = (GV.eq_w / 2.0 - TILE_W / 2, GV.eq_h / 2 - TILE_W / 2)
+    GV.eq_cent = (GV.eq_rect.w / 2.0 - TILE_W / 2, GV.eq_rect.h / 2 - TILE_W / 2)
     GV.eq_hands = GV.eq_cent
     GV.eq_rweap = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1])
     GV.eq_lweap = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1])
@@ -112,7 +114,7 @@ class GC:
     
     u_action = None
 
-    # Messages to put in the log window
+    # Messages in the game log to be output to the log surface.
     msgs = []
 
     # The complete history of commands used in this game
@@ -146,7 +148,7 @@ class GV:
     # pygame Surface for the character stats
     status_surf = None
 
-    # pygame Surface for the log window
+    # Messages in the game log to be output to the log surface.
     log_surf = None
 
     eq_surf = None
@@ -160,21 +162,12 @@ class GV:
     blank_tile = None
     
     # Pixel size of various surfaces
-    map_w, map_h = None, None
-    map_rect = None
-    status_w, status_h = None, None
-    eq_w, eq_h = None, None
-    log_w, log_h = None, None
-    screen_w, screen_h = None, None
-    map_window_w, map_window_h = None, None
-
-    # Pixel locations to blit the various surfaces
-    map_x, map_y = None, None
-    map_window_x, map_window_y = None, None
-    log_x, log_y = None, None
-    eq_x, eq_y = None, None
-    status_x, status_y = None, None
-    window_x, window_y = None, None
+    map_rect = Rect(0, 0, 0, 0)
+    status_rect = Rect(0, 0, 0, 0)
+    eq_rect = Rect(0, 0, 0, 0)
+    log_rect = Rect(0, 0, 0, 0)
+    screen_rect = Rect(0, 0, 0, 0)
+    mapview_rect = Rect(0, 0, 0, 0)
     
     # Cell locations to blit equipment on the equipment panel
     eq_cent = None
