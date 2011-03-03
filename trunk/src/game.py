@@ -21,8 +21,8 @@ def init_gv():
     GV.eq_rect.h = GV.status_rect.h
 
     # Size of the full game screen
-    GV.screen_rect.w = int(GV.map_rect.w * .8)
-    GV.screen_rect.h = int(GV.map_rect.h * .8) + GV.status_rect.h
+    GV.screen_rect.w = GV.eq_rect.w + GV.status_rect.w + 400
+    GV.screen_rect.h = GV.status_rect.h + 400
 
     # Size of the log surface
     GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
@@ -42,21 +42,22 @@ def init_gv():
     GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
 
     # Locations to blit equipment on the equipment panel
-    GV.eq_cent = (GV.eq_rect.w / 2.0 - TILE_W / 2, GV.eq_rect.h / 2 - TILE_W / 2)
-    GV.eq_hands = GV.eq_cent
-    GV.eq_rweap = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1])
-    GV.eq_lweap = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1])
-    GV.eq_rring = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1] + TILE_H)
-    GV.eq_lring = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1] + TILE_H)
-    GV.eq_boots = (GV.eq_cent[0], GV.eq_cent[1] + TILE_H * 2)
-    GV.eq_armor = (GV.eq_cent[0], GV.eq_cent[1] - TILE_H)
-    GV.eq_shirt = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1] - TILE_H)
-    GV.eq_cloak = (GV.eq_cent[0] + TILE_W, GV.eq_cent[1] - TILE_H)
-    GV.eq_neck = (GV.eq_cent[0], GV.eq_cent[1] - TILE_H * 2)
-    GV.eq_eyes = (GV.eq_cent[0] - TILE_W, GV.eq_cent[1] - TILE_H * 2)
-    GV.eq_quiver = (GV.eq_cent[0] + TILE_W * 2, GV.eq_cent[1] - TILE_H * 3)
-    GV.eq_light = (GV.eq_cent[0] - TILE_W * 2, GV.eq_cent[1] - TILE_H * 3)
-    GV.eq_head = (GV.eq_cent[0], GV.eq_cent[1] - TILE_H * 3)
+    eq_cent = (int(GV.eq_rect.w / 2.0 - TILE_W / 2), int(GV.eq_rect.h / 2.0 - TILE_W / 2))
+    GV.eq_hands = (eq_cent[0], eq_cent[1])
+    GV.eq_hands = (eq_cent[0], GV.eq_rect.y + TILE_H / 2 + 3 * TILE_H)
+    GV.eq_rweap = (GV.eq_hands[0] - TILE_W, GV.eq_hands[1])
+    GV.eq_lweap = (GV.eq_hands[0] + TILE_W, GV.eq_hands[1])
+    GV.eq_rring = (GV.eq_hands[0] - TILE_W, GV.eq_hands[1] + TILE_H)
+    GV.eq_lring = (GV.eq_hands[0] + TILE_W, GV.eq_hands[1] + TILE_H)
+    GV.eq_boots = (GV.eq_hands[0], GV.eq_hands[1] + TILE_H * 2)
+    GV.eq_armor = (GV.eq_hands[0], GV.eq_hands[1] - TILE_H)
+    GV.eq_shirt = (GV.eq_hands[0] - TILE_W, GV.eq_hands[1] - TILE_H)
+    GV.eq_cloak = (GV.eq_hands[0] + TILE_W, GV.eq_hands[1] - TILE_H)
+    GV.eq_neck = (GV.eq_hands[0], GV.eq_hands[1] - TILE_H * 2)
+    GV.eq_eyes = (GV.eq_hands[0] - TILE_W, GV.eq_hands[1] - TILE_H * 2)
+    GV.eq_quiver = (GV.eq_hands[0] + TILE_W * 2, GV.eq_hands[1] - TILE_H * 3)
+    GV.eq_light = (GV.eq_hands[0] - TILE_W * 2, GV.eq_hands[1] - TILE_H * 3)
+    GV.eq_head = (GV.eq_hands[0], GV.eq_hands[1] - TILE_H * 3)
 
 
 class GC:
@@ -153,6 +154,7 @@ class GV:
     status_rect = Rect(0, 0, 0, 0)
     map_rect = Rect(0, 0, 0, 0)
     screen_rect = Rect(0, 0, 0, 0)
+    window_rect = Rect(0, 0, 0, 0)
 
     mapview_rect = Rect(0, 0, 0, 0)
 
@@ -164,7 +166,6 @@ class GV:
     
     
     # Cell locations to blit equipment on the equipment panel
-    eq_cent = None
     eq_hands = None
     eq_rweap = None
     eq_lweap = None
@@ -256,7 +257,7 @@ class GV:
     gold = (255, 255, 102)
     floor_blue = (71, 108, 108)
 
-    log_bg_color = dark_gray
+    log_bg_color = black
     if sum(log_bg_color) < sum(white):
         default_font_color = white
     else:

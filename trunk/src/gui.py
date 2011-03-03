@@ -29,9 +29,6 @@ def draw_box(x, y, color=GV.white):
 
 
 def menu(header, options, width):
-    if len(options) > 26:
-        raise ValueError('Cannot have a menu with more than 26 options.')
- 
     # Create the header, with wordwrap
     text_img = wordwrap_img(header, width * GV.font_w, True, GV.default_font_color, justify='left')
 
@@ -188,7 +185,8 @@ def render_tooltips():
 
 
 def update_eq_surf():
-    """Update the equipment surface."""
+    """Update the equipment surface, displaying what I'm wearing and the most
+    valuable gear in my backpack."""
     GV.eq_surf.fill(GV.dark_gray)
     GV.eq_surf.blit(GV.tiles_img, GV.eq_head, GV.tile_dict['conical hat'])
     GV.eq_surf.blit(GV.tiles_img, GV.eq_eyes, GV.tile_dict['lenses'])
@@ -204,6 +202,18 @@ def update_eq_surf():
     GV.eq_surf.blit(GV.tiles_img, GV.eq_lring, GV.tile_dict['wire'])
     GV.eq_surf.blit(GV.tiles_img, GV.eq_boots, GV.tile_dict['snow boots'])
     GV.eq_surf.blit(GV.tiles_img, GV.eq_light, GV.tile_dict['candle'])
+
+
+    x = 0
+    y = GV.eq_boots[1] + TILE_W * 1.5
+    for i in GC.u.inventory:
+        GV.eq_surf.blit(GV.tiles_img, (x, y), GV.tile_dict[i.name])
+        x += TILE_W
+        if x > GV.eq_rect.w - TILE_W:
+            x = 0
+            y += TILE_H
+        if y > GV.eq_rect.h - TILE_H:
+            break
 
 
     
@@ -451,7 +461,7 @@ def view_tick():
                         GV.mapview_rect.h))
 
     if GC.state == ST_MENU:
-        GV.screen.blit(GV.window_surf, (GV.window_rect.x, GV.window_rect.y))
+        GV.screen.blit(GV.window_surf, GV.window_rect)
     else:
         render_tooltips()
 

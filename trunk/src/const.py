@@ -32,8 +32,7 @@ TILE_W, TILE_H = 16, 16
 
 # Surface sizes, in cells
 EQ_W, EQ_H = 7, STATUS_H
-#MAP_W, MAP_H = 120, 50
-MAP_W, MAP_H = 60, 25
+MAP_W, MAP_H = 120, 50
 
 
 GAME_TITLE = GAME_NAME + ' ' + VERSION
