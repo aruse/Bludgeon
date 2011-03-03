@@ -483,9 +483,6 @@ def render_objects():
     for m in GC.monsters:
         if GC.u.fov_map.lit(m.x, m.y):
             m.draw()
-        else:
-            if GC.map[m.x][m.y].explored:
-                m.draw_gray()
 
     # Always draw the player
     GC.u.draw()
