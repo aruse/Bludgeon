@@ -142,7 +142,8 @@ class GV:
     """Stores the view state."""
     tiles_img = None
     gray_tiles_img = None
-    
+    menu_bg_img = None
+
     tile_dict = None
     glyph_dict = None
 
@@ -267,6 +268,8 @@ class GV:
         default_font_color = white
     else:
         default_font_color = black
+
+    menu_font_color = black
 
     hp_bar_color = (200, 32, 32)
     hp_bar_bg_color = darker_red

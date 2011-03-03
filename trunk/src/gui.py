@@ -63,12 +63,34 @@ def draw_box(x, y, color=GV.white):
     """Draw a box around the cell at the given coords."""
     pygame.draw.rect(GV.map_surf, color, Rect(x * TILE_W, y * TILE_H, TILE_W, TILE_H), 1)
 
+def img_fill(surf, img, rect=None):
+    """Fill the given surface with the given image.  If rect is None, fill the
+    whole surface.  Otherwise fill on the rect portion.
+    """
+    if rect is None:
+        rect = surf.get_rect()
+    img_rect = img.get_rect()
+        
+    x, y = 0, 0
+    while True:
+        # Don't worry about spilling over the edges of the surface.  Pygame
+        # will handle it and it won't be a problem unless the image is huge.
+        surf.blit(img, (x, y))
+        x += img_rect.w
+
+        if x > rect.w:
+            x = 0
+            y += img_rect.h
+
+        if y > rect.h:
+            break
+
 
 def menu(header, options, w):
     padding = BORDER_W + PADDING
 
     # Create the header, with wordwrap
-    text_img = wordwrap_img(header, w * GV.font_w, True, GV.default_font_color, justify='left')
+    text_img = wordwrap_img(header, w * GV.font_w, True, GV.menu_font_color, justify='left')
 
     header_h = text_img.get_height() / float(GV.font_h)
     h = len(options) + header_h
@@ -78,7 +100,10 @@ def menu(header, options, w):
     surf_h = h * GV.font_h + padding * 2
     GV.dialog_surf = pygame.Surface((surf_w, surf_h),
                                     ).convert()
-    GV.dialog_surf.fill(GV.darker_gray)
+    img_fill(GV.dialog_surf, GV.menu_bg_img,
+             Rect(surf_w + padding, surf_h + padding,
+                  surf_w - padding * 2, surf_h - padding * 2))
+
     
     # Blit the header
     GV.dialog_surf.blit(text_img, (BORDER_W + PADDING, BORDER_W + PADDING))
@@ -88,7 +113,7 @@ def menu(header, options, w):
     letter_index = ord('a')
     for option in options:
         text = '(' + chr(letter_index) + ') ' + option
-        write_text(GV.dialog_surf, text, y,
+        write_text(GV.dialog_surf, text, y, color=GV.menu_font_color,
                    justify='left', padding=padding)
         y += 1
         letter_index += 1

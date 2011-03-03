@@ -48,7 +48,7 @@ class FOVMap(object):
                 # Translate the dx, dy coordinates into map coordinates:
                 X, Y = cx + dx * xx + dy * xy, cy + dx * yx + dy * yy
                 # l_slope and r_slope store the slopes of the left and right
-                # extremities of the square we're considering:
+                # Extremities of the square we're considering:
                 l_slope, r_slope = (dx - 0.5) / (dy + 0.5), (dx + 0.5) / (dy - 0.5)
                 if start < r_slope:
                     continue
@@ -59,7 +59,7 @@ class FOVMap(object):
                     if dx * dx + dy * dy < radius_squared:
                         self.set_lit(X, Y)
                     if blocked:
-                        # we're scanning a row of blocked squares:
+                        # We're scanning a row of blocked squares:
                         if self.blocked(X, Y):
                             new_start = r_slope
                             continue

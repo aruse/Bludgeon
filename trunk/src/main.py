@@ -362,6 +362,8 @@ def main():
     
     GV.tiles_img = load_image('tiles16.xpm')
     GV.gray_tiles_img = load_image('tiles16_gray.xpm')
+    GV.menu_bg_img = load_image('parchment.jpg')
+
     GV.tile_dict = create_tile_dict()
     GV.blank_tile = GV.tile_dict['cmap, wall, dark']
 
