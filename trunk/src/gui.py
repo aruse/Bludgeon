@@ -639,11 +639,9 @@ def view_tick():
     GV.screen.blit(GV.eq_surf, GV.eq_rect)
     GV.screen.blit(GV.status_surf, GV.status_rect)
 
-    # Need to fill the mapview area with black because the piece of the
-    # map that we draw may not fill up the whole area.
-    GV.screen.fill(GV.black, GV.mapview_rect)
     # Partition off a piece of the map_surf and blit it on to the screen
     # at the location specified by the mapview_rect
+    GV.screen.fill(GV.black, GV.mapview_rect)
     GV.screen.blit(GV.map_surf, GV.mapview_rect,
                    Rect(GV.mapview_rect.x - GV.map_rect.x,
                         GV.mapview_rect.y - GV.map_rect.y,

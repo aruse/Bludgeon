@@ -407,7 +407,6 @@ def main():
 #    if options.save_file:
 #        run_history()
 
-#    GV.mapview_rect.y = 0
 
     GV.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, GV.map_rect, GV.mapview_rect)
     GV.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.map_rect, GV.mapview_rect)

@@ -107,9 +107,13 @@ class ScrollBar():
                            - self.slider.bottomright[a])
                         
                 if move != 0:
-                    if a == 0:
+                    if (a == 0
+                        and event.pos[a] > self.display_rect.left
+                        and event.pos[a] < self.display_rect.right):
                         self.slider.move_ip((move, 0))
-                    elif a == 1:
+                    elif (a == 1
+                        and event.pos[a] > self.display_rect.top
+                        and event.pos[a] < self.display_rect.bottom):
                         self.slider.move_ip((0, move))
 
                 self.move_surf()
