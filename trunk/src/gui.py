@@ -29,7 +29,8 @@ def handle_resize(w, h):
 
     # Resize the log surface
     GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
-    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
+    GV.logview_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
+#    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
 
     # Resize the dialog surface
     set_dialog_size()
@@ -39,6 +40,7 @@ def handle_resize(w, h):
 
     GV.x_scrollbar.resize()
     GV.y_scrollbar.resize()
+    GV.log_scrollbar.resize()
 
     center_map()
 
@@ -490,26 +492,40 @@ def update_status_surf():
 
 def update_log_surf():
     """Update the log surface."""
-    GV.log_surf.fill(GV.log_bg_color)
-
-    y = GV.log_rect.h
+    total_h = 0
+    text_imgs = []
     for line, color in reversed(GC.msgs):
         text_img = wordwrap_img(line, GV.log_rect.w - GV.font_w,
                                 True, color, justify='left')
         text_rect = text_img.get_rect()
+
+        text_imgs.append((text_img, text_rect))
+        total_h += text_rect.h
+
+
+    GV.log_surf = pygame.Surface((GV.logview_rect.w, total_h)).convert()
+    GV.log_surf.fill(GV.log_bg_color)
+    GV.log_rect.h = total_h
+    GV.log_rect.bottom = GV.logview_rect.bottom
+
+    y = GV.log_rect.h
+    for text_img, text_rect in text_imgs:
         y -= text_rect.h
 
         # y needs to be able to go negative in order to properly render 
         # multi-line text at the top of the surface.  However, there's no 
         # need for it to get so negative that it would be rendering text
         # completely off the top.
-        if y < -GV.log_rect.h:
-            break
+#        if y < -GV.log_rect.h:
+#            break
 
         text_rect.top = y
         text_rect.left = GV.log_surf.get_rect().left + GV.font_w
         GV.log_surf.blit(text_img, text_rect)
 
+    GV.log_scrollbar.resize()
+    GV.log_scrollbar.align()
+    
 
 def render_map():
     for x in range(MAP_W):
@@ -597,16 +613,14 @@ def center_map_y():
 def center_map():
     """Moves the map surface so that the player appears at the center of the 
     mapview.  If the map surface is smaller than the mapview, center the map
-    inside of the mapviewinstead.
+    inside of the mapview instead.
     """
     center_map_x()
     center_map_y()
 
-
         
 def view_tick():
     """Handle all of the view actions in the game loop."""
-    update_log_surf()
     update_eq_surf()
     update_status_surf()
     
@@ -614,9 +628,14 @@ def view_tick():
     render_objects()
     render_decorations()
 
-
     # Draw all of the game surfaces on to the screen
-    GV.screen.blit(GV.log_surf, GV.log_rect)
+    GV.screen.fill(GV.black, GV.logview_rect)
+    GV.screen.blit(GV.log_surf, GV.logview_rect,
+                   Rect(GV.logview_rect.x - GV.log_rect.x,
+                        GV.logview_rect.y - GV.log_rect.y,
+                        GV.logview_rect.w,
+                        GV.logview_rect.h))
+
     GV.screen.blit(GV.eq_surf, GV.eq_rect)
     GV.screen.blit(GV.status_surf, GV.status_rect)
 
@@ -634,6 +653,7 @@ def view_tick():
     # Draw the scrollbars
     GV.x_scrollbar.draw(GV.screen)
     GV.y_scrollbar.draw(GV.screen)
+    GV.log_scrollbar.draw(GV.screen)
 
 
     if GC.state == ST_MENU:

@@ -7,7 +7,10 @@ def move_surface_locations():
     """Set the x,y coords for each of the game's surfaces."""
     GV.map_rect.x, GV.map_rect.y = 0, GV.log_rect.h
     GV.mapview_rect.x, GV.mapview_rect.y = 0, GV.log_rect.h
+
     GV.log_rect.x, GV.log_rect.y = 0, 0
+    GV.logview_rect.x, GV.logview_rect.y = 0, 0
+
     GV.eq_rect.x, GV.eq_rect.y = GV.log_rect.w, 0
     GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
 
@@ -33,8 +36,11 @@ def init_gv():
     GV.screen_rect.h = GV.status_rect.h + 400
 
     # Size of the log surface
-    GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
+    GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w) \
+        - SCROLLBAR_W
     GV.log_rect.h = GV.status_rect.h
+    GV.logview_rect.w, GV.logview_rect.h = GV.log_rect.w, GV.log_rect.h
+
 
     # The mapview size.  May be smaller or larger than the actual map size.
     # This is the location on the screen where the map or a piece thereof
@@ -163,6 +169,7 @@ class GV:
     screen_rect = Rect(0, 0, 0, 0)
     dialog_rect = Rect(0, 0, 0, 0)
 
+    logview_rect = Rect(0, 0, 0, 0)
     mapview_rect = Rect(0, 0, 0, 0)
 
     font = None

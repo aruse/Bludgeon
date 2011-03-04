@@ -7,13 +7,14 @@ from pygame.locals import *
 
 from const import *
 from game import *
-
+from gui import *
 
 def message(msg, color=GV.default_font_color):
     if len(GC.msgs) >= MAX_MSGS:
         GC.msgs.pop(0)
 
     GC.msgs.append((msg, color))
+    update_log_surf()
 
 
 def load_image(name):

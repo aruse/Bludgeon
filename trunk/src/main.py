@@ -154,6 +154,7 @@ def handle_events():
         # Handle scrolling
         GV.x_scrollbar.update(event)
         GV.y_scrollbar.update(event)
+        GV.log_scrollbar.update(event)
 
         handle_actions()
 
@@ -365,7 +366,7 @@ def main():
     GV.screen = pygame.display.set_mode(
         (GV.screen_rect.w, GV.screen_rect.h), pygame.RESIZABLE)
 
-    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
+#    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
     GV.eq_surf = pygame.Surface((GV.eq_rect.w, GV.eq_rect.h)).convert()
     GV.status_surf = pygame.Surface(
         (GV.status_rect.w, GV.status_rect.h)).convert()
@@ -400,7 +401,6 @@ def main():
     GC.u.set_fov_map(GC.map)
     
 
-    message('Welcome, {0}!'.format(uname), GV.gold)
 
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
@@ -411,9 +411,12 @@ def main():
 
     GV.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, GV.map_rect, GV.mapview_rect)
     GV.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.map_rect, GV.mapview_rect)
+    GV.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.log_rect, GV.logview_rect)
 
     center_map()
 
+    message('Welcome, {0}!'.format(uname), GV.gold)
+    message("""Moves the map surface so that the player appears at the center of the mapview.  If the map surface is smaller than the mapview, center the map inside of the mapview instead.""")
     # Main loop
     while GC.state != ST_EXIT:
         controller_tick()
