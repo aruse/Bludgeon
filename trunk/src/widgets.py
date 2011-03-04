@@ -3,7 +3,6 @@ import math
 import pygame
 from pygame.locals import *
 
-#from game import *
 
 class ScrollBar():
 #class ScrollBar(pygame.sprite.DirtySprite):
@@ -50,7 +49,10 @@ class ScrollBar():
             self.slider.h = self.track.h * self.ratio
 
     def update(self, event):
-        """Called by user with mouse events. Event must not be none."""
+        """Called by user with mouse events."""
+        if event is None:
+            return
+
         a = self.axis
         
         if event.type == MOUSEBUTTONDOWN:
@@ -70,12 +72,12 @@ class ScrollBar():
                         
             # Move the slider, and then move the surf_rect according to the
             # distance that the slider was moved.
-            if a == 0:
+            if a == 0 and move != 0:
                 self.slider.move_ip((move, 0))
                 self.surf_rect.x = (
                     (self.slider.x - self.display_rect.x) / self.ratio) * -1 \
                     + self.display_rect.x
-            elif a == 1:
+            elif a == 1 and move != 0:
                 self.slider.move_ip((0, move))
                 self.surf_rect.y = (
                     (self.slider.y - self.display_rect.y) / self.ratio) * -1 \
@@ -109,4 +111,3 @@ class ScrollView():
     surface is larger than the view.
     """
     pass
-

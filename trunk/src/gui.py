@@ -4,7 +4,7 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-from scrollview import *
+from widgets import *
 
 
 
