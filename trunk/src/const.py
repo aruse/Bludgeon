@@ -32,7 +32,8 @@ TILE_W, TILE_H = 16, 16
 
 # Surface sizes, in cells
 EQ_W, EQ_H = 7, STATUS_H
-MAP_W, MAP_H = 120, 50
+#MAP_W, MAP_H = 120, 50
+MAP_W, MAP_H = 50, 35
 
 # Minimum width of the log surface, in pixels
 MIN_LOG_W = 200
@@ -108,3 +109,5 @@ USE_HEADER = ('Press the key next to an item to use it, '
               'or any other to cancel.')
 DELETE_HEADER = ('Press the key next to an item to use it, '
                  'or any other to cancel.')
+
+SCROLLBAR_W = 20

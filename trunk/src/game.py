@@ -11,7 +11,6 @@ def move_surface_locations():
     GV.eq_rect.x, GV.eq_rect.y = GV.log_rect.w, 0
     GV.status_rect.x, GV.status_rect.y = GV.eq_rect.x + GV.eq_rect.w, 0
 
-
 def init_gv():
     GV.font = pygame.font.SysFont('Arial', FONT_SIZE)
     GV.font_h = GV.font.get_height()
@@ -40,8 +39,8 @@ def init_gv():
     # The mapview size.  May be smaller or larger than the actual map size.
     # This is the location on the screen where the map or a piece thereof
     # is drawn.  It's not an actual surface, but a logical rectangle.
-    GV.mapview_rect.w = GV.screen_rect.w
-    GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h
+    GV.mapview_rect.w = GV.screen_rect.w - SCROLLBAR_W
+    GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h - SCROLLBAR_W
 
     # Locations to blit the various surfaces
     move_surface_locations()

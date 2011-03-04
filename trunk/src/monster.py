@@ -48,14 +48,14 @@ class Monster(Object):
             self.defense = 2
             self.death = None
         elif name == 'orc':
-            self.hp = 10
-            self.atk_power = 3
+            self.hp = 1
+            self.atk_power = 1
             self.defense = 0
             self.death = die_leave_corpse
         elif name == 'troll':
-            self.hp = 16
-            self.atk_power = 4
-            self.defense = 1
+            self.hp = 2
+            self.atk_power = 2
+            self.defense = 0
             self.death = die_leave_corpse
 
         self.max_hp = self.hp

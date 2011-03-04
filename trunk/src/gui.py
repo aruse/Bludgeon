@@ -22,9 +22,10 @@ def handle_resize(w, h):
     GV.screen = pygame.display.set_mode((GV.screen_rect.w, GV.screen_rect.h),
                                         pygame.RESIZABLE)
 
-    # Resize the mapview
-    GV.mapview_rect.w, GV.mapview_rect.h = \
-        GV.screen_rect.w, GV.screen_rect.h - GV.status_rect.h
+    # Resize the mapview. We have to shave off a little so the scrollbars
+    # can fit
+    GV.mapview_rect.w = GV.screen_rect.w - SCROLLBAR_W
+    GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h - SCROLLBAR_W
 
     # Resize the log surface
     GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
@@ -35,6 +36,9 @@ def handle_resize(w, h):
 
     # Move the surfaces to their new locations
     move_surface_locations()
+
+    GV.x_scrollbar.resize()
+    GV.y_scrollbar.resize()
 
     center_map()
 
@@ -531,7 +535,7 @@ def render_objects():
 
 def render_decorations():
     draw_box(GC.u.x, GC.u.y, GV.white)
-
+    pygame.draw.rect(GV.map_surf, GV.red, Rect(0, 0, GV.map_rect.w, GV.map_rect.h), 1)
 
 def center_map_x():
     """Helper function for center_map().  Handles the horizontal coordinate."""
