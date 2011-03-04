@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from pygame.locals import *
 
@@ -90,15 +92,17 @@ class ScrollBar():
         """Place the slider where it should be, according to the location
         of the surf_rect.
         """
+        # math.ceil() needed to compensate for rounding errors causing the
+        # bars to be off by one pixel.
         if self.axis == 0:
-            self.slider.x = self.ratio \
-                * (self.surf_rect.x - self.display_rect.x) * -1 \
-                + self.display_rect.x
-            
+            self.slider.x = math.ceil(
+                self.ratio * (self.surf_rect.x - self.display_rect.x) * -1
+                + self.display_rect.x)
         elif self.axis == 1:
-            self.slider.y = self.ratio \
-                * (self.surf_rect.y - self.display_rect.y) * -1 \
-                + self.display_rect.y
+            self.slider.y = math.ceil(
+                self.ratio * (self.surf_rect.y - self.display_rect.y) * -1
+                + self.display_rect.y)
+
 
 class ScrollView():
     """Implements a scrollable area with scrollbars that appear if the
