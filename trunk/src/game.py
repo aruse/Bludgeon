@@ -17,8 +17,8 @@ def init_gv():
     GV.font_w = GV.font.size('X')[0]
 
     # Size of the map surface
-    GV.map_rect.w = MAP_W * TILE_W
-    GV.map_rect.h = MAP_H * TILE_H
+    GV.map_rect.w = (MAP_W + 2) * TILE_W 
+    GV.map_rect.h = (MAP_H + 2) * TILE_H
 
     # Size of the status panel
     GV.status_rect.w = STATUS_W * GV.font_w

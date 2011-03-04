@@ -94,6 +94,7 @@ class ScrollBar():
             self.slider.x = self.ratio \
                 * (self.surf_rect.x - self.display_rect.x) * -1 \
                 + self.display_rect.x
+            
         elif self.axis == 1:
             self.slider.y = self.ratio \
                 * (self.surf_rect.y - self.display_rect.y) * -1 \

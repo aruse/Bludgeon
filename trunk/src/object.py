@@ -103,12 +103,16 @@ class Object:
 
     def draw(self):
         """Draw this Object on the map at the current location."""
-        GV.map_surf.blit(GV.tiles_img, (self.x * TILE_W, self.y * TILE_H),
+        # Remember to offset by 1 tile so that there's room
+        # for the border.
+        GV.map_surf.blit(GV.tiles_img,
+                         ((self.x + 1) * TILE_W, (self.y + 1) * TILE_H),
                          self.tile)
  
     def draw_gray(self):
         """Draw this Object on the map at the current location, grayed out."""
-        GV.map_surf.blit(GV.gray_tiles_img, (self.x * TILE_W, self.y * TILE_H),
+        GV.map_surf.blit(GV.gray_tiles_img,
+                         ((self.x + 1) * TILE_W, (self.y + 1) * TILE_H),
                          self.tile)
 
     def can_move_dir(self, x, y=None):

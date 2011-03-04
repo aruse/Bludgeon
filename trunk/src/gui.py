@@ -69,7 +69,8 @@ def mouse_coords_to_map_coords(x, y):
 def draw_box(x, y, color=GV.white):
     """Draw a box around the cell at the given coords."""
     pygame.draw.rect(GV.map_surf, color,
-                     Rect(x * TILE_W, y * TILE_H, TILE_W, TILE_H), 1)
+                     Rect((x + 1) * TILE_W, (y + 1) * TILE_H,
+                          TILE_W, TILE_H), 1)
 
 def img_fill(surf, img, rect=None):
     """Fill the given surface with the given image.  If rect is None, fill the
@@ -505,17 +506,17 @@ def render_map():
         for y in range(MAP_H):
             if GC.u.fov_map.lit(x, y):
                 GV.map_surf.blit(GV.tiles_img,
-                                 (x * TILE_W, y * TILE_H),
+                                 ((x + 1) * TILE_W, (y + 1)* TILE_H),
                                  GC.map[x][y].tile)
                 GC.map[x][y].explored = True
             else:
                 if GC.map[x][y].explored:
                     GV.map_surf.blit(GV.gray_tiles_img,
-                                     (x * TILE_W, y * TILE_H),
+                                     ((x + 1) * TILE_W, (y + 1) * TILE_H),
                                      GC.map[x][y].tile)
                 else:
                     GV.map_surf.blit(GV.tiles_img,
-                                     (x * TILE_W, y * TILE_H),
+                                     ((x + 1) * TILE_W, (y + 1) * TILE_H),
                                      GV.blank_tile)
     
 def render_objects():
