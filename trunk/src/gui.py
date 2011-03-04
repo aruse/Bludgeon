@@ -551,6 +551,10 @@ def center_map_x():
         if GV.map_rect.x < min_x:
             GV.map_rect.x = min_x
 
+    # Move the scrollbar slider to the correct position
+    GV.x_scrollbar.align()
+
+
 def center_map_y():
     """Helper function for center_map().  Handles the vertical coordinate."""
     if GV.map_rect.h < GV.mapview_rect.h:
@@ -568,6 +572,8 @@ def center_map_y():
         if GV.map_rect.y < min_y:
             GV.map_rect.y = min_y
 
+    # Move the scrollbar slider to the correct position
+    GV.y_scrollbar.align()
 
 def center_map():
     """Moves the map surface so that the player appears at the center of the 
@@ -576,6 +582,7 @@ def center_map():
     """
     center_map_x()
     center_map_y()
+
 
         
 def view_tick():
@@ -597,14 +604,18 @@ def view_tick():
     # Need to fill the mapview area with black because the piece of the
     # map that we draw may not fill up the whole area.
     GV.screen.fill(GV.black, GV.mapview_rect)
-
-    # Partition off a piece of the map_surf and blits it on to the screen
+    # Partition off a piece of the map_surf and blit it on to the screen
     # at the location specified by the mapview_rect
     GV.screen.blit(GV.map_surf, GV.mapview_rect,
                    Rect(GV.mapview_rect.x - GV.map_rect.x,
                         GV.mapview_rect.y - GV.map_rect.y,
                         GV.mapview_rect.w,
                         GV.mapview_rect.h))
+
+    # Draw the scrollbars
+    GV.x_scrollbar.draw(GV.screen)
+    GV.y_scrollbar.draw(GV.screen)
+
 
     if GC.state == ST_MENU:
         GV.screen.blit(GV.dialog_surf, GV.dialog_rect)

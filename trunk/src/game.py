@@ -280,7 +280,10 @@ class GV:
     xp_bar_color = (32, 200, 32)
     xp_bar_bg_color = darker_green
 
-    
+
+    x_scrollbar = None
+    y_scrollbar = None
+
 # From Slash'EM
 #CLR_BLACK = (0, 0, 0)
 #CLR_D_GRAY = (64, 64, 64)

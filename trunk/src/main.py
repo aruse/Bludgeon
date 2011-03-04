@@ -146,8 +146,14 @@ def handle_events():
             GC.button = event.button
         elif event.type == MOUSEBUTTONUP:
             GC.button = None
+        elif event.type == MOUSEMOTION:
+            pass
         elif event.type == pygame.VIDEORESIZE:
             handle_resize(event.w, event.h)
+
+        # Handle scrolling
+        GV.x_scrollbar.update(event)
+        GV.y_scrollbar.update(event)
 
         handle_actions()
 
@@ -387,9 +393,6 @@ def main():
         GC.dlevel_dict['doom'] = []
         GC.dlevel_dict['doom'].append(gen_connected_rooms())
         GC.map = GC.dlevel_dict['doom'][0]
-
-
-
     
     # Create a dlevel
 #    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
@@ -403,8 +406,11 @@ def main():
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
 #    if options.save_file:
 #        run_history()
-    
-        
+
+
+    GV.x_scrollbar = ScrollBar(20, 0, GV.map_rect, GV.mapview_rect)
+    GV.y_scrollbar = ScrollBar(20, 1, GV.map_rect, GV.mapview_rect)
+
     center_map()
 
     # Main loop

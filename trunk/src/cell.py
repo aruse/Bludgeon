@@ -9,8 +9,6 @@ class Cell:
     """Map cell, representing a single location on the map."""
 
     def __init__(self, name, explored=False):
-        self.name = name
-        
         self.set_tile(name)
 
         # All tiles start unexplored
