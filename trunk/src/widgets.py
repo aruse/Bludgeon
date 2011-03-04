@@ -59,6 +59,33 @@ class ScrollBar():
             if self.slider.collidepoint(event.pos):
                 self.scrolling = True
 
+            elif self.track.collidepoint(event.pos):
+                if a == 0:
+                    if event.pos[a] > self.slider.bottomright[a]:
+                        move = self.slider.w
+                    elif event.pos[a] < self.slider.topleft[a]:
+                        move = -self.slider.w
+
+                    move = max(move, self.track.topleft[a] \
+                                   - self.slider.topleft[a])
+                    move = min(move, self.track.bottomright[a] \
+                                   - self.slider.bottomright[a])
+                    self.slider.move_ip((move, 0))
+                elif a == 1:
+                    if event.pos[a] > self.slider.bottomright[a]:
+                        move = self.slider.h
+                    elif event.pos[a] < self.slider.topleft[a]:
+                        move = -self.slider.h
+
+                    move = max(move, self.track.topleft[a] \
+                                   - self.slider.topleft[a])
+                    move = min(move, self.track.bottomright[a] \
+                                   - self.slider.bottomright[a])
+                    self.slider.move_ip((0, move))
+
+                self.move_surf()
+
+
         elif event.type == MOUSEBUTTONUP:
             if self.scrolling:
                 self.scrolling = False
@@ -70,18 +97,29 @@ class ScrollBar():
             move = min(move,
                        self.track.bottomright[a] - self.slider.bottomright[a])
                         
-            # Move the slider, and then move the surf_rect according to the
-            # distance that the slider was moved.
-            if a == 0 and move != 0:
-                self.slider.move_ip((move, 0))
-                self.surf_rect.x = (
-                    (self.slider.x - self.display_rect.x) / self.ratio) * -1 \
-                    + self.display_rect.x
-            elif a == 1 and move != 0:
-                self.slider.move_ip((0, move))
-                self.surf_rect.y = (
-                    (self.slider.y - self.display_rect.y) / self.ratio) * -1 \
-                    + self.display_rect.y
+            if move != 0:
+                if a == 0:
+                    self.slider.move_ip((move, 0))
+                elif a == 1:
+                    self.slider.move_ip((0, move))
+
+            self.move_surf()
+
+
+    def move_surf(self):
+        """Align the surface location according to the position of the
+        slider.
+        """
+        if self.axis == 0:
+            self.surf_rect.x = (
+                (self.slider.x - self.display_rect.x) / self.ratio) * -1 \
+                + self.display_rect.x
+        elif self.axis == 1:
+            self.surf_rect.y = (
+                (self.slider.y - self.display_rect.y) / self.ratio) * -1 \
+                + self.display_rect.y
+
+
 
     def draw(self, surf):
         """Render the scrollbar, but only if it's needed."""
