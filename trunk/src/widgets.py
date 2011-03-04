@@ -13,7 +13,8 @@ class ScrollBar():
     light_gray = (191, 191, 191)
     lighter_gray = (220, 220, 220)
 
-    def __init__(self, thickness, axis, surf_rect, display_rect):
+    def __init__(self, thickness, axis,
+                 surf_rect, display_rect, always_show=True):
         """axis can be 0 for the x-axis or 1 for the y-axis"""
 
         self.thickness = thickness
@@ -33,6 +34,9 @@ class ScrollBar():
         # Whether or not the mouse is hovering over the slider
         self.hover = False
 
+        self.always_show = always_show
+        self.shown = always_show
+        
         self.resize()
 
     def resize(self):
@@ -53,6 +57,12 @@ class ScrollBar():
                                      self.display_rect.h)
             self.slider = pygame.Rect(self.track)
             self.slider.h = self.track.h * min(1, self.ratio)
+
+        if self.always_show is False:
+            if self.ratio < 1:
+                self.shown = True
+            else:
+                self.shown = False
 
     def update(self, event):
         """Called by user with mouse events."""
@@ -106,14 +116,12 @@ class ScrollBar():
                 move = min(move, self.track.bottomright[a] 
                            - self.slider.bottomright[a])
                         
-                if move != 0:
-                    if (a == 0
-                        and event.pos[a] > self.display_rect.left
-                        and event.pos[a] < self.display_rect.right):
+                if (move != 0
+                    and event.pos[a] > self.display_rect.topleft[a]
+                    and event.pos[a] < self.display_rect.bottomright[a]):
+                    if a == 0:
                         self.slider.move_ip((move, 0))
-                    elif (a == 1
-                        and event.pos[a] > self.display_rect.top
-                        and event.pos[a] < self.display_rect.bottom):
+                    elif a == 1:
                         self.slider.move_ip((0, move))
 
                 self.move_surf()
@@ -140,6 +148,9 @@ class ScrollBar():
 
     def draw(self, surf):
         """Render the scrollbar, but only if it's needed."""
+        if self.shown is False:
+            return
+
         # The track
         pygame.draw.rect(surf, ScrollBar.gray, self.track, 0)
 

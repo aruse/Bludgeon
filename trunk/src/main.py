@@ -410,9 +410,11 @@ def main():
 
     GV.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, GV.map_rect, GV.mapview_rect)
     GV.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.map_rect, GV.mapview_rect)
-    GV.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.log_rect, GV.logview_rect)
+    GV.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.log_rect, GV.logview_rect, always_show=False)
 
+    # Make sure everything is aligned correctly
     center_map()
+    handle_resize(GV.screen_rect.w, GV.screen_rect.h)
 
     message('Welcome, {0}!'.format(uname), GV.gold)
     message("""Moves the map surface so that the player appears at the center of the mapview.  If the map surface is smaller than the mapview, center the map inside of the mapview instead.""")

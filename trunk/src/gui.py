@@ -28,15 +28,16 @@ def handle_resize(w, h):
     GV.mapview_rect.h = GV.screen_rect.h - GV.status_rect.h - SCROLLBAR_W
 
     # Resize the log surface
-    GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
-    GV.logview_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w)
-#    GV.log_surf = pygame.Surface((GV.log_rect.w, GV.log_rect.h)).convert()
+    GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w) \
+        - SCROLLBAR_W
+    GV.logview_rect.w = GV.log_rect.w
 
     # Resize the dialog surface
     set_dialog_size()
 
     # Move the surfaces to their new locations
     move_surface_locations()
+    update_log_surf()
 
     GV.x_scrollbar.resize()
     GV.y_scrollbar.resize()
@@ -502,6 +503,9 @@ def update_log_surf():
         text_imgs.append((text_img, text_rect))
         total_h += text_rect.h
 
+    # To avoid divide-by-zero errors when there are no messages to display.
+    if total_h < 1:
+        total_h = 1
 
     GV.log_surf = pygame.Surface((GV.logview_rect.w, total_h)).convert()
     GV.log_surf.fill(GV.log_bg_color)
@@ -652,7 +656,6 @@ def view_tick():
     GV.x_scrollbar.draw(GV.screen)
     GV.y_scrollbar.draw(GV.screen)
     GV.log_scrollbar.draw(GV.screen)
-
 
     if GC.state == ST_MENU:
         GV.screen.blit(GV.dialog_surf, GV.dialog_rect)
