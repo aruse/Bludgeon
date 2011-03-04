@@ -37,7 +37,7 @@ class ScrollBar():
                                      self.display_rect.w,
                                      self.thickness)
             self.slider = pygame.Rect(self.track)
-            self.slider.w = self.track.w * self.ratio
+            self.slider.w = self.track.w * min(1, self.ratio)
 
         elif self.axis == 1:
             self.ratio = float(self.display_rect.h) / self.surf_rect.h
@@ -46,7 +46,7 @@ class ScrollBar():
                                      self.thickness,
                                      self.display_rect.h)
             self.slider = pygame.Rect(self.track)
-            self.slider.h = self.track.h * self.ratio
+            self.slider.h = self.track.h * min(1, self.ratio)
 
     def update(self, event):
         """Called by user with mouse events."""
@@ -57,7 +57,8 @@ class ScrollBar():
         
         if event.type == MOUSEBUTTONDOWN:
             if self.slider.collidepoint(event.pos):
-                self.scrolling = True
+                if self.ratio < 1:
+                    self.scrolling = True
 
             elif self.track.collidepoint(event.pos):
                 if a == 0:
@@ -124,9 +125,8 @@ class ScrollBar():
     def draw(self, surf):
         """Render the scrollbar, but only if it's needed."""
         pygame.draw.rect(surf, ScrollBar.black, self.track, 0)
-        if self.ratio < 1:
-            pygame.draw.rect(surf, ScrollBar.white, self.track, 1)
-            pygame.draw.rect(surf, ScrollBar.white, self.slider.inflate(-4,-4), 0)
+        pygame.draw.rect(surf, ScrollBar.white, self.track, 1)
+        pygame.draw.rect(surf, ScrollBar.white, self.slider.inflate(-4,-4), 0)
 
     def align(self):
         """Place the slider where it should be, according to the location
@@ -138,11 +138,17 @@ class ScrollBar():
             self.slider.x = math.ceil(
                 self.ratio * (self.surf_rect.x - self.display_rect.x) * -1
                 + self.display_rect.x)
+
+            if self.slider.x < self.display_rect.x:
+                self.slider.x = self.display_rect.x
+
         elif self.axis == 1:
             self.slider.y = math.ceil(
                 self.ratio * (self.surf_rect.y - self.display_rect.y) * -1
                 + self.display_rect.y)
 
+            if self.slider.y < self.display_rect.y:
+                self.slider.y = self.display_rect.y
 
 class ScrollView():
     """Implements a scrollable area with scrollbars that appear if the
