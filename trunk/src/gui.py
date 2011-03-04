@@ -56,6 +56,11 @@ def mouse_coords_to_map_coords(x, y):
     # Compensate for the relative position of the map surface.
     x -= GV.map_rect.x
     y -= GV.map_rect.y
+
+    # Compensate for map border
+    x -= TILE_W
+    y -= TILE_H
+
     # Convert into map coords
     x /= TILE_W
     y /= TILE_H
@@ -260,7 +265,12 @@ def render_tooltips():
 
         bar_len = 100
 
-        text_img = GV.font.render('You see: ' + obj.name, True, GV.white)
+        if GC.u.fov_map.lit(obj.x, obj.y):
+            text = 'You see: ' + obj.name
+        else:
+            text = 'You remember seeing: ' + obj.name
+
+        text_img = GV.font.render(text, True, GV.white)
         text_rect = text_img.get_rect()
 
         if hp_bar and text_rect.w < bar_len:
