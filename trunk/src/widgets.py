@@ -9,7 +9,9 @@ class ScrollBar():
     black = (0, 0, 0)
     dark_gray = (63, 63, 63)
     gray = (128, 128, 128)
+    medium_light_gray = (160, 160, 160)
     light_gray = (191, 191, 191)
+    lighter_gray = (220, 220, 220)
 
     def __init__(self, thickness, axis, surf_rect, display_rect):
         """axis can be 0 for the x-axis or 1 for the y-axis"""
@@ -24,6 +26,12 @@ class ScrollBar():
         self.orig_display_rect = display_rect.copy()
 
         self.scrolling = False
+
+        # Whether or not the slider is clicked
+        self.clicked = False
+
+        # Whether or not the mouse is hovering over the slider
+        self.hover = False
 
         self.resize()
 
@@ -55,6 +63,8 @@ class ScrollBar():
         
         if event.type == MOUSEBUTTONDOWN:
             if self.slider.collidepoint(event.pos):
+                self.clicked = True
+
                 if self.ratio < 1:
                     self.scrolling = True
 
@@ -86,23 +96,28 @@ class ScrollBar():
 
 
         elif event.type == MOUSEBUTTONUP:
-            if self.scrolling:
-                self.scrolling = False
+            self.clicked = False
+            self.scrolling = False
 
-        elif (event.type == MOUSEMOTION and self.scrolling
-              and event.rel[a] != 0):
-            move = max(event.rel[a],
-                       self.track.topleft[a] - self.slider.topleft[a])
-            move = min(move,
-                       self.track.bottomright[a] - self.slider.bottomright[a])
+        elif event.type == MOUSEMOTION:
+            if self.scrolling and event.rel[a] != 0:
+                move = max(event.rel[a], self.track.topleft[a] 
+                           - self.slider.topleft[a])
+                move = min(move, self.track.bottomright[a] 
+                           - self.slider.bottomright[a])
                         
-            if move != 0:
-                if a == 0:
-                    self.slider.move_ip((move, 0))
-                elif a == 1:
-                    self.slider.move_ip((0, move))
+                if move != 0:
+                    if a == 0:
+                        self.slider.move_ip((move, 0))
+                    elif a == 1:
+                        self.slider.move_ip((0, move))
 
-            self.move_surf()
+                self.move_surf()
+
+            if self.slider.collidepoint(event.pos):
+                self.hover = True
+            else:
+                self.hover = False
 
 
     def move_surf(self):
@@ -124,9 +139,19 @@ class ScrollBar():
         # The track
         pygame.draw.rect(surf, ScrollBar.gray, self.track, 0)
 
+        slider_color = None
+
+        if self.hover:
+            slider_color = ScrollBar.lighter_gray
+
+        if self.clicked or self.scrolling:
+            slider_color = ScrollBar.dark_gray
+
+        if slider_color is None:
+            slider_color = ScrollBar.light_gray
 
         # The slider
-        pygame.draw.rect(surf, ScrollBar.light_gray, 
+        pygame.draw.rect(surf, slider_color,
                          (self.slider.x + 2,
                           self.slider.y + 2,
                           self.slider.w - 4,
