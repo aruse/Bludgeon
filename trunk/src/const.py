@@ -110,4 +110,4 @@ USE_HEADER = ('Press the key next to an item to use it, '
 DELETE_HEADER = ('Press the key next to an item to use it, '
                  'or any other to cancel.')
 
-SCROLLBAR_W = 20
+SCROLLBAR_W = 16

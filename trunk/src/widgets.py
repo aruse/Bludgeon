@@ -5,13 +5,11 @@ from pygame.locals import *
 
 
 class ScrollBar():
-#class ScrollBar(pygame.sprite.DirtySprite):
-#    """ Same interface as sprite.Group.
-#    Get result of update() in pixels scrolled, from get_scrolled()
-#    """
-
     white = (255, 255, 255)
     black = (0, 0, 0)
+    dark_gray = (63, 63, 63)
+    gray = (128, 128, 128)
+    light_gray = (191, 191, 191)
 
     def __init__(self, thickness, axis, surf_rect, display_rect):
         """axis can be 0 for the x-axis or 1 for the y-axis"""
@@ -121,12 +119,39 @@ class ScrollBar():
                 + self.display_rect.y
 
 
-
     def draw(self, surf):
         """Render the scrollbar, but only if it's needed."""
-        pygame.draw.rect(surf, ScrollBar.black, self.track, 0)
-        pygame.draw.rect(surf, ScrollBar.white, self.track, 1)
-        pygame.draw.rect(surf, ScrollBar.white, self.slider.inflate(-4,-4), 0)
+        # The track
+        pygame.draw.rect(surf, ScrollBar.gray, self.track, 0)
+
+        # The slider
+        pygame.draw.rect(surf, ScrollBar.light_gray, 
+                         (self.slider.x + 2,
+                          self.slider.y + 2,
+                          self.slider.w - 4,
+                          self.slider.h - 4), 0)
+
+        # The top and left of the slider
+        pygame.draw.lines(surf, ScrollBar.white, False,
+                          ((self.slider.x + 1,
+                            self.slider.y + self.slider.h - 2),
+                           (self.slider.x + 1, self.slider.y + 1),
+                           (self.slider.x + self.slider.w - 2,
+                            self.slider.y + 1)
+                           ), 1)
+
+        # The bottom and right of the slider
+        pygame.draw.lines(surf, ScrollBar.black, False,
+                          ((self.slider.x + self.slider.w - 2,
+                            self.slider.y + 1),
+                           (self.slider.x + self.slider.w - 2,
+                            self.slider.y + self.slider.h - 2),
+                           (self.slider.x + 1,
+                            self.slider.y + self.slider.h - 2)
+                           ), 1)
+
+#inflate(-4,-4), 0)
+#        pygame.draw.rect(surf, ScrollBar.gray, self.slider.inflate(-4,-4), 0)
 
     def align(self):
         """Place the slider where it should be, according to the location

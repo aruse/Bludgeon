@@ -548,6 +548,14 @@ def render_decorations():
     draw_box(GC.u.x, GC.u.y, GV.white)
     pygame.draw.rect(GV.map_surf, GV.red, Rect(0, 0, GV.map_rect.w, GV.map_rect.h), 1)
 
+    # Put an image in the corner where the scrollbars intersect
+    # FIXME: this doesn't actually do anything
+    GV.screen.blit(GV.tiles_img,
+                   (GV.mapview_rect.x + GV.mapview_rect.w,
+                    GV.mapview_rect.y + GV.mapview_rect.h),
+                   GV.tile_dict['Cthulhu'])
+
+
 def center_map_x():
     """Helper function for center_map().  Handles the horizontal coordinate."""
     if GV.map_rect.w < GV.mapview_rect.w:
