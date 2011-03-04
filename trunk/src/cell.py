@@ -38,7 +38,16 @@ class Cell:
 #        self.cell_class = tile_class_dict[name]
         self.tile = GV.tile_dict[name]
         
-        
-    def dig():
-        self.blocks_movement = False
-        self.block_signt = False
+    def draw(self, x, y):
+        """Draw this Cell on the map at the given coords."""
+        # Remember to offset by 1 tile so that there's room
+        # for the border.
+        GV.map_surf.blit(GV.tiles_img,
+                         ((x + 1) * TILE_W, (y + 1) * TILE_H),
+                         self.tile)
+ 
+    def draw_gray(self, x, y):
+        """Draw this Cell on the map at the given coords, grayed out."""
+        GV.map_surf.blit(GV.gray_tiles_img,
+                         ((x + 1) * TILE_W, (y + 1) * TILE_H),
+                         self.tile)

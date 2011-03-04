@@ -515,15 +515,11 @@ def render_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.u.fov_map.lit(x, y):
-                GV.map_surf.blit(GV.tiles_img,
-                                 ((x + 1) * TILE_W, (y + 1)* TILE_H),
-                                 GC.map[x][y].tile)
+                GC.map[x][y].draw(x, y)
                 GC.map[x][y].explored = True
             else:
                 if GC.map[x][y].explored:
-                    GV.map_surf.blit(GV.gray_tiles_img,
-                                     ((x + 1) * TILE_W, (y + 1) * TILE_H),
-                                     GC.map[x][y].tile)
+                    GC.map[x][y].draw_gray(x, y)
                 else:
                     GV.map_surf.blit(GV.tiles_img,
                                      ((x + 1) * TILE_W, (y + 1) * TILE_H),
