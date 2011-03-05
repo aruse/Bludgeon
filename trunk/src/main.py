@@ -143,6 +143,7 @@ def handle_events():
             GC.prev_key = GC.key
             GC.key = None
         elif event.type == MOUSEBUTTONDOWN:
+            print event.button
             GC.button = event.button
         elif event.type == MOUSEBUTTONUP:
             GC.button = None
