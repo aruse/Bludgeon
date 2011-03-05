@@ -12,9 +12,9 @@ class FOVMap(object):
     def __init__(self, map):
         self.data = map
         self.w, self.h = len(map), len(map[0])
-        self.light = []
+        self.marked = []
         for i in range(self.w):
-            self.light.append([0] * self.h)
+            self.marked.append([0] * self.h)
         self.flag = 1
 
     def square(self, x, y):
@@ -25,15 +25,17 @@ class FOVMap(object):
                 or x >= self.w or y >= self.h
                 or self.data[x][y].block_sight)
 
-    def lit(self, x, y):
-        return self.light[x][y] == self.flag
+    def in_fov(self, x, y):
+        """Returns whether or not this cell is in the FOV."""
+        return self.marked[x][y] == self.flag
 
-    def set_lit(self, x, y):
+    def set_marked(self, x, y):
+        """Sets a cell as in the FOV."""
         if 0 <= x < self.w and 0 <= y < self.h:
-            self.light[x][y] = self.flag
+            self.marked[x][y] = self.flag
 
-    def _cast_light(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):
-        """Recursive lightcasting function"""
+    def _cast_ray(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):
+        """Recursive raycasting function"""
         if start < end:
             return
         radius_squared = radius * radius
@@ -57,7 +59,7 @@ class FOVMap(object):
                 else:
                     # Our light beam is touching this square; light it:
                     if dx * dx + dy * dy < radius_squared:
-                        self.set_lit(X, Y)
+                        self.set_marked(X, Y)
                     if blocked:
                         # We're scanning a row of blocked squares:
                         if self.blocked(X, Y):
@@ -70,7 +72,7 @@ class FOVMap(object):
                         if self.blocked(X, Y) and j < radius:
                             # This is a blocking square, start a child scan:
                             blocked = True
-                            self._cast_light(cx, cy, j + 1, start, l_slope,
+                            self._cast_ray(cx, cy, j + 1, start, l_slope,
                                              radius, xx, xy, yx, yy, id + 1)
                             new_start = r_slope
             # Row is scanned; do next row unless last square was blocked:
@@ -78,13 +80,15 @@ class FOVMap(object):
                 break
 
     def do_fov(self, x, y, radius):
-        """Calculate lit squares from the given location and radius"""
+        """Calculate which cells are in FOV from the given
+        location and radius.
+        """
         self.flag += 1
         for oct in range(8):
-            self._cast_light(x, y, 1, 1.0, 0.0, radius,
+            self._cast_ray(x, y, 1, 1.0, 0.0, radius,
                              self.mult[0][oct], self.mult[1][oct],
                              self.mult[2][oct], self.mult[3][oct], 0)
         # This is necessary because the algorithm doesn't recognise the
         # starting square as being in the FOV.
-        self.set_lit(x, y)
+        self.set_marked(x, y)
         

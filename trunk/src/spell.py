@@ -25,7 +25,7 @@ def closest_monster(max_range):
     closest_dist = max_range + 1
 
     for m in GC.monsters:
-        if m != GC.u and GC.u.fov_map.lit(m.x, m.y):
+        if m != GC.u and GC.u.fov_map.in_fov(m.x, m.y):
             dist = GC.u.distance_to(m)
             if dist < closest_dist:
                 closest_enemy = m

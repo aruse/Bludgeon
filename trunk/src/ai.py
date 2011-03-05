@@ -10,7 +10,7 @@ class StupidAI:
     def take_turn(self):
         # If I can see the monster, it can see me
         m = self.owner
-        if GC.u.fov_map.lit(m.x, m.y):
+        if GC.u.fov_map.in_fov(m.x, m.y):
             if m.distance_to(GC.u) >= 2:
                 m.move_towards(GC.u.x, GC.u.y)
             elif GC.u.hp > 0:

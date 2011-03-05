@@ -143,7 +143,6 @@ def handle_events():
             GC.prev_key = GC.key
             GC.key = None
         elif event.type == MOUSEBUTTONDOWN:
-            print event.button
             GC.button = event.button
         elif event.type == MOUSEBUTTONUP:
             GC.button = None
@@ -274,7 +273,7 @@ def handle_actions():
 
             # Accept the target if the player clicked in FOV, and in
             # case a range is specified, if it's in that range
-            if GC.button == BUTTON_L and GC.u.fov_map.lit(x, y):
+            if GC.button == BUTTON_L and GC.u.fov_map.in_fov(x, y):
                 targeting_function = GC.targeting_function.pop(0)
                 success = targeting_function(GC.targeting_item, x, y)
 

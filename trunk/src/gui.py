@@ -171,7 +171,7 @@ def object_under_mouse():
     x, y = mouse_coords_to_map_coords(x, y)
 
     if x is not None and y is not None and (
-        GC.u.fov_map.lit(x, y) or GC.map[x][y].explored):
+        GC.u.fov_map.in_fov(x, y) or GC.map[x][y].explored):
     
         for m in GC.monsters + [GC.u]:
             if m.x == x and m.y == y:
@@ -268,7 +268,7 @@ def render_tooltips():
 
         bar_len = 100
 
-        if GC.u.fov_map.lit(obj.x, obj.y):
+        if GC.u.fov_map.in_fov(obj.x, obj.y):
             text = 'You see: ' + obj.name
         else:
             text = 'You remember seeing: ' + obj.name
@@ -534,7 +534,7 @@ def update_log_surf():
 def render_map():
     for x in range(MAP_W):
         for y in range(MAP_H):
-            if GC.u.fov_map.lit(x, y):
+            if GC.u.fov_map.in_fov(x, y):
                 GC.map[x][y].draw(x, y)
                 GC.map[x][y].explored = True
             else:
@@ -547,14 +547,14 @@ def render_map():
     
 def render_objects():
     for item in GC.items:
-        if GC.u.fov_map.lit(item.x, item.y):
+        if GC.u.fov_map.in_fov(item.x, item.y):
             item.draw()
         else:
             if GC.map[item.x][item.y].explored:
                 item.draw_gray()
 
     for m in GC.monsters:
-        if GC.u.fov_map.lit(m.x, m.y):
+        if GC.u.fov_map.in_fov(m.x, m.y):
             m.draw()
 
     # Always draw the player
