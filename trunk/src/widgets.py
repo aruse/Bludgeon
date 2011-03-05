@@ -15,11 +15,16 @@ class ScrollBar():
     # Colors
     white = [255] * 3
     black = [0] * 3
+
     track_bg = white
     track_fg = [205] * 3
+
     slider_normal = [64] * 3
     slider_hover = [127] * 3
     slider_clicked = [32] * 3
+
+    arrow_inactive = track_fg
+    arrow_active = slider_normal
 
     # The length in pixels of the area off the end of the track where
     # the arrows are drawn.
@@ -308,7 +313,12 @@ class ScrollBar():
                        self.track.y + self.track.h / 2),
                       (self.track.x - 4,
                        self.track.y + self.track.h - 4))
-            pygame.draw.polygon(surf, ScrollBar.slider_normal, points, 0)
+            if self.slider.x == self.track.x:
+                arrow_color = ScrollBar.arrow_inactive
+            else:
+                arrow_color = ScrollBar.arrow_active
+
+            pygame.draw.polygon(surf, arrow_color, points, 0)
 
             # The right arrow
             pygame.draw.circle(surf, ScrollBar.track_bg,
@@ -324,7 +334,12 @@ class ScrollBar():
                        self.track.y + self.track.h / 2),
                       (self.track.x + self.track.w + 4,
                        self.track.y + self.track.h - 4))
-            pygame.draw.polygon(surf, ScrollBar.slider_normal, points, 0)
+            if self.slider.right == self.track.right:
+                arrow_color = ScrollBar.arrow_inactive
+            else:
+                arrow_color = ScrollBar.arrow_active
+
+            pygame.draw.polygon(surf, arrow_color, points, 0)
 
         elif self.axis == 1:
             # The vertical track
@@ -353,7 +368,12 @@ class ScrollBar():
                        self.track.y - ar + 4),
                       (self.track.x + self.track.w - 4,
                        self.track.y - 4))
-            pygame.draw.polygon(surf, ScrollBar.slider_normal, points, 0)
+            if self.slider.y == self.track.y:
+                arrow_color = ScrollBar.arrow_inactive
+            else:
+                arrow_color = ScrollBar.arrow_active
+
+            pygame.draw.polygon(surf, arrow_color, points, 0)
 
             # The down arrow
             pygame.draw.circle(surf, ScrollBar.track_bg,
@@ -369,7 +389,12 @@ class ScrollBar():
                        self.track.y + self.track.h  + 4),
                       (self.track.x + self.track.w / 2,
                        self.track.y + self.track.h + ar - 4))
-            pygame.draw.polygon(surf, ScrollBar.slider_normal, points, 0)
+            if self.slider.bottom == self.track.bottom:
+                arrow_color = ScrollBar.arrow_inactive
+            else:
+                arrow_color = ScrollBar.arrow_active
+
+            pygame.draw.polygon(surf, arrow_color, points, 0)
 
         slider_color = ScrollBar.slider_normal
 
