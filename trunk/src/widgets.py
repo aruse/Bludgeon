@@ -3,6 +3,13 @@ import math
 import pygame
 from pygame.locals import *
 
+# Mouse buttons
+BUTTON_L = 1
+BUTTON_M = 2
+BUTTON_R = 3
+BUTTON_SCROLL_U = 4
+BUTTON_SCROLL_D = 5
+
 
 class ScrollBar():
     # Colors
@@ -17,6 +24,9 @@ class ScrollBar():
     # The length in pixels of the area off the end of the track where
     # the arrows are drawn.
     arrow_size = 16
+
+    # Pixels to scroll with each wheel movement
+    wheel_scroll_amt = 10
 
     def __init__(self, thickness, axis,
                  surf_rect, display_rect, always_show=True):
@@ -154,6 +164,17 @@ class ScrollBar():
             elif self.arrows[1].collidepoint(event.pos):
                 self.arrow_scroll_amount = 1
 
+            # Handle scroll wheel
+            if (self.axis == 1
+                and (self.track.collidepoint(event.pos)
+                     or self.display_rect.collidepoint(event.pos))):
+                if event.button == BUTTON_SCROLL_U:
+                    self.move_slider(-ScrollBar.wheel_scroll_amt)
+                elif event.button == BUTTON_SCROLL_D:
+                    self.move_slider(ScrollBar.wheel_scroll_amt)
+                
+                self.move_surf()
+
         elif event.type == MOUSEBUTTONUP:
             self.clicked = False
             self.scrolling = False
@@ -161,25 +182,33 @@ class ScrollBar():
 
         elif event.type == MOUSEMOTION:
             if self.scrolling and event.rel[a] != 0:
-                move = max(event.rel[a], self.track.topleft[a] 
-                           - self.slider.topleft[a])
-                move = min(move, self.track.bottomright[a] 
-                           - self.slider.bottomright[a])
-                        
-                if (move != 0
-                    and event.pos[a] > self.display_rect.topleft[a]
+                # This keeps the mouse from activating the slider if you 
+                # click and then move outside of the display_rect.
+                if (event.pos[a] > self.display_rect.topleft[a]
                     and event.pos[a] < self.display_rect.bottomright[a]):
-                    if a == 0:
-                        self.slider.move_ip((move, 0))
-                    elif a == 1:
-                        self.slider.move_ip((0, move))
 
-                self.move_surf()
+                    self.move_slider(event.rel[a])
+                    self.move_surf()
 
             if self.slider.collidepoint(event.pos):
                 self.hover = True
             else:
                 self.hover = False
+
+                                
+    def move_slider(self, d):
+        """Move the slider by d amount."""
+        a = self.axis
+        move = max(d, self.track.topleft[a] 
+                   - self.slider.topleft[a])
+        move = min(move, self.track.bottomright[a] 
+                   - self.slider.bottomright[a])
+                        
+        if move != 0:
+            if a == 0:
+                self.slider.move_ip((move, 0))
+            elif a == 1:
+                self.slider.move_ip((0, move))
 
     def update(self, surf):
         """Handle arrow scrolling and then draw the scrollbar. Needs to be
@@ -191,15 +220,7 @@ class ScrollBar():
     def arrow_scroll(self):
         """Scrolls while the arrows are clicked."""
         if self.arrow_scroll_amount != 0:
-            move = max(self.arrow_scroll_amount, self.track.topleft[self.axis] 
-                       - self.slider.topleft[self.axis])
-            move = min(move, self.track.bottomright[self.axis] 
-                       - self.slider.bottomright[self.axis])
-            if self.axis == 0:
-                self.slider.move_ip((move, 0))
-            elif self.axis == 1:
-                self.slider.move_ip((0, move))
-
+            self.move_slider(self.arrow_scroll_amount)
             self.move_surf()
 
     def move_surf(self):
