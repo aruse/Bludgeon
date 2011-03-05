@@ -265,8 +265,8 @@ class ScrollBar():
                 * (self.display_rect.x - self.surf_rect.x)
                 + self.track.x)
 
-            if self.slider.x < self.display_rect.x:
-                self.slider.x = self.display_rect.x
+            if self.slider.x < self.track.x:
+                self.slider.x = self.track.x
 
         elif self.axis == 1:
             self.slider.y = math.ceil(
@@ -274,8 +274,8 @@ class ScrollBar():
                 * (self.display_rect.y - self.surf_rect.y)
                 + self.track.y)
 
-            if self.slider.y < self.display_rect.y:
-                self.slider.y = self.display_rect.y
+            if self.slider.y < self.track.y:
+                self.slider.y = self.track.y
 
     def draw(self, surf):
         """Render the scrollbar."""
