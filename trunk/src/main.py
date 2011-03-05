@@ -152,9 +152,9 @@ def handle_events():
             handle_resize(event.w, event.h)
 
         # Handle scrolling
-        GV.x_scrollbar.update(event)
-        GV.y_scrollbar.update(event)
-        GV.log_scrollbar.update(event)
+        GV.x_scrollbar.handle_event(event)
+        GV.y_scrollbar.handle_event(event)
+        GV.log_scrollbar.handle_event(event)
 
         handle_actions()
 
@@ -418,6 +418,7 @@ def main():
 
     message('Welcome, {0}!'.format(uname), GV.gold)
     message("""Moves the map surface so that the player appears at the center of the mapview.  If the map surface is smaller than the mapview, center the map inside of the mapview instead.""")
+
     # Main loop
     while GC.state != ST_EXIT:
         controller_tick()

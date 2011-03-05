@@ -327,7 +327,7 @@ def render_tooltips():
 def update_eq_surf():
     """Update the equipment surface, displaying what I'm wearing and the most
     valuable gear in my backpack."""
-    GV.eq_surf.fill(GV.dark_gray)
+    GV.eq_surf.fill(GV.black)
     GV.eq_surf.blit(GV.tiles_img, GV.eq_head, GV.tile_dict['conical hat'])
     GV.eq_surf.blit(GV.tiles_img, GV.eq_eyes, GV.tile_dict['lenses'])
     GV.eq_surf.blit(GV.tiles_img, GV.eq_neck, GV.tile_dict['oval'])
@@ -653,9 +653,9 @@ def view_tick():
                         GV.mapview_rect.h))
 
     # Draw the scrollbars
-    GV.x_scrollbar.draw(GV.screen)
-    GV.y_scrollbar.draw(GV.screen)
-    GV.log_scrollbar.draw(GV.screen)
+    GV.x_scrollbar.update(GV.screen)
+    GV.y_scrollbar.update(GV.screen)
+    GV.log_scrollbar.update(GV.screen)
 
     if GC.state == ST_MENU:
         GV.screen.blit(GV.dialog_surf, GV.dialog_rect)
