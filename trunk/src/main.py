@@ -137,10 +137,10 @@ def handle_events():
         if event.type == QUIT:
             GC.state = ST_EXIT
         elif event.type == KEYDOWN:
-            GC.prev_key = GC.key
             GC.key = event.key
+#            print event.unicode
+#            print event.scancode
         elif event.type == KEYUP:
-            GC.prev_key = GC.key
             GC.key = None
         elif event.type == MOUSEBUTTONDOWN:
             GC.button = event.button
@@ -319,17 +319,6 @@ def controller_tick(reel=False):
         # Player takes turn
         handle_events()
 
-        if GC.key == GC.prev_key:
-            GC.key_held += 1
-        else:
-            GC.key_held = 0
-            
-        # If a key has been held down long enough, repeat the action
-        if GC.key_held > REPEAT_DELAY:
-            handle_actions()
-
-        GC.prev_key = GC.key
-
     if GC.fov_recompute:
         GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
         GC.fov_recompute = False
@@ -341,6 +330,12 @@ def main():
     # pygame.init() is WAY faster.
     pygame.display.init()
     pygame.font.init()
+
+    # Wait 200 ms before repeating a key that's held down, and send them
+    # as fast as possible.  The repeat delay is therefore limited by the
+    # frame rate, not by set_repeat()
+    pygame.key.set_repeat(200, 1)
+
     pygame.display.set_caption('{0} {1}'.format(GAME_NAME, VERSION))
 
     parser = optparse.OptionParser()

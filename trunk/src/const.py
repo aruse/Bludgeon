@@ -51,9 +51,6 @@ GAME_TITLE = GAME_NAME + ' ' + VERSION
 
 FRAME_RATE = 20
 
-# Number of clock cycles a key has to be held down before it's repeated.
-REPEAT_DELAY = 4
-
 
 # Some room generation constants
 ROOM_MAX_SIZE = 10

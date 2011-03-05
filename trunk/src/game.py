@@ -72,13 +72,8 @@ class GC:
     """Stores the controller state."""
     clock = None
 
-    key = None       # The key currently held down
-    prev_key = None  # The key from last clock cycle
-
-    button = None
-    
-    # Number of clock cycles the key has been held down
-    key_held = 0
+    key = None       # The last pressed key
+    button = None    # The last clicked mouse button
     
     # Whether or not an action has been handled this clock cycle
     action_handled = False
