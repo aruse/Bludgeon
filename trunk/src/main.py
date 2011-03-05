@@ -408,9 +408,12 @@ def main():
 #        run_history()
 
 
-    GV.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, GV.map_rect, GV.mapview_rect)
-    GV.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.map_rect, GV.mapview_rect)
-    GV.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.log_rect, GV.logview_rect, always_show=False)
+    GV.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, GV.map_rect,
+                               GV.mapview_rect, always_show=False)
+    GV.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.map_rect,
+                               GV.mapview_rect, always_show=False)
+    GV.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, GV.log_rect,
+                                 GV.logview_rect, always_show=False)
 
     # Make sure everything is aligned correctly
     center_map()

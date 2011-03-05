@@ -26,17 +26,12 @@ class ScrollBar():
     arrow_inactive = track_fg
     arrow_active = slider_normal
 
-    # The length in pixels of the area off the end of the track where
-    # the arrows are drawn.
-    arrow_size = 16
-
     # Pixels to scroll with each wheel movement
     wheel_scroll_amt = 10
 
-    def __init__(self, thickness, axis,
-                 surf_rect, display_rect, always_show=True):
+    def __init__(self, thickness, axis, surf_rect, display_rect,
+                 always_show=True):
         """axis can be 0 for the x-axis or 1 for the y-axis"""
-
         self.thickness = thickness
         self.axis = axis
         self.surf_rect = surf_rect
@@ -78,19 +73,19 @@ class ScrollBar():
         if self.axis == 0:
             self.surf_ratio = float(self.display_rect.w) / self.surf_rect.w
             self.track = pygame.Rect(
-                self.display_rect.x + ScrollBar.arrow_size,
+                self.display_rect.x + self.thickness,
                 self.display_rect.bottom,
-                self.display_rect.w - ScrollBar.arrow_size * 2,
+                self.display_rect.w - self.thickness * 2,
                 self.thickness)
             self.arrows[0] = pygame.Rect(
-                self.track.x - ScrollBar.arrow_size,
+                self.track.x - self.thickness,
                 self.track.y,
-                ScrollBar.arrow_size,
+                self.thickness,
                 self.track.h)
             self.arrows[1] = pygame.Rect(
                 self.track.x + self.track.w,
                 self.track.y,
-                ScrollBar.arrow_size,
+                self.thickness,
                 self.track.h)
             self.slider = pygame.Rect(self.track)
             self.slider.w = self.track.w * min(1, self.surf_ratio)
@@ -100,28 +95,31 @@ class ScrollBar():
             self.surf_ratio = float(self.display_rect.h) / self.surf_rect.h
             self.track = pygame.Rect(
                 self.display_rect.right,
-                self.display_rect.y + ScrollBar.arrow_size,
+                self.display_rect.y + self.thickness,
                 self.thickness,
-                self.display_rect.h - ScrollBar.arrow_size * 2)
+                self.display_rect.h - self.thickness * 2)
             self.arrows[0] = pygame.Rect(
                 self.track.x,
-                self.track.y - ScrollBar.arrow_size,
+                self.track.y - self.thickness,
                 self.track.w,
-                ScrollBar.arrow_size)
+                self.thickness)
             self.arrows[1] = pygame.Rect(
                 self.track.x,
                 self.track.y + self.track.h,
                 self.track.w,
-                ScrollBar.arrow_size)
+                self.thickness)
             self.slider = pygame.Rect(self.track)
             self.slider.h = self.track.h * min(1, self.surf_ratio)
             self.track_ratio = float(self.track.h) / self.display_rect.h
 
         if self.always_show is False:
-            if self.surf_ratio < 1:
-                self.shown = True
-            else:
+            # Only make the slider disappear if the surf_rect is
+            # larger than the display_rect in both dimensions.
+            if (float(self.display_rect.w) / self.surf_rect.w >= 1
+                and float(self.display_rect.h) / self.surf_rect.h >= 1):
                 self.shown = False
+            else:
+                self.shown = True
 
     def handle_event(self, event):
         """Handle mouse events.  Called by invoking program."""
@@ -283,33 +281,32 @@ class ScrollBar():
             return
 
         # Some abbreviateions so the code doesn't take up so much visual space.
-        ar = ScrollBar.arrow_size
         th = self.thickness
 
         if self.axis == 0:
             # The horizontal track
             pygame.draw.rect(surf, ScrollBar.track_bg,
-                             (self.track.x - ar * 0.5,
+                             (self.track.x - th * 0.5,
                               self.track.y,
-                              self.track.w + ar,
+                              self.track.w + th,
                               self.track.h), 0)
             pygame.draw.rect(surf, ScrollBar.track_fg,
-                             (self.track.x + ar * 0.5,
+                             (self.track.x + th * 0.5,
                               self.track.y + 2,
-                              self.track.w - ar,
+                              self.track.w - th,
                               self.track.h - 4), 0)
 
             # The left arrow
             pygame.draw.circle(surf, ScrollBar.track_bg,
-                               (self.track.x - int(ar * 0.5),
+                               (self.track.x - int(th * 0.5),
                                 self.track.y + int(th * 0.5)),
                                int(th * 0.5), 0)
             pygame.draw.circle(surf, ScrollBar.track_fg,
-                               (self.track.x + int(ar * 0.5),
+                               (self.track.x + int(th * 0.5),
                                 self.track.y + int(th * 0.5)),
-                               int(th * 0.4), 0)
+                               int(th * 0.5 - 2), 0)
             points = ((self.track.x - 4, self.track.y + 4),
-                      (self.track.x - ar + 4,
+                      (self.track.x - th + 4,
                        self.track.y + self.track.h / 2),
                       (self.track.x - 4,
                        self.track.y + self.track.h - 4))
@@ -322,15 +319,15 @@ class ScrollBar():
 
             # The right arrow
             pygame.draw.circle(surf, ScrollBar.track_bg,
-                               (self.track.x + self.track.w + int(ar * 0.5),
+                               (self.track.x + self.track.w + int(th * 0.5),
                                 self.track.y + int(th * 0.5)),
                                int(th * 0.5), 0)
             pygame.draw.circle(surf, ScrollBar.track_fg,
-                               (self.track.x + self.track.w - int(ar * 0.5),
+                               (self.track.x + self.track.w - int(th * 0.5),
                                 self.track.y + int(th * 0.5)),
-                               int(th * 0.4), 0)
+                               int(th * 0.5 - 2), 0)
             points = ((self.track.x + self.track.w + 4, self.track.y + 4),
-                      (self.track.x + self.track.w + ar - 4,
+                      (self.track.x + self.track.w + th - 4,
                        self.track.y + self.track.h / 2),
                       (self.track.x + self.track.w + 4,
                        self.track.y + self.track.h - 4))
@@ -345,27 +342,27 @@ class ScrollBar():
             # The vertical track
             pygame.draw.rect(surf, ScrollBar.track_bg,
                              (self.track.x,
-                              self.track.y - ar * 0.5,
+                              self.track.y - th * 0.5,
                               self.track.w,
-                              self.track.h + ar), 0)
+                              self.track.h + th), 0)
             pygame.draw.rect(surf, ScrollBar.track_fg,
                              (self.track.x + 2,
-                              self.track.y + ar * 0.5,
+                              self.track.y + th * 0.5,
                               self.track.w - 4,
-                              self.track.h - ar), 0)
+                              self.track.h - th), 0)
 
             # The up arrow
             pygame.draw.circle(surf, ScrollBar.track_bg,
                                (self.track.x + int(th * 0.5),
-                                self.track.y - int(ar * 0.5)),
+                                self.track.y - int(th * 0.5)),
                                int(th * 0.5), 0)
             pygame.draw.circle(surf, ScrollBar.track_fg,
                                (self.track.x + int(th * 0.5),
-                                self.track.y + int(ar * 0.5)),
-                               int(th * 0.4), 0)
+                                self.track.y + int(th * 0.5)),
+                               int(th * 0.5 - 2), 0)
             points = ((self.track.x + 4, self.track.y - 4),
                       (self.track.x + self.track.w / 2,
-                       self.track.y - ar + 4),
+                       self.track.y - th + 4),
                       (self.track.x + self.track.w - 4,
                        self.track.y - 4))
             if self.slider.y == self.track.y:
@@ -378,17 +375,17 @@ class ScrollBar():
             # The down arrow
             pygame.draw.circle(surf, ScrollBar.track_bg,
                                (self.track.x + int(th * 0.5),
-                                self.track.y + self.track.h + int(ar * 0.5)),
+                                self.track.y + self.track.h + int(th * 0.5)),
                                int(th * 0.5), 0)
             pygame.draw.circle(surf, ScrollBar.track_fg,
                                (self.track.x + int(th * 0.5),
-                                self.track.y + self.track.h - int(ar * 0.5)),
-                               int(th * 0.4), 0)
+                                self.track.y + self.track.h - int(th * 0.5)),
+                               int(th * 0.5 - 2), 0)
             points = ((self.track.x + 4, self.track.y + self.track.h + 4),
                       (self.track.x + self.track.w - 4,
                        self.track.y + self.track.h  + 4),
                       (self.track.x + self.track.w / 2,
-                       self.track.y + self.track.h + ar - 4))
+                       self.track.y + self.track.h + th - 4))
             if self.slider.bottom == self.track.bottom:
                 arrow_color = ScrollBar.arrow_inactive
             else:
@@ -414,11 +411,11 @@ class ScrollBar():
             pygame.draw.circle(surf, slider_color,
                                (self.slider.x + int(th * 0.5),
                                 self.slider.y + int(th * 0.5)),
-                               int(th * 0.4), 0)
+                               int(th * 0.5 - 2), 0)
             pygame.draw.circle(surf, slider_color,
                                (self.slider.x + self.slider.w - int(th * 0.5),
                                 self.slider.y + int(th * 0.5)),
-                               int(th * 0.4), 0)
+                               int(th * 0.5 - 2), 0)
         elif self.axis == 1:
             pygame.draw.rect(surf, slider_color,
                              (self.slider.x + 2,
@@ -428,11 +425,11 @@ class ScrollBar():
             pygame.draw.circle(surf, slider_color,
                                (self.slider.x + int(th * 0.5),
                                 self.slider.y + int(th * 0.5)),
-                               int(th * 0.4), 0)
+                               int(th * 0.5 - 2), 0)
             pygame.draw.circle(surf, slider_color,
                                (self.slider.x + int(th * 0.5),
                                 self.slider.y + self.slider.h - int(th * 0.5)),
-                               int(th * 0.4), 0)
+                               int(th * 0.5 - 2), 0)
 
         # The highlight on the top and left
 #        pygame.draw.lines(surf, ScrollBar.white, False,
