@@ -169,9 +169,9 @@ class ScrollBar():
                 and (self.track.collidepoint(event.pos)
                      or self.display_rect.collidepoint(event.pos))):
                 if event.button == BUTTON_SCROLL_U:
-                    self.move_slider(-ScrollBar.wheel_scroll_amt)
+                    self._move_slider(-ScrollBar.wheel_scroll_amt)
                 elif event.button == BUTTON_SCROLL_D:
-                    self.move_slider(ScrollBar.wheel_scroll_amt)
+                    self._move_slider(ScrollBar.wheel_scroll_amt)
                 
                 self.move_surf()
 
@@ -187,7 +187,7 @@ class ScrollBar():
                 if (event.pos[a] > self.display_rect.topleft[a]
                     and event.pos[a] < self.display_rect.bottomright[a]):
 
-                    self.move_slider(event.rel[a])
+                    self._move_slider(event.rel[a])
                     self.move_surf()
 
             if self.slider.collidepoint(event.pos):
@@ -196,7 +196,7 @@ class ScrollBar():
                 self.hover = False
 
                                 
-    def move_slider(self, d):
+    def _move_slider(self, d):
         """Move the slider by d amount."""
         a = self.axis
         move = max(d, self.track.topleft[a] 
@@ -220,7 +220,7 @@ class ScrollBar():
     def arrow_scroll(self):
         """Scrolls while the arrows are clicked."""
         if self.arrow_scroll_amount != 0:
-            self.move_slider(self.arrow_scroll_amount)
+            self._move_slider(self.arrow_scroll_amount)
             self.move_surf()
 
     def move_surf(self):
@@ -232,11 +232,21 @@ class ScrollBar():
                 (self.track.x - self.slider.x)
                 / self.surf_ratio) / self.track_ratio \
                 + self.display_rect.x
+
+            # Compensate for rounding errors
+            if self.surf_rect.right < self.display_rect.right:
+                self.surf_rect.right = self.display_rect.right
+
         elif self.axis == 1:
             self.surf_rect.y = (
                 (self.track.y - self.slider.y)
                 / self.surf_ratio) / self.track_ratio \
                 + self.display_rect.y
+
+            # Compensate for rounding errors
+            if self.surf_rect.bottom < self.display_rect.bottom:
+                self.surf_rect.bottom = self.display_rect.bottom
+
 
     def align(self):
         """Place the slider where it should be, according to the location
