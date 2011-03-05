@@ -230,6 +230,10 @@ class ScrollBar():
         """Align the surface location according to the position of the
         slider.
         """
+        # If the sliders are not needed, don't do anything.
+        if self.surf_ratio >= 1:
+            return
+
         if self.axis == 0:
             self.surf_rect.x = (
                 (self.track.x - self.slider.x)

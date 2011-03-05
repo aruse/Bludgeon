@@ -515,14 +515,6 @@ def update_log_surf():
     y = GV.log_rect.h
     for text_img, text_rect in text_imgs:
         y -= text_rect.h
-
-        # y needs to be able to go negative in order to properly render 
-        # multi-line text at the top of the surface.  However, there's no 
-        # need for it to get so negative that it would be rendering text
-        # completely off the top.
-#        if y < -GV.log_rect.h:
-#            break
-
         text_rect.top = y
         text_rect.left = GV.log_surf.get_rect().left + GV.font_w
         GV.log_surf.blit(text_img, text_rect)
