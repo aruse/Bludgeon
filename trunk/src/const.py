@@ -93,7 +93,7 @@ DIRH = {'u': (0, -1),
 ST_PLAYING = 1
 ST_MENU = 2
 ST_TARGETING = 3
-ST_EXIT = 4
+ST_QUIT = 4
 ST_PLAYBACK = 5
 
 # Transparency of tooltip popups, 0-255

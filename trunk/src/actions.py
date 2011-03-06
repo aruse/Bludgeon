@@ -99,3 +99,7 @@ def magic_mapping():
     for x in range(MAP_W):
         for y in range(MAP_H):
             GC.map[x][y].explored = True
+
+def quit_game(signum=None, frame=None):
+    """Gracefully exit."""
+    GC.state = ST_QUIT

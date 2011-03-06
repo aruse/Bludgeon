@@ -5,6 +5,7 @@
 import os
 import time
 import optparse
+import signal
 
 import pygame
 from pygame.locals import *
@@ -76,7 +77,7 @@ def handle_events():
     # Handle input events
     for event in pygame.event.get():
         if event.type == QUIT:
-            GC.state = ST_EXIT
+            quit_game()
         elif event.type == KEYDOWN:
             GC.key = event.key
         elif event.type == KEYUP:
@@ -194,7 +195,8 @@ def handle_actions():
             GC.state = ST_PLAYING
     elif GC.state == ST_PLAYBACK:
         GC.u_took_turn = True
-    elif GC.state == ST_EXIT:
+    elif GC.state == ST_QUIT:
+        # Do nothing; let the main loop exit on its own.
         pass
     else:
         impossible('Unknown state: ' + GC.state)
@@ -227,6 +229,11 @@ def controller_tick(reel=False):
 
 
 def main():
+    # Set up signal handlers
+    signal.signal(signal.SIGINT, quit_game)
+    signal.signal(signal.SIGTERM, quit_game)
+
+
     # Initializing these modules separately instead of calling
     # pygame.init() is WAY faster.
     pygame.display.init()
@@ -321,6 +328,6 @@ def main():
     message("""Moves the map surface so that the player appears at the center of the mapview.  If the map surface is smaller than the mapview, center the map inside of the mapview instead.""")
 
     # Main loop
-    while GC.state != ST_EXIT:
+    while GC.state != ST_QUIT:
         controller_tick()
         view_tick()
