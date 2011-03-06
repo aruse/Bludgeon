@@ -233,7 +233,6 @@ def main():
     signal.signal(signal.SIGINT, quit_game)
     signal.signal(signal.SIGTERM, quit_game)
 
-
     # Initializing these modules separately instead of calling
     # pygame.init() is WAY faster.
     pygame.display.init()

@@ -19,6 +19,10 @@ class Cell:
 
         # Value from 0 to 1, indicating degree of illumination.
         self.illumination = None
+
+        # Monsters and items in this cell
+        self.monsters = []
+        self.items = []
         
 
     def set_tile(self, name):

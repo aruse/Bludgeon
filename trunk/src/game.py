@@ -136,6 +136,8 @@ class GC:
     # The state of the random number generator
     random_state = None
 
+    fov_outline = False
+
     
 class GV:
     """Stores the view state."""

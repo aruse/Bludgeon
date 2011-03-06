@@ -14,11 +14,14 @@ from object import *
 from item import *
 from gui import *
 
-def die_leave_corpse(monster):
-    message(monster.name.capitalize() + ' dies!', GV.red)
-    GC.monsters.remove(monster)
-    corpse = Item(monster.x, monster.y, 'corpse', prev_monster=monster)
+def die_leave_corpse(m):
+    message(m.name.capitalize() + ' dies!', GV.red)
+    GC.monsters.remove(m)
+    GC.map[m.x][m.y].monsters.remove(m)
+
+    corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
     GC.items.append(corpse)
+    GC.map[m.x][m.y].items.append(corpse)
     
 class Monster(Object):
     """Anything that moves and acts under its own power.  Players and
@@ -122,12 +125,23 @@ class Monster(Object):
                 self.inventory.remove(item)
             return use_result
 
-    def drop(self, item):
+    def drop(self, i):
         """Drop an item."""
-        item.x, item.y = self.x, self.y
-        self.inventory.remove(item)
-        GC.items.append(item)
-        message('You dropped the ' + item.name + '.')
+        i.x, i.y = self.x, self.y
+        self.inventory.remove(i)
+        GC.items.append(i)
+        GC.map[i.x][i.y].append(i)
+
+        message('You dropped the ' + i.name + '.')
+
+    def move(self, dx, dy=None):
+        oldx, oldy = self.x, self.y
+        if Object.move(self, dx, dy):
+            # Let the map know that this monster has moved.
+            if self != GC.u:
+                GC.map[oldx][oldy].monsters.remove(self)
+                GC.map[self.x][self.y].monsters.append(self)
+
 
 
 class Player(Monster):

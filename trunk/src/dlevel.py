@@ -46,6 +46,7 @@ def place_objects(map, room):
                 monster = Monster(x, y, 'troll', ai=StupidAI())
  
             GC.monsters.append(monster)
+            map[x][y].monsters.append(monster)
 
     # Choose random number of items
     for i in range(random.randrange(8)):
@@ -65,6 +66,7 @@ def place_objects(map, room):
                 item = Item(x, y, 'scroll of confusion')
 
             GC.items.append(item)
+            map[x][y].items.append(item)
  
 
 

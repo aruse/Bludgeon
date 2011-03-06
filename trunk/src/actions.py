@@ -103,3 +103,7 @@ def magic_mapping():
 def quit_game(signum=None, frame=None):
     """Gracefully exit."""
     GC.state = ST_QUIT
+
+def show_fov():
+    """Toggle a flag to visually outline the FOV on the map."""
+    GC.fov_outline = not GC.fov_outline

@@ -22,13 +22,14 @@ def shifta(x, y):
 
 class KeyHandler:
     """Handle the actions of a specific keystroke."""
-    def __init__(self, action, args, turn):
+    def __init__(self, action, args, turn, desc=None):
         """Arguments:
         action -- Action to perform when the key is pressed.
         args -- List of arguments to give to action
         turn -- Whether or not this action counts as taking a turn.  If this
                 depends on the outcome of the action, set it to None and let
                 the action handler take care of it.
+        desc -- Short description of what this keystroke does.
         """
         self.action = action
         self.args = args
@@ -199,6 +200,9 @@ def attach_key_actions():
             K_v: KeyHandler(None, (), True),
             K_w: KeyHandler(None, (), True),
             K_y: KeyHandler(None, (), True),
+
+            # FIXME: This should actually be handled under #vision
+            K_z: KeyHandler(show_fov, (), False),
             },
         }
 

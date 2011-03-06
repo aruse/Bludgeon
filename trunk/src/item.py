@@ -36,3 +36,10 @@ class Item(Object):
             self.use_function = cast_lightning
         elif self.name == 'scroll of confusion':
             self.use_function = cast_confuse
+
+    def move(self, dx, dy=None):
+        oldx, oldy = self.x, self.y
+        if Object.move(self, dx, dy):
+            # Let the map know that this item has moved.
+            GC.map[oldx][oldy].items.remove(self)
+            GC.map[self.x][self.y].items.append(self)
