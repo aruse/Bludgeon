@@ -7,10 +7,6 @@ from util import *
 from widgets import *
 
 
-#def cell2pixel(x, y):
-#    """Take in (x, y) cell coords and return (x, y) pixel coords on the map."""
-#    return ((x + 1) * TILE_W, (y + 1) * TILE_H)
-
 def handle_resize(w, h):
     """Shuffle surfaces around to their correct places when the game
     is resized.

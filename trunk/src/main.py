@@ -79,7 +79,7 @@ def handle_events():
         if event.type == QUIT:
             quit_game()
         elif event.type == KEYDOWN:
-            GC.key = event.key
+            GC.key = event
         elif event.type == KEYUP:
             GC.key = None
         elif event.type == MOUSEBUTTONDOWN:
@@ -105,43 +105,55 @@ def monsters_take_turn():
             m.ai.take_turn()
         
 def handle_actions():
+    if GC.key:
+        key_code, char, mod = GC.key.key, GC.key.unicode, GC.key.mod
+        GC.key = None
+    else:
+        key_code, char, mod = None, None, None
+
     # Whether or not this keypress counts as taking a turn
     GC.u_took_turn = False
     
     if GC.state == ST_PLAYING:
         # Handle all keypresses
-        if GC.key:
+        if key_code:
             handled = False
-            mods = pygame.key.get_mods()
-            if mods & KMOD_SHIFT:
-                if (GC.key in GC.pkeys[KMOD_SHIFT]
-                    and GC.pkeys[KMOD_SHIFT][GC.key].action):
-                    GC.pkeys[KMOD_SHIFT][GC.key].do()
-                    handled = True
-            elif mods & KMOD_CTRL:
-                if (GC.key in GC.pkeys[KMOD_CTRL]
-                    and GC.pkeys[KMOD_CTRL][GC.key].action):
-                    GC.pkeys[KMOD_CTRL][GC.key].do()
-                    handled = True
-            elif mods & KMOD_ALT:
-                if (GC.key in GC.pkeys[KMOD_ALT]
-                    and GC.pkeys[KMOD_ALT][GC.key].action):
-                    GC.pkeys[KMOD_ALT][GC.key].do()
-                    handled = True
-            else:
-                if (GC.key in GC.pkeys[KMOD_NONE]
-                    and GC.pkeys[KMOD_NONE][GC.key].action):
-                    GC.pkeys[KMOD_NONE][GC.key].do()
+            key_combo = ''
+
+            if mod & KMOD_CTRL:
+                key_combo = 'Ctrl + '
+
+                if (key_code in GC.pkeys[KMOD_CTRL]
+                    and GC.pkeys[KMOD_CTRL][key_code].action):
+                    GC.pkeys[KMOD_CTRL][key_code].do()
                     handled = True
 
-            if GC.key not in ignore_keys and handled is False:
-                message("Unknown command '{0}'.".format(
-                        pygame.key.name(GC.key)))
+            elif mod & KMOD_ALT:
+                key_combo = 'Alt + '
+
+                if (key_code in GC.pkeys[KMOD_ALT]
+                    and GC.pkeys[KMOD_ALT][key_code].action):
+                    GC.pkeys[KMOD_ALT][key_code].do()
+                    handled = True
+
+            else:
+                # First, look up by char.  If it's not found, then look up by
+                # key_code.
+                if (char in GC.pkeys[KMOD_NONE]
+                    and GC.pkeys[KMOD_NONE][char].action):
+                    GC.pkeys[KMOD_NONE][char].do()
+                    handled = True
+                elif (key_code in GC.pkeys[KMOD_NONE]
+                    and GC.pkeys[KMOD_NONE][key_code].action):
+                    GC.pkeys[KMOD_NONE][key_code].do()
+                    handled = True
+
+            if key_code not in ignore_keys and handled is False:
+                message("Unknown command '{0}{1}'.".format(
+                        key_combo, char))
 
     elif GC.state == ST_MENU:
-        if GC.key:
-            char = pygame.key.name(GC.key)
-
+        if key_code:
             if len(char) == 1:
                 index = ord(char) - ord('a')
                 if index >= 0 and index < len(GC.menu_options):
@@ -190,7 +202,7 @@ def handle_actions():
                     GC.u_took_turn = True
                     
             GC.state = ST_PLAYING
-        elif GC.key:
+        elif key_code:
             message('Cancelled')
             GC.state = ST_PLAYING
     elif GC.state == ST_PLAYBACK:
@@ -218,7 +230,7 @@ def controller_tick(reel=False):
         handle_actions()
     else:
         GC.clock.tick(FRAME_RATE)
-        
+        GC.keys_handled = 0
         # Player takes turn
         handle_events()
 

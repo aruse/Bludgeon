@@ -70,9 +70,12 @@ def init_gv():
 
 class GC:
     """Stores the controller state."""
+    # Debug mode
+    debug = False
+
     clock = None
 
-    key = None       # The last pressed key
+    key = None       # The last key event
     button = None    # The last clicked mouse button
     
     # Whether or not an action has been handled this clock cycle
