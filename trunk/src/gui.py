@@ -154,9 +154,14 @@ def menu(header, options, w):
     GC.menu_options = options
     GC.state = ST_MENU
  
-def inventory_menu(header):
+def inventory_menu(header, menu_type):
+    """Display an inventory menu.
+    header -- Text to display at the top of the menu.
+    menu_type -- Keyword identifying the type of menu.
+    """
+    GC.menu = menu_type
+
     inv = GC.u.inventory
-    
     if len(inv) == 0:
         options = ['Inventory is empty.']
     else:
@@ -484,12 +489,11 @@ def update_status_surf():
     write_text(surf, 'Weapon Range ' + str(5), y, justify='left',
                padding=GV.font_w)
     y += 1    
-    write_text(surf, 'Hungry Burdened Afraid', y, justify='left',
+    write_text(surf, 'Hungry Burdened Confused Poisoned', y, justify='left',
                padding=GV.font_w)
     y += 1    
-    write_text(surf, 'Hallucinating Sick Invisible', y, justify='left',
+    write_text(surf, 'Hallucinating Sick Blind Stunned', y, justify='left',
                padding=GV.font_w)
-
 
 def update_log_surf():
     """Update the log surface."""

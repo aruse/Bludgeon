@@ -19,67 +19,8 @@ from cell import *
 from ai import *
 from gui import *
 from spell import *
-
-simple_save_objs = [
-    'GC.dlevel',
-    'GC.branch',
-    'GC.msgs',
-    'GC.oid_seq',
-    'GC.random_seed',
-    'GC.random_state',
-    'GC.cmd_history',
-    ]
-complex_save_objs = [
-    'GC.u',
-    'GC.map',
-    'GC.monsters',
-    'GC.items',
-    ]
-
-#    'GC.dlevel_dict',
-#    'GC.monsters_dict',
-#    'GC.items_dict',
-
-
-def save_game(file):
-    f = open(file, 'w')
-
-    for obj in simple_save_objs:
-        f.write('{0} = {1}\n'.format(obj, repr(eval(obj))))
-
-    GC.map[GC.u.x+1][GC.u.y+1].set_tile('cmap, wall, horizontal, mine')
-
-    f.write('map = [')
-
-    for x in range(len(GC.map)):
-        f.write('[')
-        for y in range(len(GC.map[0])):
-            f.write("{{'n': {0}, 'e': {1}}}, ".format(
-                    repr(GC.map[x][y].name),  repr(GC.map[x][y].explored)))
-        f.write('],\n')
-    f.write(']\n')
-
-
-    # For references to Objects, just save the oid
-    f.write(repr([m.oid for m in GC.monsters]) + '\n')
-    f.write(repr([m.oid for m in GC.items]) + '\n')
-
-# Uncomment to work out save files
-#    f.write('objects = [')
-#    
-#
-#    for oid, o in GC.obj_dict.iter:
-#        if oid == GC.u.oid:
-#            continue
-#        elif 
-#    f.write(']\n')
-
-
-    f.close()
-
-#    f.write('GC.cmd_history = {0}\n'.format(GC.cmd_history))
-#    for var in dir(GC):
-#        print 'GC.{0} = {1}'.format(var, eval('GC.' + var))
+from keys import *
+from actions import *
 
 
 def monster_at(x, y):
@@ -138,8 +79,6 @@ def handle_events():
             GC.state = ST_EXIT
         elif event.type == KEYDOWN:
             GC.key = event.key
-#            print event.unicode
-#            print event.scancode
         elif event.type == KEYUP:
             GC.key = None
         elif event.type == MOUSEBUTTONDOWN:
@@ -148,7 +87,7 @@ def handle_events():
             GC.button = None
         elif event.type == MOUSEMOTION:
             pass
-        elif event.type == pygame.VIDEORESIZE:
+        elif event.type == VIDEORESIZE:
             handle_resize(event.w, event.h)
 
         # Handle scrolling
@@ -165,74 +104,38 @@ def monsters_take_turn():
             m.ai.take_turn()
         
 def handle_actions():
-    # If an action has already been taken this clock cycle, don't do
-    # another one.
-    if GC.action_handled and GC.state != ST_PLAYBACK:
-        return
-
     # Whether or not this keypress counts as taking a turn
-    u_took_turn = False
-        
+    GC.u_took_turn = False
+    
     if GC.state == ST_PLAYING:
-        # Exit the game
-        if GC.key == K_ESCAPE:
-            GC.state = ST_EXIT
-        elif GC.key == K_UP or GC.key == K_KP8:
-            GC.u.try_move(DIRH['u'])
-            u_took_turn = True
-        elif GC.key == K_DOWN or GC.key == K_KP2:
-            GC.u.try_move(DIRH['d'])
-            u_took_turn = True
-        elif GC.key == K_LEFT or GC.key == K_KP4:
-            GC.u.try_move(DIRH['l'])
-            u_took_turn = True
-        elif GC.key == K_RIGHT or GC.key == K_KP6:
-            GC.u.try_move(DIRH['r'])
-            u_took_turn = True
-        elif GC.key == K_KP7:
-            GC.u.try_move(DIRH['ul'])
-            u_took_turn = True
-        elif GC.key == K_KP9:
-            GC.u.try_move(DIRH['ur'])
-            u_took_turn = True
-        elif GC.key == K_KP1:
-            GC.u.try_move(DIRH['dl'])
-            u_took_turn = True
-        elif GC.key == K_KP3:
-            GC.u.try_move(DIRH['dr'])
-            u_took_turn = True
-        elif GC.key:
-            char = pygame.key.name(GC.key)
-
-            if char == 's':
-                save_file = 'save.bludgeon'
-                save_game(save_file)
-                message('Saved game to {0}.'.format(save_file))
-            elif char == '.':
-                GC.cmd_history.append(('m', 0, 0))
-                u_took_turn = True
-            elif char == ',':
-                item_here = False
-                for i in GC.items:
-                    if i.x == GC.u.x and i.y == GC.u.y:
-                        GC.u.pick_up(i)
-                        item_here = True
-
-                if item_here:
-                    u_took_turn = True
-                else:
-                    message('Nothing to pick up!')
-
-            elif char == 'i':
-                inventory_menu(USE_HEADER)
-                GC.menu = 'use'
-
-            elif char == 'd':
-                inventory_menu(DELETE_HEADER)
-                GC.menu = 'drop'
-
+        # Handle all keypresses
+        if GC.key:
+            handled = False
+            mods = pygame.key.get_mods()
+            if mods & KMOD_SHIFT:
+                if (GC.key in GC.pkeys[KMOD_SHIFT]
+                    and GC.pkeys[KMOD_SHIFT][GC.key].action):
+                    GC.pkeys[KMOD_SHIFT][GC.key].do()
+                    handled = True
+            elif mods & KMOD_CTRL:
+                if (GC.key in GC.pkeys[KMOD_CTRL]
+                    and GC.pkeys[KMOD_CTRL][GC.key].action):
+                    GC.pkeys[KMOD_CTRL][GC.key].do()
+                    handled = True
+            elif mods & KMOD_ALT:
+                if (GC.key in GC.pkeys[KMOD_ALT]
+                    and GC.pkeys[KMOD_ALT][GC.key].action):
+                    GC.pkeys[KMOD_ALT][GC.key].do()
+                    handled = True
             else:
-                message(pygame.key.name(GC.key) + ' pressed')
+                if (GC.key in GC.pkeys[KMOD_NONE]
+                    and GC.pkeys[KMOD_NONE][GC.key].action):
+                    GC.pkeys[KMOD_NONE][GC.key].do()
+                    handled = True
+
+            if GC.key not in ignore_keys and handled is False:
+                message("Unknown command '{0}'.".format(
+                        pygame.key.name(GC.key)))
 
     elif GC.state == ST_MENU:
         if GC.key:
@@ -250,13 +153,13 @@ def handle_actions():
                                     GC.cmd_history.append(('u',
                                                            item.oid,
                                                            None, None))
-                                    u_took_turn = True
+                                    GC.u_took_turn = True
                                 else:
-                                    u_took_turn = False
+                                    GC.u_took_turn = False
                                 
                     elif GC.menu == 'drop':
                         GC.state = ST_PLAYING # Exit menu
-                        u_took_turn = True
+                        GC.u_took_turn = True
                         if len(GC.u.inventory) > 0:
                             item = GC.u.inventory[index]
                             if item is not None:
@@ -283,26 +186,25 @@ def handle_actions():
                     GC.cmd_history.append(('u', GC.targeting_item.oid, x, y))
                     GC.u.inventory.remove(GC.targeting_item)
                     GC.targeting_item = None
-                    u_took_turn = True
+                    GC.u_took_turn = True
                     
             GC.state = ST_PLAYING
         elif GC.key:
             message('Cancelled')
             GC.state = ST_PLAYING
     elif GC.state == ST_PLAYBACK:
-        u_took_turn = True
+        GC.u_took_turn = True
     elif GC.state == ST_EXIT:
         pass
     else:
         impossible('Unknown state: ' + GC.state)
 
-    if u_took_turn:
+    if GC.u_took_turn:
         GC.fov_recompute = True
+        center_map()
         monsters_take_turn()
     else:
         GC.fov_recompute = False
-        
-    GC.action_handled = True
         
 
 def controller_tick(reel=False):
@@ -314,7 +216,6 @@ def controller_tick(reel=False):
         handle_actions()
     else:
         GC.clock.tick(FRAME_RATE)
-        GC.action_handled = False
         
         # Player takes turn
         handle_events()
@@ -413,6 +314,8 @@ def main():
     # Make sure everything is aligned correctly
     center_map()
     handle_resize(GV.screen_rect.w, GV.screen_rect.h)
+
+    attach_key_actions()
 
     message('Welcome, {0}!'.format(uname), GV.gold)
     message("""Moves the map surface so that the player appears at the center of the mapview.  If the map surface is smaller than the mapview, center the map inside of the mapview instead.""")

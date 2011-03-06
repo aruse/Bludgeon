@@ -103,28 +103,28 @@ $       Count your gold
 #       Perform an extended command
 M-?     Display extended command help (if the platform allows this)
 M-2     Toggle two-weapon combat (unless number_pad is enabled)
-M-a     Adjust inventory letters
-M-b     Steal
-M-c     Talk to someone
-M-d     Dip an object into something
-M-e     Class special effect
-M-f     Force a lock
-M-i     Invoke an object's special powers
-M-j     Jump to another location
-M-k     Advance or check weapons skills
-M-l     Loot a box on the floor
-M-m     Use a monster's special ability
-M-n     Name an item or type of object
-M-o     Offer a sacrifice to the gods
-M-p     Pray to the gods for help
-M-q     Quit
-M-r     Rub a lamp
-M-s     Sit down
-M-t     Use techniques
-M-u     Untrap something (trap, door, or chest)
-M-v     Print compile time options for this version of NetHack
-M-w     Wipe off your face
-M-y     Polymorph yourself
+M-a     #adjust    Adjust inventory letters
+M-b     #borrow    Steal
+M-c     #chat      Talk to someone
+M-d     #dip       Dip an object into something
+M-e     #enhance   Class special effect
+M-f     #force     Force a lock
+M-i     #invoke    Invoke an object's special powers
+M-j     #jump      Jump to another location
+M-k     #advance   Advance or check weapons skills
+M-l     #loot      Loot a box on the floor
+M-m     #monster   Use a monster's special ability
+M-n     #name      Name an item or type of object
+M-o     #offer     Offer a sacrifice to the gods
+M-p     #pray      Pray to the gods for help
+M-q     #quit      Quit
+M-r     #rub       Rub a lamp
+M-s     #sit       Sit down
+M-t     #technique Use techniques
+M-u     #untrap    Untrap something (trap, door, or chest)
+M-v     #version   Print compile time options for this version of NetHack
+M-w     #wipe      Wipe off your face
+M-y     #youpoly   Polymorph yourself
 
 Debug mode extended commands:
 #levelchange      change experience level

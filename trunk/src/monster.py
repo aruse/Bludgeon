@@ -141,7 +141,9 @@ class Player(Monster):
     def move(self, dx, dy=None):
         GC.cmd_history.append(('m', dx, dy))
         Monster.move(self, dx, dy)
-        center_map()
+
+    def rest(self):
+        self.move(0, 0)
 
     def pick_up(self, item):
         GC.cmd_history.append(('p', item.oid))

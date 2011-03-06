@@ -198,6 +198,13 @@ class ScrollBar():
             else:
                 self.hover = False
 
+        elif event.type == ACTIVEEVENT:
+            # If the game window loses focus, stop hovering.  This is
+            # necessary because we won't get a MOUSEMOTION event to
+            # stop hovering if the slider is next to the border of the
+            # game window.
+            if event.gain == 0:
+                self.hover = False
                                 
     def _move_slider(self, d):
         """Move the slider by d amount."""
