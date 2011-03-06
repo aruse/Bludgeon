@@ -138,6 +138,9 @@ class GC:
 
     fov_outline = False
 
+    # Whether or not the message log has been updated this cycle.
+    log_updated = True
+
     
 class GV:
     """Stores the view state."""

@@ -29,7 +29,7 @@ class Monster(Object):
     Item.
     """
     
-    def __init__(self, x, y, name, oid=None, ai=None):
+    def __init__(self, x, y, name, oid=None, ai=None, fov_radius=TORCH_RADIUS):
         Object.__init__(self, x, y, name, oid=oid)
 
         self.ai = ai
@@ -38,6 +38,7 @@ class Monster(Object):
             
         self.blocks_sight = False
         self.blocks_movement = True
+        self.fov_radius = fov_radius
 
         # Function to call when this monster dies
         self.death = None
@@ -145,8 +146,8 @@ class Monster(Object):
 
 
 class Player(Monster):
-    def __init__(self, x, y, name, oid=None):
-        Monster.__init__(self, x, y, name, oid=oid)
+    def __init__(self, x, y, name, oid=None, fov_radius=TORCH_RADIUS):
+        Monster.__init__(self, x, y, name, oid=oid, fov_radius=fov_radius)
 
     def attack(self, target):
         GC.cmd_history.append(('a', target.oid))

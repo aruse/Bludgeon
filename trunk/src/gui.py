@@ -7,6 +7,9 @@ from util import *
 from widgets import *
 
 
+#def cell2pixel(x, y):
+#    """Take in (x, y) cell coords and return (x, y) pixel coords on the map."""
+#    return ((x + 1) * TILE_W, (y + 1) * TILE_H)
 
 def handle_resize(w, h):
     """Shuffle surfaces around to their correct places when the game
@@ -37,7 +40,7 @@ def handle_resize(w, h):
 
     # Move the surfaces to their new locations
     move_surface_locations()
-    update_log_surf()
+    GC.log_updated = True
 
     GV.x_scrollbar.resize()
     GV.y_scrollbar.resize()
@@ -76,9 +79,33 @@ def mouse_coords_to_map_coords(x, y):
 
 def draw_box(x, y, color=GV.white):
     """Draw a box around the cell at the given coords."""
+    coords = cell2pixel(x, y)
     pygame.draw.rect(GV.map_surf, color,
                      Rect((x + 1) * TILE_W, (y + 1) * TILE_H,
                           TILE_W, TILE_H), 1)
+
+def draw_line_between(x1, y1, x2, y2, color=GV.white):
+    """Draw a line between the two given adjacent cells."""
+    # Horizontal line, (x1, y1) on the left
+    if x1 < x2:
+        coords1 = cell2pixel(x2, y2)
+        coords2 = cell2pixel(x2, y2 + 1)
+    # Horizontal line, (x2, y2) on the left
+    elif x2 < x1:
+        coords1 = cell2pixel(x1, y1)
+        coords2 = cell2pixel(x1, y1 + 1)
+    # Vertical line, (x1, y1) on the top
+    elif y1 < y2:
+        coords1 = cell2pixel(x2, y2)
+        coords2 = cell2pixel(x2 + 1, y2)
+    # Vertical line, (x2, y2) on the top
+    elif y2 < y1:
+        coords1 = cell2pixel(x1, y1)
+        coords2 = cell2pixel(x1 + 1, y1)
+
+    pygame.draw.line(GV.map_surf, color,
+                     coords1, coords2, 1)
+
 
 def img_fill(surf, img, rect=None):
     """Fill the given surface with the given image.  If rect is None, fill the
@@ -525,9 +552,14 @@ def update_log_surf():
 
     GV.log_scrollbar.resize()
     GV.log_scrollbar.align()
+
+    # Mark the log surface as updated
+    GC.log_updated = False
     
 
 def render_map():
+    GV.map_surf.fill(GV.black)
+
     for x in range(MAP_W):
         for y in range(MAP_H):
             if GC.u.fov_map.in_fov(x, y):
@@ -538,8 +570,7 @@ def render_map():
                     GC.map[x][y].draw_gray(x, y)
                 else:
                     GV.map_surf.blit(GV.tiles_img,
-                                     ((x + 1) * TILE_W, (y + 1) * TILE_H),
-                                     GV.blank_tile)
+                                     cell2pixel(x, y), GV.blank_tile)
     
 def render_objects():
     for item in GC.items:
@@ -556,9 +587,29 @@ def render_objects():
     # Always draw the player
     GC.u.draw()
 
+
+def draw_fov_outline(color):
+    """Draws an outline around the outside of any FOV maps in play."""
+    for m in GC.monsters + [GC.u]:
+        if m.fov_map is None:
+            continue
+
+        for x in range(m.x - m.fov_radius, m.x + m.fov_radius):
+            for y in range(m.y - m.fov_radius, m.y + m.fov_radius):
+                if (m.fov_map.in_fov(x, y)
+                    != m.fov_map.in_fov(x + 1, y)):
+                    draw_line_between(x, y, x + 1, y, color)
+                if (m.fov_map.in_fov(x, y)
+                    != m.fov_map.in_fov(x, y + 1)):
+                    draw_line_between(x, y, x, y + 1, color)
+
+
 def render_decorations():
     draw_box(GC.u.x, GC.u.y, GV.white)
     pygame.draw.rect(GV.map_surf, GV.red, Rect(0, 0, GV.map_rect.w, GV.map_rect.h), 1)
+
+    if GC.fov_outline:
+        draw_fov_outline(GV.red)
 
     # Put an image in the corner where the scrollbars intersect
     # FIXME: this doesn't actually do anything
@@ -621,6 +672,9 @@ def center_map():
         
 def view_tick():
     """Handle all of the view actions in the game loop."""
+    if GC.log_updated:
+        update_log_surf()
+
     update_eq_surf()
     update_status_surf()
     
@@ -641,7 +695,6 @@ def view_tick():
 
     # Partition off a piece of the map_surf and blit it on to the screen
     # at the location specified by the mapview_rect
-    GV.screen.fill(GV.black, GV.mapview_rect)
     GV.screen.blit(GV.map_surf, GV.mapview_rect,
                    Rect(GV.mapview_rect.x - GV.map_rect.x,
                         GV.mapview_rect.y - GV.map_rect.y,

@@ -223,7 +223,7 @@ def controller_tick(reel=False):
         handle_events()
 
     if GC.fov_recompute:
-        GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
+        GC.u.fov_map.do_fov(GC.u.x, GC.u.y, GC.u.fov_radius)
         GC.fov_recompute = False
 
 
@@ -291,7 +291,7 @@ def main():
         random.seed(GC.random_seed)
         GC.u = Player(0, 0, 'wizard')
     else:
-        GC.u = Player(0, 0, 'wizard')
+        GC.u = Player(0, 0, 'wizard', fov_radius=10)
         GC.dlevel = 1
         GC.dlevel_dict['doom'] = []
         GC.dlevel_dict['doom'].append(gen_connected_rooms())
@@ -305,7 +305,7 @@ def main():
 
 
     # Have to call this once to before drawing the initial screen.
-    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, 10)
+    GC.u.fov_map.do_fov(GC.u.x, GC.u.y, GC.u.fov_radius)
 #    if options.save_file:
 #        run_history()
 

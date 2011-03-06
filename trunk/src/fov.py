@@ -27,7 +27,8 @@ class FOVMap(object):
 
     def in_fov(self, x, y):
         """Returns whether or not this cell is in the FOV."""
-        return self.marked[x][y] == self.flag
+        return (0 <= x < self.w and 0 <= y < self.h
+                and self.marked[x][y] == self.flag)
 
     def set_marked(self, x, y):
         """Sets a cell as in the FOV."""

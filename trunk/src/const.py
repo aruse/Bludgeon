@@ -3,6 +3,9 @@
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
 
+# Debug mode
+DEBUG = True
+
 BUTTON_L = 1
 BUTTON_M = 2
 BUTTON_R = 3

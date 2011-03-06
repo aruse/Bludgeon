@@ -7,14 +7,13 @@ from pygame.locals import *
 
 from const import *
 from game import *
-from gui import *
 
 def message(msg, color=GV.default_font_color):
     if len(GC.msgs) >= MAX_MSGS:
         GC.msgs.pop(0)
 
     GC.msgs.append((msg, color))
-    update_log_surf()
+    GC.log_updated = True
 
 
 def load_image(name):
@@ -70,3 +69,7 @@ def convert_to_grayscale(surf):
             gs_color = (average, average, average, alpha)
             gray.set_at((x, y), gs_color)
     return gray
+
+def cell2pixel(x, y):
+    """Take in (x, y) cell coords and return (x, y) pixel coords on the map."""
+    return ((x + 1) * TILE_W, (y + 1) * TILE_H)

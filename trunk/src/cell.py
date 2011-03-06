@@ -47,7 +47,7 @@ class Cell:
         # Remember to offset by 1 tile so that there's room
         # for the border.
         GV.map_surf.blit(GV.tiles_img,
-                         ((x + 1) * TILE_W, (y + 1) * TILE_H),
+                         cell2pixel(x, y),
                          self.tile)
  
     def draw_gray(self, x, y):
