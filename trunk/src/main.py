@@ -149,8 +149,12 @@ def handle_actions():
                     handled = True
 
             if key_code not in ignore_keys and handled is False:
+                if char in GC.pkeys[KMOD_NONE]:
+                    key_to_print = char
+                else:
+                    key_to_print = pygame.key.name(key_code)
                 message("Unknown command '{0}{1}'.".format(
-                        key_combo, char))
+                        key_combo, key_to_print))
 
     elif GC.state == ST_MENU:
         if key_code:

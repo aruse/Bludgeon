@@ -231,78 +231,157 @@ def attach_key_actions():
 #            K_y: KeyHandler(None, (), True, "Move"),
             K_t: KeyHandler(None, (), True, "Teleport, if you are able."),
             K_x: KeyHandler(None, (), True, ""),
-            K_y: KeyHandler(None, (), True, "Polymorph, if you are able."),
             },
         KMOD_ALT: {
-            K_QUESTION: KeyHandler(None, (), True, ""),
-            K_a: KeyHandler(None, (), True, ""),
-            K_b: KeyHandler(None, (), True, ""),
-            K_c: KeyHandler(None, (), True, ""),
-            K_d: KeyHandler(None, (), True, ""),
-            K_e: KeyHandler(None, (), True, ""),
-            K_i: KeyHandler(None, (), True, ""),
-            K_j: KeyHandler(None, (), True, ""),
-            K_k: KeyHandler(None, (), True, ""),
-            K_l: KeyHandler(None, (), True, ""),
-            K_m: KeyHandler(None, (), True, ""),
-            K_n: KeyHandler(None, (), True, ""),
-            K_o: KeyHandler(None, (), True, ""),
-            K_p: KeyHandler(None, (), True, ""),
-            K_q: KeyHandler(None, (), True, ""),
-            K_r: KeyHandler(None, (), True, ""),
-            K_s: KeyHandler(None, (), True, ""),
-            K_t: KeyHandler(None, (), True, ""),
-            K_u: KeyHandler(None, (), True, ""),
-            K_v: KeyHandler(None, (), True, ""),
-            K_w: KeyHandler(None, (), True, ""),
-            K_y: KeyHandler(None, (), True, ""),
+            K_QUESTION: KeyHandler(None, (), True,
+                                   "Display help with extended commands."),
             },
+        'ext': {
+            '2weapon': KeyHandler(
+                None, (), True,
+                "Wield both your primary and secondary weapons "
+                "simultaneously."),
+            'adjust': KeyHandler(
+                None, (), True,
+                "Adjust which inventory letters are assigned to which items."),
+            'borrow': KeyHandler(None, (), True,
+                                 "Attempt to steal from a someone."),
+            'chat': KeyHandler(None, (), True, "Talk to someone."),
+            'conduct': KeyHandler(
+                None, (), True,
+                "List which voluntary challenges you've followed so far."),
+            'dip': KeyHandler(None, (), True, "Dip an object into something."),
+            'enhance': KeyHandler(
+                None, (), True,
+                "Advance or check character skills."),
+            'force': KeyHandler(None, (), True,
+                                "Attempt to force open a lock."),
+            'invoke': KeyHandler(None, (), True,
+                                 "Invoke the special powers of an artifact."),
+            'jump': KeyHandler(None, (), True, "Jump."),
+            'loot': KeyHandler(
+                None, (), True,
+                "Loot a box or bag in the same location as you, or remove "
+                "the saddle from a horse."),
+            'monster': KeyHandler(
+                None, (), True,
+                "When polymorphed into a monster, use that monster's special "
+                "ability."),
+            'name': KeyHandler(
+                None, (), True,
+                "Add a label to a specific item or class of items."),
+            'offer': KeyHandler(None, (), True, "Offer a sacrifice to a god."),
+            'pray': KeyHandler(None, (), True, "Pray to a god for help."),
+            'quit': KeyHandler(
+                None, (), True,
+                "Quit the game permanently.  This will end your character's "
+                "life, and you'll have to start over with a new character."),
+            'rub': KeyHandler(
+                None, (), True,
+                "Rub something (usually a lamp or a stone)."),
+            'sit': KeyHandler(None, (), True,
+                              "Sit on the floor or on an object."),
+            'technique': KeyHandler(
+                None, (), True,
+                "Use a special technique available to your role or race."),
+            'untrap': KeyHandler(
+                None, (), True, "Attempt to disarm a trap."),
+            'vanquished': KeyHandler(
+                None, (), True,
+                "Show a list of all monsters vanquished in this game."),
+            'wipe': KeyHandler(None, (), True, "Wipe your face."),
+            'youpoly': KeyHandler(
+                None, (), True, "Polymorph, if you are able."),
+            }
         }
 
 
     # Key bindings that do the same as ones already defined above.
-    pkeys[KMOD_NONE][K_UP] = pkeys[KMOD_NONE][K_KP8]
-    pkeys[KMOD_NONE][K_DOWN] = pkeys[KMOD_NONE][K_KP2]
-    pkeys[KMOD_NONE][K_LEFT] = pkeys[KMOD_NONE][K_KP4]
-    pkeys[KMOD_NONE][K_RIGHT] = pkeys[KMOD_NONE][K_KP6]
-    pkeys[KMOD_NONE][K_HOME] = pkeys[KMOD_NONE][K_KP7]
-    pkeys[KMOD_NONE][K_END] = pkeys[KMOD_NONE][K_KP1]
-    pkeys[KMOD_NONE][K_PAGEUP] = pkeys[KMOD_NONE][K_KP9]
-    pkeys[KMOD_NONE][K_PAGEDOWN] = pkeys[KMOD_NONE][K_KP3]
+    GC.pkeys[KMOD_NONE][K_UP] = GC.pkeys[KMOD_NONE][K_KP8]
+    GC.pkeys[KMOD_NONE][K_DOWN] = GC.pkeys[KMOD_NONE][K_KP2]
+    GC.pkeys[KMOD_NONE][K_LEFT] = GC.pkeys[KMOD_NONE][K_KP4]
+    GC.pkeys[KMOD_NONE][K_RIGHT] = GC.pkeys[KMOD_NONE][K_KP6]
+    GC.pkeys[KMOD_NONE][K_HOME] = GC.pkeys[KMOD_NONE][K_KP7]
+    GC.pkeys[KMOD_NONE][K_END] = GC.pkeys[KMOD_NONE][K_KP1]
+    GC.pkeys[KMOD_NONE][K_PAGEUP] = GC.pkeys[KMOD_NONE][K_KP9]
+    GC.pkeys[KMOD_NONE][K_PAGEDOWN] = GC.pkeys[KMOD_NONE][K_KP3]
 
-    pkeys[KMOD_NONE][1] = pkeys[KMOD_NONE][K_KP1]
-    pkeys[KMOD_NONE][2] = pkeys[KMOD_NONE][K_KP2]
-    pkeys[KMOD_NONE][3] = pkeys[KMOD_NONE][K_KP3]
-    pkeys[KMOD_NONE][4] = pkeys[KMOD_NONE][K_KP4]
-    pkeys[KMOD_NONE][6] = pkeys[KMOD_NONE][K_KP6]
-    pkeys[KMOD_NONE][7] = pkeys[KMOD_NONE][K_KP7]
-    pkeys[KMOD_NONE][8] = pkeys[KMOD_NONE][K_KP8]
-    pkeys[KMOD_NONE][9] = pkeys[KMOD_NONE][K_KP9]
+    GC.pkeys[KMOD_NONE][1] = GC.pkeys[KMOD_NONE][K_KP1]
+    GC.pkeys[KMOD_NONE][2] = GC.pkeys[KMOD_NONE][K_KP2]
+    GC.pkeys[KMOD_NONE][3] = GC.pkeys[KMOD_NONE][K_KP3]
+    GC.pkeys[KMOD_NONE][4] = GC.pkeys[KMOD_NONE][K_KP4]
+    GC.pkeys[KMOD_NONE][6] = GC.pkeys[KMOD_NONE][K_KP6]
+    GC.pkeys[KMOD_NONE][7] = GC.pkeys[KMOD_NONE][K_KP7]
+    GC.pkeys[KMOD_NONE][8] = GC.pkeys[KMOD_NONE][K_KP8]
+    GC.pkeys[KMOD_NONE][9] = GC.pkeys[KMOD_NONE][K_KP9]
 
+    GC.pkeys[KMOD_NONE][' '] = GC.pkeys[KMOD_NONE]['.']
+    GC.pkeys[KMOD_NONE]['+'] = GC.pkeys[KMOD_NONE]['X']
 
-    pkeys[KMOD_NONE][' '] = pkeys[KMOD_NONE]['.']
-    pkeys[KMOD_NONE]['+'] = pkeys[KMOD_NONE]['X']
-    pkeys[KMOD_CTRL][K_c] = pkeys[KMOD_ALT][K_q]
+    GC.pkeys[KMOD_CTRL][K_c] = GC.pkeys['ext']['quit'] 
+    GC.pkeys[KMOD_NONE][K_y] = GC.pkeys['ext']['youpoly']
+    GC.pkeys[KMOD_ALT][K_2] = GC.pkeys['ext']['2weapon']
+    GC.pkeys[KMOD_ALT][K_a] = GC.pkeys['ext']['adjust']
+    GC.pkeys[KMOD_ALT][K_b] = GC.pkeys['ext']['borrow']
+    GC.pkeys[KMOD_ALT][K_c] = GC.pkeys['ext']['chat']
+    GC.pkeys[KMOD_ALT][K_d] = GC.pkeys['ext']['dip']
+    GC.pkeys[KMOD_ALT][K_e] = GC.pkeys['ext']['enhance']
+    GC.pkeys[KMOD_ALT][K_f] = GC.pkeys['ext']['force']
+    GC.pkeys[KMOD_ALT][K_i] = GC.pkeys['ext']['invoke']
+    GC.pkeys[KMOD_ALT][K_j] = GC.pkeys['ext']['jump']
+    GC.pkeys[KMOD_ALT][K_l] = GC.pkeys['ext']['loot']
+    GC.pkeys[KMOD_ALT][K_m] = GC.pkeys['ext']['monster']
+    GC.pkeys[KMOD_ALT][K_n] = GC.pkeys['ext']['name']
+    GC.pkeys[KMOD_ALT][K_o] = GC.pkeys['ext']['offer']
+    GC.pkeys[KMOD_ALT][K_p] = GC.pkeys['ext']['pray']
+    GC.pkeys[KMOD_ALT][K_q] = GC.pkeys['ext']['quit']
+    GC.pkeys[KMOD_ALT][K_r] = GC.pkeys['ext']['rub']
+    GC.pkeys[KMOD_ALT][K_s] = GC.pkeys['ext']['sit']
+    GC.pkeys[KMOD_ALT][K_t] = GC.pkeys['ext']['technique']
+    GC.pkeys[KMOD_ALT][K_u] = GC.pkeys['ext']['untrap']
+    GC.pkeys[KMOD_ALT][K_w] = GC.pkeys['ext']['wipe']
+    GC.pkeys[KMOD_ALT][K_y] = GC.pkeys['ext']['youpoly']
+
 
     # Define actions for special debug mode commands.
     if GC.debug:
-        GC.pkeys[KMOD_CTRL][K_f] = KeyHandler(magic_mapping, (), False)
-        GC.pkeys[KMOD_CTRL][K_e]: KeyHandler(
-            None, (), True, "Search an entire room."),
-        GC.pkeys[KMOD_CTRL][K_f]: KeyHandler(
-            None, (), True, "Map the entire level."),
-        GC.pkeys[KMOD_CTRL][K_g]: KeyHandler(
-            None, (), True, "Create a monster."),
-        GC.pkeys[KMOD_CTRL][K_i]: KeyHandler(
-            None, (), True, "Identify all items in inventory."),
-        GC.pkeys[KMOD_CTRL][K_j]: KeyHandler(
-            None, (), True, "Go up one experience level."),
-        GC.pkeys[KMOD_CTRL][K_o]: KeyHandler(
-            None, (), True, "Show the layout of the entire dungeon."),
-        GC.pkeys[KMOD_CTRL][K_v]: KeyHandler(
-            None, (), True, "Level teleport."),
-        GC.pkeys[KMOD_CTRL][K_w]: KeyHandler(
+        GC.pkeys[KMOD_CTRL][K_e] = KeyHandler(
+            None, (), True, "Search an entire room.")
+        GC.pkeys[KMOD_CTRL][K_f] = KeyHandler(
+            magic_mapping, (), False, "Map the entire level.")
+        GC.pkeys[KMOD_CTRL][K_g] = KeyHandler(
+            None, (), True, "Create a monster.")
+        GC.pkeys[KMOD_CTRL][K_i] = KeyHandler(
+            None, (), True, "Identify all items in inventory.")
+        GC.pkeys[KMOD_CTRL][K_j] = KeyHandler(
+            None, (), True, "Go up one experience level.")
+        GC.pkeys[KMOD_CTRL][K_o] = KeyHandler(
+            None, (), True, "Show the layout of the entire dungeon.")
+        GC.pkeys[KMOD_CTRL][K_v] = KeyHandler(
+            test_handler, (5, 6), True, "Level teleport.")
+        GC.pkeys[KMOD_CTRL][K_w] = KeyHandler(
             None, (), True, "Wish."),
+
+        GC.pkeys['ext']['levelchange'] = KeyHandler(
+            None, (), True, "Change experience level."),
+        GC.pkeys['ext']['lightsources'] = KeyHandler(
+            None, (), True, "Highlight light sources."),
+        GC.pkeys['ext']['monpolycontrol'] = KeyHandler(
+            None, (), True, "Control polymorphs of monsters."),
+        GC.pkeys['ext']['panic'] = KeyHandler(
+            None, (), True, "Test the panic system."),
+        GC.pkeys['ext']['polyself'] = KeyHandler(
+            None, (), True, "Polymorph self."),
+        GC.pkeys['ext']['seenv'] = KeyHandler(
+            None, (), True, "Show seen vectors."),
+        GC.pkeys['ext']['stats'] = KeyHandler(
+            None, (), True, "Show memory statistics."),
+        GC.pkeys['ext']['timeout'] = KeyHandler(
+            None, (), True, "Show timeout queue."),
+        GC.pkeys['ext']['vision'] = KeyHandler(
+            None, (), True, "Highlight field of view."),
+        GC.pkeys['ext']['wmode'] = KeyHandler(
+            None, (), True, "Show all wall modes."),
 
         # FIXME: This should actually be handled under #vision
         GC.pkeys[KMOD_CTRL][K_z] = KeyHandler(show_fov, (), False)

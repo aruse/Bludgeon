@@ -71,7 +71,7 @@ def init_gv():
 class GC:
     """Stores the controller state."""
     # Debug mode
-    debug = False
+    debug = True
 
     clock = None
 
