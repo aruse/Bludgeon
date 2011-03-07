@@ -49,161 +49,260 @@ def attach_key_actions():
     # mod can be one of KMOD_NONE, KMOD_CTRL, KMOD_ALT
     GC.pkeys = {
         KMOD_NONE: {
-            K_UP: KeyHandler(GC.u.try_move, (DIRH['u'],), True),
-            K_DOWN: KeyHandler(GC.u.try_move, (DIRH['d'],), True),
-            K_LEFT: KeyHandler(GC.u.try_move, (DIRH['l'],), True),
-            K_RIGHT: KeyHandler(GC.u.try_move, (DIRH['r'],), True),
-            K_KP1: KeyHandler(GC.u.try_move, (DIRH['dl'],), True),
-            K_KP2: KeyHandler(GC.u.try_move, (DIRH['d'],), True),
-            K_KP3: KeyHandler(GC.u.try_move, (DIRH['dr'],), True),
-            K_KP4: KeyHandler(GC.u.try_move, (DIRH['l'],), True),
-            K_KP5: KeyHandler(None, (), True),
-            K_KP6: KeyHandler(GC.u.try_move, (DIRH['r'],), True),
-            K_KP7: KeyHandler(GC.u.try_move, (DIRH['ul'],), True),
-            K_KP8: KeyHandler(GC.u.try_move, (DIRH['u'],), True),
-            K_KP9: KeyHandler(GC.u.try_move, (DIRH['ur'],), True),
+            K_KP1: KeyHandler(GC.u.try_move, (DIRH['dl'],), True, ""),
+            K_KP2: KeyHandler(GC.u.try_move, (DIRH['d'],), True, ""),
+            K_KP3: KeyHandler(GC.u.try_move, (DIRH['dr'],), True, ""),
+            K_KP4: KeyHandler(GC.u.try_move, (DIRH['l'],), True, ""),
+            K_KP5: KeyHandler(None, (), True, ""),
+            K_KP6: KeyHandler(GC.u.try_move, (DIRH['r'],), True, ""),
+            K_KP7: KeyHandler(GC.u.try_move, (DIRH['ul'],), True, ""),
+            K_KP8: KeyHandler(GC.u.try_move, (DIRH['u'],), True, ""),
+            K_KP9: KeyHandler(GC.u.try_move, (DIRH['ur'],), True, ""),
 
-            K_ESCAPE: KeyHandler(None, (), True),
-            '^': KeyHandler(None, (), True),
-            '<': KeyHandler(None, (), True),
-            '>': KeyHandler(None, (), True),
-            '/': KeyHandler(None, (), True),
-            '?': KeyHandler(None, (), True),
-            '&': KeyHandler(None, (), True),
-            '`': KeyHandler(None, (), True),
-            '!': KeyHandler(test_handler, (1, 2), True),
-            '\\': KeyHandler(None, (), True),
-            '_': KeyHandler(None, (), True),
-            '.': KeyHandler(GC.u.rest, (), True),
-            ' ': KeyHandler(None, (), True),
-            ':': KeyHandler(None, (), True),
-            ',': KeyHandler(pick_up, (GC.u,), None),
-            '@': KeyHandler(None, (), True),
-            '(': KeyHandler(None, (), True),
-            ')': KeyHandler(None, (), True),
-            '[': KeyHandler(None, (), True),
-            '=': KeyHandler(None, (), True),
-            '"': KeyHandler(None, (), True),
-            '$': KeyHandler(None, (), True),
-            '+': KeyHandler(None, (), True),
-            '#': KeyHandler(None, (), True),
-            '*': KeyHandler(None, (), True),
-            '0': KeyHandler(None, (), True),
-            '1': KeyHandler(None, (), True),
-            '2': KeyHandler(None, (), True),
-            '3': KeyHandler(None, (), True),
-            '4': KeyHandler(None, (), True),
-            '5': KeyHandler(None, (), True),
-            '6': KeyHandler(None, (), True),
-            '7': KeyHandler(None, (), True),
-            '8': KeyHandler(None, (), True),
-            '9': KeyHandler(None, (), True),
-            'a': KeyHandler(None, (), True),
-            'b': KeyHandler(None, (), True),
-            'c': KeyHandler(None, (), True),
-            'd': KeyHandler(inventory_menu, (DELETE_HEADER, 'drop'), None),
-            'e': KeyHandler(None, (), True),
-            'f': KeyHandler(None, (), True),
-            'g': KeyHandler(None, (), True),
-            'h': KeyHandler(None, (), True),
-            'i': KeyHandler(inventory_menu, (USE_HEADER, 'use'), None),
-            'j': KeyHandler(None, (), True),
-            'k': KeyHandler(None, (), True),
-            'l': KeyHandler(None, (), True),
-            'm': KeyHandler(None, (), True),
-            'n': KeyHandler(None, (), True),
-            'o': KeyHandler(None, (), True),
-            'p': KeyHandler(None, (), True),
-            'q': KeyHandler(None, (), True),
-            'r': KeyHandler(None, (), True),
-            's': KeyHandler(save_game, ('save.bludgeon',), False),
-            't': KeyHandler(None, (), True),
-            'u': KeyHandler(None, (), True),
-            'v': KeyHandler(None, (), True),
-            'w': KeyHandler(None, (), True),
-            'x': KeyHandler(None, (), True),
-            'y': KeyHandler(None, (), True),
-            'z': KeyHandler(None, (), True),
-            'A': KeyHandler(test_handler, (1, 2), True),
-            'B': KeyHandler(None, (), True),
-            'C': KeyHandler(None, (), True),
-            'D': KeyHandler(None, (), True),
-            'E': KeyHandler(None, (), True),
-            'F': KeyHandler(None, (), True),
-            'G': KeyHandler(None, (), True),
-            'H': KeyHandler(None, (), True),
-            'I': KeyHandler(None, (), True),
-            'J': KeyHandler(None, (), True),
-            'K': KeyHandler(None, (), True),
-            'L': KeyHandler(None, (), True),
-            'M': KeyHandler(None, (), True),
-            'N': KeyHandler(None, (), True),
-            'O': KeyHandler(None, (), True),
-            'P': KeyHandler(None, (), True),
-            'Q': KeyHandler(None, (), True),
-            'R': KeyHandler(None, (), True),
-            'S': KeyHandler(None, (), True),
-            'T': KeyHandler(None, (), True),
-            'U': KeyHandler(None, (), True),
-            'V': KeyHandler(None, (), True),
-            'W': KeyHandler(None, (), True),
-            'X': KeyHandler(None, (), True),
-            'Y': KeyHandler(None, (), True),
-            'Z': KeyHandler(None, (), True),
+            K_ESCAPE: KeyHandler(None, (), True, "Cancel command."),
+            '^': KeyHandler(None, (), "Examine a trap."),
+            '<': KeyHandler(None, (), True, "Go up a staircase or ladder."),
+            '>': KeyHandler(None, (), True, "Go down a staircase or ladder."),
+            '/': KeyHandler(None, (), True,
+                            "Describe a particular symbol on the map."),
+            '?': KeyHandler(None, (), True, "Open the help menu."),
+            '&': KeyHandler(None, (), True,
+                            "Explain what the following command does."),
+            '`': KeyHandler(None, (), True, "Open the command menu."),
+            '\\': KeyHandler(None, (), True,
+                             "List which objects have been discovered."),
+            '_': KeyHandler(None, (), True,
+                            "Travel to a particular point on the map."),
+            '.': KeyHandler(GC.u.rest, (), True, "Rest for one turn."),
+            ':': KeyHandler(None, (), True,
+                            "Describe the floor at the current location."),
+            ';': KeyHandler(None, (), True,
+                            "How is this different than '/'?"),
+            ',': KeyHandler(
+                pick_up, (GC.u,), None,
+                "Pick things up from the current location.  May be preceded "
+                "by 'm' to select which things to pick up."),
+            '@': KeyHandler(None, (), True, "Toggle the autopickup option.  "
+                            "When this option is on, you will automatically "
+                            "pick up any item that you walk over."),
+            '(': KeyHandler(None, (), True, "Show the currently used tools."),
+            ')': KeyHandler(None, (), True,
+                            "Show the currently wielded weapon."),
+            '[': KeyHandler(None, (), True, "Show the currently worn armor."),
+            '=': KeyHandler(None, (), True, "Show the currently worn rings."),
+            '"': KeyHandler(None, (), True, "Show the currently worn amulet."),
+            '$': KeyHandler(None, (), True,
+                            "Count all of your gold pieces in all of your "
+                            "carried containers."),
+            '#': KeyHandler(None, (), True, "Perform an extended command.  "
+                            "You'll be given a list of extended commands and "
+                            "be prompted to type which one you want to use."),
+            '*': KeyHandler(None, (), True, "Show all worn equipment."),
+            'a': KeyHandler(
+                None, (), True,
+                "Apply (a.k.a. use) a tool, such as a bag, torch, pick-axe, "
+                "etc."),
+            'b': KeyHandler(None, (), True, "Move"),
+            'c': KeyHandler(None, (), True, "Close a door"),
+            'd': KeyHandler(inventory_menu, (DELETE_HEADER, 'drop'), None,
+                            "Drop one item from your inventory."),
+            'e': KeyHandler(
+                None, (), True,
+                "Eat something, either from your inventory or the ground at "
+                "your location.  If you are a vampire, instead drain blood"
+                "from a corpse."),
+            'f': KeyHandler(
+                None, (), True,
+                "Fire objects in your quiver.  You will launch them using the "
+                "currently equiped weapon (such as a bow) if it makes sense "
+                "to do so."),
+            'g': KeyHandler(
+                None, (), True,
+                "Prefix: When followed by a direction, move until you are "
+                "next to something interesting."),
+            'h': KeyHandler(None, (), True, "Move"),
+            'i': KeyHandler(inventory_menu, (USE_HEADER, 'use'), None,
+                            "Show your current inventory."),
+            'j': KeyHandler(None, (), True, "Move"),
+            'k': KeyHandler(None, (), True, "Move"),
+            'l': KeyHandler(None, (), True, "Move"),
+            'm': KeyHandler(
+                None, (), True,
+                "Prefix: When followed by a direction, move without fighting "
+                "or picking anything up."),
+            'n': KeyHandler(None, (), True, "Move"),
+            'o': KeyHandler(None, (), True, "Open a door."),
+            'p': KeyHandler(
+                None, (), True,
+                "Pay a shopkeeper for items or inquire about shopkeeper "
+                "services."),
+            'q': KeyHandler(
+                None, (), True,
+                "Quaff (a.k.a. drink) something.  Usually a potion or a "
+                "water source."),
+            'r': KeyHandler(
+                None, (), True,
+                "Read something.  Usually a scroll, a spellbook, or writing "
+                "on the floor."),
+            's': KeyHandler(None, (), True,
+                            "Search for traps or secret doors for one turn."),
+            't': KeyHandler(None, (), True,
+                            "Throw something, usually a weapon."),
+            'u': KeyHandler(None, (), True, "Move"),
+            'v': KeyHandler(None, (), True, "Display the software version."),
+            'w': KeyHandler(
+                None, (), True, 
+                "Wield (a.k.a. put in your hand, ready to use) a weapon.  "
+                "In order to wield nothing and fight with your bare hands, "
+                "use '-' when asked for which weapon to wield."),
+            'x': KeyHandler(
+                None, (), True,
+                "Exchange your wielded weapon with your secondary weapon.  "
+                "If you have no secondary weapon, move your wielded weapon to "
+                "your secondary weapon and fight with your bare hands."),
+            'y': KeyHandler(None, (), True, "Move"),
+            'z': KeyHandler(None, (), True, "Zap a wand."),
+            'A': KeyHandler(None, (), True, "Remove all worn armor."),
+            'B': KeyHandler(None, (), True, "Move"),
+            'C': KeyHandler(
+                None, (), True,
+                "Call (a.k.a. name) an individual monster.  Useful if you "
+                "want to be able to distinguish between monsters in combat."),
+            'D': KeyHandler(None, (), True,
+                            "Drop several items from your inventory."),
+            'E': KeyHandler(
+                None, (), True,
+                "Engrave on the floor.  You can use a weapon, or type '-' to "
+                "write with your fingers.  There are other items with which "
+                "you can engrave as well."),
+            'F': KeyHandler(None, (), True,
+                            "Fight a monster in a particular direction."),
+            'G': KeyHandler(
+                None, (), True,
+                "Prefix: When followed by a direction, fight a monster, even "
+                "if you're not sure if there's a monster there."),
+            'H': KeyHandler(None, (), True, "Move"),
+            'I': KeyHandler(None, (), True,
+                            "List sub-groups of items in your inventory."),
+            'J': KeyHandler(None, (), True, "Move"),
+            'K': KeyHandler(None, (), True, "Move"),
+            'L': KeyHandler(None, (), True, "Move"),
+            'M': KeyHandler(None, (), True, "Move"),
+            'N': KeyHandler(None, (), True, "Move"),
+            'O': KeyHandler(None, (), True, "Set game options."),
+            'P': KeyHandler(
+                None, (), True,
+                "Put on an accessory, such as a ring, amulet, or blindfold."),
+            'Q': KeyHandler(
+                None, (), True,
+                "Put ammunition into your quiver.  This ammunition will then "
+                "be used with the 'f' command."),
+            'R': KeyHandler(
+                None, (), True,
+                "Remove a worn accessory, such as a ring, amulet, or "
+                "blindfold."),
+            'S': KeyHandler(
+                save_game, ('save.bludgeon',), False,
+                "Save the game.  There is only one savefile per character, "
+                "so this will overwrite any existing savefile.  This is by "
+                "design."),
+            'T': KeyHandler(None, (), True,
+                            "Take off one piece of worn armor."),
+            'U': KeyHandler(None, (), True, "Move"),
+            'V': KeyHandler(None, (), True, "Show game history."),
+            'W': KeyHandler(None, (), True, "Wear one piece of armor."),
+            'X': KeyHandler(None, (), True, "List all known spells."),
+            'Y': KeyHandler(None, (), True, "Move"),
+            'Z': KeyHandler(None, (), True, "Zap (a.k.a. cast) a known spell."),
             },
         KMOD_CTRL: {
-            K_a: KeyHandler(None, (), True),
-            K_b: KeyHandler(None, (), True),
-            K_c: KeyHandler(None, (), True),
-            K_d: KeyHandler(None, (), True),
-            K_e: KeyHandler(None, (), True),
-            K_g: KeyHandler(None, (), True),
-            K_h: KeyHandler(None, (), True),
-            K_i: KeyHandler(None, (), True),
-            K_j: KeyHandler(None, (), True),
-            K_l: KeyHandler(None, (), True),
-            K_n: KeyHandler(None, (), True),
-            K_o: KeyHandler(None, (), True),
-            K_p: KeyHandler(None, (), True),
-            K_r: KeyHandler(None, (), True),
-            K_t: KeyHandler(None, (), True),
-            K_v: KeyHandler(None, (), True),
-            K_u: KeyHandler(None, (), True),
-            K_w: KeyHandler(None, (), True),
-            K_x: KeyHandler(None, (), True),
-            K_y: KeyHandler(None, (), True),
-            K_z: KeyHandler(None, (), True),
+            K_a: KeyHandler(None, (), True, "Re-do the previous command."),
+            K_d: KeyHandler(
+                None, (), True,
+                "Kick something (usually something locked that you wish to "
+                "open)."),
+#            K_b: KeyHandler(None, (), True, "Move"),
+#            K_h: KeyHandler(None, (), True, "Move"),
+#            K_j: KeyHandler(None, (), True, "Move"),
+#            K_k: KeyHandler(None, (), True, "Move"),
+#            K_l: KeyHandler(None, (), True, "Move"),
+#            K_n: KeyHandler(None, (), True, "Move"),
+#            K_u: KeyHandler(None, (), True, "Move"),
+#            K_y: KeyHandler(None, (), True, "Move"),
+            K_t: KeyHandler(None, (), True, "Teleport, if you are able."),
+            K_x: KeyHandler(None, (), True, ""),
+            K_y: KeyHandler(None, (), True, "Polymorph, if you are able."),
             },
         KMOD_ALT: {
-            K_QUESTION: KeyHandler(None, (), True),
-            K_a: KeyHandler(None, (), True),
-            K_b: KeyHandler(None, (), True),
-            K_c: KeyHandler(None, (), True),
-            K_d: KeyHandler(None, (), True),
-            K_e: KeyHandler(None, (), True),
-            K_f: KeyHandler(None, (), True),
-            K_i: KeyHandler(None, (), True),
-            K_j: KeyHandler(None, (), True),
-            K_k: KeyHandler(None, (), True),
-            K_l: KeyHandler(None, (), True),
-            K_m: KeyHandler(None, (), True),
-            K_n: KeyHandler(None, (), True),
-            K_o: KeyHandler(None, (), True),
-            K_p: KeyHandler(None, (), True),
-            K_q: KeyHandler(None, (), True),
-            K_r: KeyHandler(None, (), True),
-            K_s: KeyHandler(None, (), True),
-            K_t: KeyHandler(None, (), True),
-            K_u: KeyHandler(None, (), True),
-            K_v: KeyHandler(None, (), True),
-            K_w: KeyHandler(None, (), True),
-            K_y: KeyHandler(None, (), True),
+            K_QUESTION: KeyHandler(None, (), True, ""),
+            K_a: KeyHandler(None, (), True, ""),
+            K_b: KeyHandler(None, (), True, ""),
+            K_c: KeyHandler(None, (), True, ""),
+            K_d: KeyHandler(None, (), True, ""),
+            K_e: KeyHandler(None, (), True, ""),
+            K_i: KeyHandler(None, (), True, ""),
+            K_j: KeyHandler(None, (), True, ""),
+            K_k: KeyHandler(None, (), True, ""),
+            K_l: KeyHandler(None, (), True, ""),
+            K_m: KeyHandler(None, (), True, ""),
+            K_n: KeyHandler(None, (), True, ""),
+            K_o: KeyHandler(None, (), True, ""),
+            K_p: KeyHandler(None, (), True, ""),
+            K_q: KeyHandler(None, (), True, ""),
+            K_r: KeyHandler(None, (), True, ""),
+            K_s: KeyHandler(None, (), True, ""),
+            K_t: KeyHandler(None, (), True, ""),
+            K_u: KeyHandler(None, (), True, ""),
+            K_v: KeyHandler(None, (), True, ""),
+            K_w: KeyHandler(None, (), True, ""),
+            K_y: KeyHandler(None, (), True, ""),
             },
         }
+
+
+    # Key bindings that do the same as ones already defined above.
+    pkeys[KMOD_NONE][K_UP] = pkeys[KMOD_NONE][K_KP8]
+    pkeys[KMOD_NONE][K_DOWN] = pkeys[KMOD_NONE][K_KP2]
+    pkeys[KMOD_NONE][K_LEFT] = pkeys[KMOD_NONE][K_KP4]
+    pkeys[KMOD_NONE][K_RIGHT] = pkeys[KMOD_NONE][K_KP6]
+    pkeys[KMOD_NONE][K_HOME] = pkeys[KMOD_NONE][K_KP7]
+    pkeys[KMOD_NONE][K_END] = pkeys[KMOD_NONE][K_KP1]
+    pkeys[KMOD_NONE][K_PAGEUP] = pkeys[KMOD_NONE][K_KP9]
+    pkeys[KMOD_NONE][K_PAGEDOWN] = pkeys[KMOD_NONE][K_KP3]
+
+    pkeys[KMOD_NONE][1] = pkeys[KMOD_NONE][K_KP1]
+    pkeys[KMOD_NONE][2] = pkeys[KMOD_NONE][K_KP2]
+    pkeys[KMOD_NONE][3] = pkeys[KMOD_NONE][K_KP3]
+    pkeys[KMOD_NONE][4] = pkeys[KMOD_NONE][K_KP4]
+    pkeys[KMOD_NONE][6] = pkeys[KMOD_NONE][K_KP6]
+    pkeys[KMOD_NONE][7] = pkeys[KMOD_NONE][K_KP7]
+    pkeys[KMOD_NONE][8] = pkeys[KMOD_NONE][K_KP8]
+    pkeys[KMOD_NONE][9] = pkeys[KMOD_NONE][K_KP9]
+
+
+    pkeys[KMOD_NONE][' '] = pkeys[KMOD_NONE]['.']
+    pkeys[KMOD_NONE]['+'] = pkeys[KMOD_NONE]['X']
+    pkeys[KMOD_CTRL][K_c] = pkeys[KMOD_ALT][K_q]
 
     # Define actions for special debug mode commands.
     if GC.debug:
         GC.pkeys[KMOD_CTRL][K_f] = KeyHandler(magic_mapping, (), False)
+        GC.pkeys[KMOD_CTRL][K_e]: KeyHandler(
+            None, (), True, "Search an entire room."),
+        GC.pkeys[KMOD_CTRL][K_f]: KeyHandler(
+            None, (), True, "Map the entire level."),
+        GC.pkeys[KMOD_CTRL][K_g]: KeyHandler(
+            None, (), True, "Create a monster."),
+        GC.pkeys[KMOD_CTRL][K_i]: KeyHandler(
+            None, (), True, "Identify all items in inventory."),
+        GC.pkeys[KMOD_CTRL][K_j]: KeyHandler(
+            None, (), True, "Go up one experience level."),
+        GC.pkeys[KMOD_CTRL][K_o]: KeyHandler(
+            None, (), True, "Show the layout of the entire dungeon."),
+        GC.pkeys[KMOD_CTRL][K_v]: KeyHandler(
+            None, (), True, "Level teleport."),
+        GC.pkeys[KMOD_CTRL][K_w]: KeyHandler(
+            None, (), True, "Wish."),
 
         # FIXME: This should actually be handled under #vision
         GC.pkeys[KMOD_CTRL][K_z] = KeyHandler(show_fov, (), False)
