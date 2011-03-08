@@ -215,6 +215,32 @@ def attach_key_actions():
             'Y': KeyHandler(None, (), True, "Move"),
             'Z': KeyHandler(None, (), True, "Zap (a.k.a. cast) a known spell."),
             },
+        KMOD_SHIFT: {
+            K_KP1: KeyHandler(scroll_map, (DIRH['dl'],), False,
+                              "Scroll the map window."),
+            K_KP2: KeyHandler(scroll_map, (DIRH['d'],), False,
+                              "Scroll the map window."),
+            K_KP3: KeyHandler(scroll_map, (DIRH['dr'],), False,
+                              "Scroll the map window."),
+            K_KP4: KeyHandler(scroll_map, (DIRH['l'],), False,
+                              "Scroll the map window."),
+            K_KP6: KeyHandler(scroll_map, (DIRH['r'],), False,
+                              "Scroll the map window."),
+            K_KP7: KeyHandler(scroll_map, (DIRH['ul'],), False,
+                              "Scroll the map window."),
+            K_KP8: KeyHandler(scroll_map, (DIRH['u'],), False,
+                              "Scroll the map window."),
+            K_KP9: KeyHandler(scroll_map, (DIRH['ur'],), False,
+                              "Scroll the map window."),
+            K_PAGEUP: KeyHandler(scroll_log, (DIRH['u'],), False,
+                              "Scroll the log window up."),
+            K_PAGEDOWN: KeyHandler(scroll_log, (DIRH['d'],), False,
+                              "Scroll the log window down."),
+            K_HOME: KeyHandler(scroll_log_end, (DIRH['u'],), False,
+                              "Scroll the log window to the top."),
+            K_END: KeyHandler(scroll_log_end, (DIRH['d'],), False,
+                              "Scroll the log window to the bottom."),
+            },
         KMOD_CTRL: {
             K_a: KeyHandler(None, (), True, "Re-do the previous command."),
             K_d: KeyHandler(
@@ -273,7 +299,7 @@ def attach_key_actions():
             'offer': KeyHandler(None, (), True, "Offer a sacrifice to a god."),
             'pray': KeyHandler(None, (), True, "Pray to a god for help."),
             'quit': KeyHandler(
-                None, (), True,
+                quit_game, (), False,
                 "Quit the game permanently.  This will end your character's "
                 "life, and you'll have to start over with a new character."),
             'rub': KeyHandler(
@@ -305,6 +331,11 @@ def attach_key_actions():
     GC.pkeys[KMOD_NONE][K_END] = GC.pkeys[KMOD_NONE][K_KP1]
     GC.pkeys[KMOD_NONE][K_PAGEUP] = GC.pkeys[KMOD_NONE][K_KP9]
     GC.pkeys[KMOD_NONE][K_PAGEDOWN] = GC.pkeys[KMOD_NONE][K_KP3]
+
+    GC.pkeys[KMOD_SHIFT][K_UP] = GC.pkeys[KMOD_SHIFT][K_KP8]
+    GC.pkeys[KMOD_SHIFT][K_DOWN] = GC.pkeys[KMOD_SHIFT][K_KP2]
+    GC.pkeys[KMOD_SHIFT][K_LEFT] = GC.pkeys[KMOD_SHIFT][K_KP4]
+    GC.pkeys[KMOD_SHIFT][K_RIGHT] = GC.pkeys[KMOD_SHIFT][K_KP6]
 
     GC.pkeys[KMOD_NONE][1] = GC.pkeys[KMOD_NONE][K_KP1]
     GC.pkeys[KMOD_NONE][2] = GC.pkeys[KMOD_NONE][K_KP2]
@@ -360,28 +391,28 @@ def attach_key_actions():
         GC.pkeys[KMOD_CTRL][K_v] = KeyHandler(
             test_handler, (5, 6), True, "Level teleport.")
         GC.pkeys[KMOD_CTRL][K_w] = KeyHandler(
-            None, (), True, "Wish."),
+            None, (), True, "Wish.")
 
         GC.pkeys['ext']['levelchange'] = KeyHandler(
-            None, (), True, "Change experience level."),
+            None, (), True, "Change experience level.")
         GC.pkeys['ext']['lightsources'] = KeyHandler(
-            None, (), True, "Highlight light sources."),
+            None, (), True, "Highlight light sources.")
         GC.pkeys['ext']['monpolycontrol'] = KeyHandler(
-            None, (), True, "Control polymorphs of monsters."),
+            None, (), True, "Control polymorphs of monsters.")
         GC.pkeys['ext']['panic'] = KeyHandler(
-            None, (), True, "Test the panic system."),
+            None, (), True, "Test the panic system.")
         GC.pkeys['ext']['polyself'] = KeyHandler(
-            None, (), True, "Polymorph self."),
+            None, (), True, "Polymorph self.")
         GC.pkeys['ext']['seenv'] = KeyHandler(
-            None, (), True, "Show seen vectors."),
+            None, (), True, "Show seen vectors.")
         GC.pkeys['ext']['stats'] = KeyHandler(
-            None, (), True, "Show memory statistics."),
+            None, (), True, "Show memory statistics.")
         GC.pkeys['ext']['timeout'] = KeyHandler(
-            None, (), True, "Show timeout queue."),
+            None, (), True, "Show timeout queue.")
         GC.pkeys['ext']['vision'] = KeyHandler(
-            None, (), True, "Highlight field of view."),
+            None, (), True, "Highlight field of view.")
         GC.pkeys['ext']['wmode'] = KeyHandler(
-            None, (), True, "Show all wall modes."),
+            None, (), True, "Show all wall modes.")
 
         # FIXME: This should actually be handled under #vision
         GC.pkeys[KMOD_CTRL][K_z] = KeyHandler(show_fov, (), False)

@@ -75,7 +75,7 @@ def save_game(file):
 #        print 'GC.{0} = {1}'.format(var, eval('GC.' + var))
 
 
-    message('Saved game to {0}.'.format(save_file))
+    message('Saved game to {0}.'.format(file))
 
 
 
@@ -107,3 +107,16 @@ def quit_game(signum=None, frame=None):
 def show_fov():
     """Toggle a flag to visually outline the FOV on the map."""
     GC.fov_outline = not GC.fov_outline
+
+def scroll_map(coords):
+    """Scroll the map in the direction given."""
+    GV.x_scrollbar.move_slider(coords[0] * SCROLL_AMT)
+    GV.y_scrollbar.move_slider(coords[1] * SCROLL_AMT)
+
+def scroll_log(coords):
+    """Scroll the log window up or down."""
+    GV.log_scrollbar.move_slider(coords[1] * SCROLL_AMT)
+
+def scroll_log_end(coords):
+    """Scroll the log window all the way to the top or bottom."""
+    GV.log_scrollbar.move_slider(coords[1] * GV.log_rect.h)

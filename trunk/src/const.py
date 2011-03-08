@@ -3,9 +3,6 @@
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
 
-# Debug mode
-DEBUG = True
-
 BUTTON_L = 1
 BUTTON_M = 2
 BUTTON_R = 3
@@ -113,3 +110,6 @@ DELETE_HEADER = ('Press the key next to an item to use it, '
                  'or any other to cancel.')
 
 SCROLLBAR_W = 16
+
+# Amount to scroll a surface when using shift + direction.
+SCROLL_AMT = 10

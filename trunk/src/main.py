@@ -56,7 +56,7 @@ def run_history():
             GC.u.move(cmd[1], cmd[2])
         elif cmd[0] == 'a':
             GC.u.attack(GC.obj_dict[cmd[1]])
-        elif cmd[0] == 'p':
+        elif cmd[0] == ',':
             GC.u.pick_up(GC.obj_dict[cmd[1]])
         elif cmd[0] == 'd':
             GC.u.drop(GC.obj_dict[cmd[1]])
@@ -120,7 +120,16 @@ def handle_actions():
             handled = False
             key_combo = ''
 
-            if mod & KMOD_CTRL:
+            if mod & KMOD_SHIFT:
+                if char not in GC.pkeys[KMOD_NONE]:
+                    key_combo = 'Shift + '
+
+                if (key_code in GC.pkeys[KMOD_SHIFT]
+                    and GC.pkeys[KMOD_SHIFT][key_code].action):
+                    GC.pkeys[KMOD_SHIFT][key_code].do()
+                    handled = True
+
+            elif mod & KMOD_CTRL:
                 key_combo = 'Ctrl + '
 
                 if (key_code in GC.pkeys[KMOD_CTRL]
@@ -136,7 +145,7 @@ def handle_actions():
                     GC.pkeys[KMOD_ALT][key_code].do()
                     handled = True
 
-            else:
+            if not handled:
                 # First, look up by char.  If it's not found, then look up by
                 # key_code.
                 if (char in GC.pkeys[KMOD_NONE]

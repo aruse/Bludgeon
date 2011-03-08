@@ -172,12 +172,10 @@ class ScrollBar():
                 and (self.track.collidepoint(event.pos)
                      or self.display_rect.collidepoint(event.pos))):
                 if event.button == BUTTON_SCROLL_U:
-                    self._move_slider(-ScrollBar.wheel_scroll_amt)
+                    self.move_slider(-ScrollBar.wheel_scroll_amt)
                 elif event.button == BUTTON_SCROLL_D:
-                    self._move_slider(ScrollBar.wheel_scroll_amt)
+                    self.move_slider(ScrollBar.wheel_scroll_amt)
                 
-                self.move_surf()
-
         elif event.type == MOUSEBUTTONUP:
             self.clicked = False
             self.scrolling = False
@@ -190,8 +188,7 @@ class ScrollBar():
                 if (event.pos[a] > self.display_rect.topleft[a]
                     and event.pos[a] < self.display_rect.bottomright[a]):
 
-                    self._move_slider(event.rel[a])
-                    self.move_surf()
+                    self.move_slider(event.rel[a])
 
             if self.slider.collidepoint(event.pos):
                 self.hover = True
@@ -206,7 +203,7 @@ class ScrollBar():
             if event.gain == 0:
                 self.hover = False
                                 
-    def _move_slider(self, d):
+    def move_slider(self, d):
         """Move the slider by d amount."""
         a = self.axis
         move = max(d, self.track.topleft[a] 
@@ -220,6 +217,8 @@ class ScrollBar():
             elif a == 1:
                 self.slider.move_ip((0, move))
 
+        self.move_surf()
+
     def update(self, surf):
         """Handle arrow scrolling and then draw the scrollbar. Needs to be
         called once per game loop iteration.
@@ -230,8 +229,7 @@ class ScrollBar():
     def arrow_scroll(self):
         """Scrolls while the arrows are clicked."""
         if self.arrow_scroll_amount != 0:
-            self._move_slider(self.arrow_scroll_amount)
-            self.move_surf()
+            self.move_slider(self.arrow_scroll_amount)
 
     def move_surf(self):
         """Align the surface location according to the position of the

@@ -161,7 +161,7 @@ class Player(Monster):
         self.move(0, 0)
 
     def pick_up(self, item):
-        GC.cmd_history.append(('p', item.oid))
+        GC.cmd_history.append((',', item.oid))
         Monster.pick_up(self, item)
 
     def targeted_use(self, item, x, y):
