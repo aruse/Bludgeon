@@ -1,4 +1,3 @@
-import random
 import math
 
 import pygame
@@ -19,6 +18,16 @@ def die_leave_corpse(m):
     GC.monsters.remove(m)
     GC.map[m.x][m.y].monsters.remove(m)
 
+    corpse = Item(m.x, m.y, 'corpse', prev_monster=m, oid=m.oid)
+    GC.items.append(corpse)
+    GC.map[m.x][m.y].items.append(corpse)
+
+
+def player_death(m):
+    message(m.name.capitalize() + ' dies!', GV.red)
+    GC.monsters.remove(m)
+    GC.map[m.x][m.y].monsters.remove(m)
+
     corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
     GC.items.append(corpse)
     GC.map[m.x][m.y].items.append(corpse)
@@ -29,7 +38,8 @@ class Monster(Object):
     Item.
     """
     
-    def __init__(self, x, y, name, oid=None, ai=None, fov_radius=TORCH_RADIUS):
+    def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
+                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS):
         Object.__init__(self, x, y, name, oid=oid)
 
         self.ai = ai
@@ -47,22 +57,38 @@ class Monster(Object):
         self.fov_map = None
 
         if name == 'wizard':
-            self.hp = 30
+            if hp is None:
+                self.hp = 30
+            if death is None:
+                self.death = None
             self.atk_power = 5
             self.defense = 2
-            self.death = None
         elif name == 'orc':
-            self.hp = 1
+            if hp is None:
+                self.hp = 1
+            if death is None:
+                self.death = die_leave_corpse
             self.atk_power = 1
             self.defense = 0
-            self.death = die_leave_corpse
         elif name == 'troll':
-            self.hp = 2
+            if hp is None:
+                self.hp = 10
+            if death is None:
+                self.death = die_leave_corpse
             self.atk_power = 2
             self.defense = 0
-            self.death = die_leave_corpse
 
-        self.max_hp = self.hp
+
+        if hp is not None:
+            self.hp = hp
+        if death is not None:
+            self.death = death
+
+        if max_hp is None:
+            self.max_hp = self.hp
+        else:
+            self.max_hp = max_hp
+
         self.inventory = []
         
         # FIXME dummy values
@@ -117,6 +143,7 @@ class Monster(Object):
 
     def use(self, item):
         """Use an item."""
+
         if item.use_function is None:
                 message('The ' + item.name + ' cannot be used.')
         else:
@@ -146,8 +173,13 @@ class Monster(Object):
 
 
 class Player(Monster):
-    def __init__(self, x, y, name, oid=None, fov_radius=TORCH_RADIUS):
-        Monster.__init__(self, x, y, name, oid=oid, fov_radius=fov_radius)
+    def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
+                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS):
+        if death is None:
+            death = player_death
+        Monster.__init__(self, x, y, name, oid=oid, ai=ai, hp=hp, max_hp=max_hp,
+                         mp=mp, max_mp=max_mp, death=death,
+                         fov_radius=fov_radius)
 
     def attack(self, target):
         GC.cmd_history.append(('a', target.oid))

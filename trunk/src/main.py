@@ -3,6 +3,8 @@
 # Setup of game objects and main game loop.
 
 import os
+import sys
+import random
 import time
 import optparse
 import signal
@@ -29,21 +31,6 @@ def monster_at(x, y):
     for m in GC.monsters:
         if m.x == x and m.y ==y:
             return m
-
-def load_game(file):
-    f = open(file, 'r')
-    exec(f.read())
-    f.close()
-
-    # Replace the map structure in the save file with actual cells.
-    GC.map = map
-
-    for x in range(len(GC.map)):
-        for y in range(len(GC.map[0])):
-            GC.map[x][y] = Cell(GC.map[x][y]['n'], explored=GC.map[x][y]['e'])
-
-    # Replace oids with references to the actual objects.
-
 
 def run_history():
     old_history = GC.cmd_history
@@ -310,24 +297,33 @@ def main():
     GV.tile_dict = create_tile_dict()
     GV.blank_tile = GV.tile_dict['cmap, wall, dark']
 
+    
+    GC.map_rand = random.Random()
+    GC.rand = random.Random()
 
     if options.save_file:
         load_game(options.save_file)
-        random.seed(GC.random_seed)
-        GC.u = Player(0, 0, 'wizard')
+        GC.map_rand.seed(GC.random_seed)
+        GC.rand.seed(GC.random_seed)
+
     else:
+        # We need to generate a random seed using the default-seeded random
+        # number generator, and then save that to seed the game's generators.
+        # This will allow us to easily use the same seed in order to duplicate
+        # games.
+        GC.random_seed = str(random.randrange(sys.maxint))
+        GC.map_rand.seed(GC.random_seed)
+        GC.rand.seed(GC.random_seed)
+
         GC.u = Player(0, 0, 'wizard', fov_radius=10)
         GC.dlevel = 1
         GC.dlevel_dict['doom'] = []
         GC.dlevel_dict['doom'].append(gen_connected_rooms())
         GC.map = GC.dlevel_dict['doom'][0]
     
-    # Create a dlevel
-#    GC.map = gen_sparse_maze(MAP_W, MAP_H, 0.1)
-#    GC.map = gen_perfect_maze(MAP_W, MAP_H)
+
     GC.u.set_fov_map(GC.map)
     
-
 
     # Have to call this once to before drawing the initial screen.
     GC.u.fov_map.do_fov(GC.u.x, GC.u.y, GC.u.fov_radius)
@@ -349,7 +345,6 @@ def main():
     attach_key_actions()
 
     message('Welcome, {0}!'.format(uname), GV.gold)
-    message("""Moves the map surface so that the player appears at the center of the mapview.  If the map surface is smaller than the mapview, center the map inside of the mapview instead.""")
 
     # Main loop
     while GC.state != ST_QUIT:

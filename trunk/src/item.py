@@ -1,4 +1,3 @@
-import random
 import math
 
 import pygame
@@ -28,14 +27,19 @@ class Item(Object):
         # resurrection, de-stoning, etc.
         self.prev_monster = prev_monster
 
-        if self.name == 'healing potion':
-            self.use_function = cast_heal
-        elif self.name == 'scroll of fireball':
-            self.use_function = cast_fireball
-        elif self.name == 'scroll of lightning':
-            self.use_function = cast_lightning
-        elif self.name == 'scroll of confusion':
-            self.use_function = cast_confuse
+        if use_function is None:
+            if self.name == 'healing potion':
+                self.use_function = cast_heal
+            elif self.name == 'scroll of fireball':
+                self.use_function = cast_fireball
+            elif self.name == 'scroll of lightning':
+                self.use_function = cast_lightning
+            elif self.name == 'scroll of confusion':
+                self.use_function = cast_confuse
+            else:
+                self.use_function = None
+        else:
+            self.use_function = use_function
 
     def move(self, dx, dy=None):
         oldx, oldy = self.x, self.y

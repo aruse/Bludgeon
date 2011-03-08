@@ -128,7 +128,17 @@ class GC:
     # The complete history of commands used in this game
     cmd_history = []
 
-    random_seed = 1
+    random_seed = None
+
+    # The random number generator used for building maps and other data that
+    # needs to be the same for all games using the same random seed.
+    map_rand = None
+    # The random number generator used for everything else.
+    rand = None
+
+    # The state of the random number generators
+    map_rand_state = None
+    rand_state = None
 
     # Keeps track of the oid of the next object to be created
     oid_seq = 1
@@ -136,8 +146,6 @@ class GC:
     # Mapping of oids to objects
     obj_dict = {}
 
-    # The state of the random number generator
-    random_state = None
 
     fov_outline = False
 

@@ -52,7 +52,7 @@ class Object:
             return False
 
     def move_randomly(self):
-        dir = random.randrange(len(DIR))
+        dir = GC.rand.randrange(len(DIR))
         if self.can_move_dir(DIR[dir]):
             self.move(DIR[dir])
 

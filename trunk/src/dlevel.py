@@ -33,14 +33,14 @@ def blocks_movement(map, x, y):
 
 
 def place_objects(map, room):
-    for i in range(random.randrange(3)):
+    for i in range(GC.map_rand.randrange(3)):
         #choose random spot for this monster
-        x = random.randrange(room.x1 + 1, room.x2 - 1)
-        y = random.randrange(room.y1 + 1, room.y2 - 1)
+        x = GC.map_rand.randrange(room.x1 + 1, room.x2 - 1)
+        y = GC.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
         #only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
-            if random.randrange(0, 100) < 80:  #80% chance of getting an orc
+            if GC.map_rand.randrange(0, 100) < 80:  #80% chance of getting an orc
                 monster = Monster(x, y, 'orc', ai=StupidAI())
             else:
                 monster = Monster(x, y, 'troll', ai=StupidAI())
@@ -49,13 +49,13 @@ def place_objects(map, room):
             map[x][y].monsters.append(monster)
 
     # Choose random number of items
-    for i in range(random.randrange(8)):
-        x = random.randrange(room.x1 + 1, room.x2 - 1)
-        y = random.randrange(room.y1 + 1, room.y2 - 1)
+    for i in range(GC.map_rand.randrange(8)):
+        x = GC.map_rand.randrange(room.x1 + 1, room.x2 - 1)
+        y = GC.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
         # Only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
-            dice = random.randrange(0, 100)
+            dice = GC.map_rand.randrange(0, 100)
             if dice < 40:
                 item = Item(x, y, 'healing potion')
             elif dice < 40 + 20:
@@ -102,8 +102,6 @@ def create_v_tunnel(map, y1, y2, x):
 
 def gen_level(type):
     """Type can be 'connected_rooms'."""
-    # Re-seed the random number generator here.
-    #random.seed(GC.random_seed + branch_num * 1000 + level_depth)
     map = gen_connected_rooms()
 
     
@@ -115,11 +113,11 @@ def gen_connected_rooms():
     rooms = []
     
     for r in range(MAX_ROOMS):
-        w = random.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
-        h = random.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        w = GC.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        h = GC.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
 
-        x = random.randrange(0, MAP_W - w - 1)
-        y = random.randrange(0, MAP_H - h - 1)
+        x = GC.map_rand.randrange(0, MAP_W - w - 1)
+        y = GC.map_rand.randrange(0, MAP_H - h - 1)
  
         new_room = Room(x, y, w, h)
         
@@ -146,7 +144,7 @@ def gen_connected_rooms():
     for i in range(1, len(rooms)):
         (new_x, new_y) = rooms[i].center()
         (prev_x, prev_y) = rooms[i - 1].center()
-        if random.randrange(0, 2):
+        if GC.map_rand.randrange(0, 2):
             create_h_tunnel(map, prev_x, new_x, prev_y)
             create_v_tunnel(map, prev_y, new_y, new_x)
         else:
@@ -174,7 +172,7 @@ def gen_perfect_maze(w, h):
     # Starting at a random point, move out in a random direction,
     # knocking down walls as you go.  If you've been to a wall
     # previously, backtrack.
-    cur_cell = [random.randrange(w - 1), random.randrange(h - 1)]
+    cur_cell = [GC.map_rand.randrange(w - 1), GC.map_rand.randrange(h - 1)]
     if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
         cur_cell[0] += 1
     if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
@@ -208,7 +206,7 @@ def gen_perfect_maze(w, h):
         # If there are moves to make, select a random direction
         if possible_moves.count(1):
             # Select a number from 0 to number of possible moves - 1
-            move_direction = random.randrange(possible_moves.count(1))
+            move_direction = GC.map_rand.randrange(possible_moves.count(1))
             # Map the direction to an index of the possible_moves list
             move_direction = possible_moves.index(1, move_direction)
 
@@ -277,7 +275,7 @@ def gen_braid_maze(w, h, braid_degree=1.0):
                     connection = DIR_DOWN
 
                 # If there is only one connection, it's a dead-end
-                if connections == 1 and random.random() < braid_degree :
+                if connections == 1 and GC.map_rand.random() < braid_degree :
                     if connection == DIR_LEFT and x < w - 1:
                         map[x + 1][y].set_tile('cmap, floor of a room')
                     if connection == DIR_RIGHT and x > 0:
@@ -312,7 +310,7 @@ def gen_sparse_maze(w, h, sparse_degree=0.1, braid_degree=0.9):
 
                 if ((walls_hor == 2 and walls_ver == 0) or \
                     (walls_ver == 2 and walls_hor == 0)) and \
-                    random.random() < sparse_degree:
+                    GC.map_rand.random() < sparse_degree:
                     map[x][y] = 0
                 
     return update_wall_tiles(map)
