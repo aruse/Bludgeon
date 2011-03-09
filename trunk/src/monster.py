@@ -170,6 +170,26 @@ class Monster(Object):
                 GC.map[oldx][oldy].monsters.remove(self)
                 GC.map[self.x][self.y].monsters.append(self)
 
+    def serialize(self):
+        """Convert Monster to a string, suitable for saving or network
+        transmission.
+        """
+        # Need to trim off the trailing bracket from the Object serialization.
+        o = Object.serialize(self)[:-1]
+
+        inventory = repr([i.oid for i in self.inventory])
+        if self.ai is None:
+            ai = None
+        else:
+            ai = repr(self.ai.__class__.__name__)
+
+        m = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},'ai':{4},"
+             "'death':{5},'inventory':{6}}}".format(
+                repr(self.hp), repr(self.max_hp), repr(self.mp),
+                repr(self.max_mp), ai, repr(self.death.__name__), inventory))
+
+        return o + m
+
 
 
 class Player(Monster):
@@ -229,3 +249,8 @@ class Player(Monster):
         else:
             self.move(dx, dy)
 
+    def serialize(self):
+        """Convert Player object to a string, suitable for saving or network
+        transmission.
+        """
+        return Monster.serialize(self)

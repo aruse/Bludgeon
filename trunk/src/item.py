@@ -42,8 +42,25 @@ class Item(Object):
             self.use_function = use_function
 
     def move(self, dx, dy=None):
+        """Move item by dx, dy amounts."""
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this item has moved.
             GC.map[oldx][oldy].items.remove(self)
             GC.map[self.x][self.y].items.append(self)
+
+    def serialize(self):
+        """Convert Item to a string, suitable for saving or network
+        transmission.
+        """
+        # Need to trim off the trailing bracket from the Object serialization.
+        o = Object.serialize(self)[:-1]
+
+        if self.use_function is None:
+            use_function = None
+        else:
+            use_function = self.use_function.__name__
+
+        i = "'use_function':{0},}}".format(repr(use_function))
+
+        return o + i

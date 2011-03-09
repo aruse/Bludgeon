@@ -30,7 +30,6 @@ complex_save_objs = [
     'GC.monsters',
     'GC.items',
     ]
-
 #    'GC.dlevel_dict',
 #    'GC.monsters_dict',
 #    'GC.items_dict',
@@ -41,8 +40,6 @@ def save_game(file):
 
     for obj in simple_save_objs:
         f.write('{0} = {1}\n'.format(obj, repr(eval(obj))))
-
-#    GC.map[GC.u.x+1][GC.u.y+1].set_tile('cmap, wall, horizontal, mine')
 
     f.write('map = [')
 
@@ -65,39 +62,26 @@ def save_game(file):
     # Save all monsters in existence.
     f.write('monster_defs = [')
     for oid, o in GC.obj_dict.iteritems():
-        if oid == GC.u.oid:
-            continue
-        if o.__class__.__name__ == 'Monster':
-            f.write("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},'blocks_movement':{5},'hp':{6},'max_hp':{7},'mp':{8},'max_mp':{9},'ai':{10},'death':{11}}},".format(
-                    repr(oid), repr(o.x), repr(o.y), repr(o.name),
-                    repr(o.blocks_sight), repr(o.blocks_movement),
-                    repr(o.hp), repr(o.max_hp), repr(o.mp), repr(o.max_mp),
-                    repr(o.ai.__class__.__name__), repr(o.death.__name__)))
+        if oid != GC.u.oid and o.__class__.__name__ == 'Monster':
+            f.write(o.serialize() + ',')
     f.write(']\n')
 
     # Save all items in existence.
     f.write('item_defs = [')
     for oid, o in GC.obj_dict.iteritems():
         if o.__class__.__name__ == 'Item':
-            if o.use_function is None:
-                use_function = None
-            else:
-                use_function = o.use_function.__name__
-            f.write("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},'blocks_movement':{5},'use_function':{6}}},".format(
-                    repr(oid), repr(o.x), repr(o.y), repr(o.name),
-                    repr(o.blocks_sight), repr(o.blocks_movement),
-                    repr(use_function)))
+            f.write(o.serialize() + ',')
     f.write(']\n')
 
     # Save the player's state.
-    inventory = repr([i.oid for i in GC.u.inventory])
-    f.write('u = ')
-    f.write("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},'blocks_movement':{5},'hp':{6},'max_hp':{7},'mp':{8},'max_mp':{9},'ai':{10},'death':{11},'inventory':{12}}}".format(
-            repr(GC.u.oid), repr(GC.u.x), repr(GC.u.y), repr(GC.u.name),
-            repr(GC.u.blocks_sight), repr(GC.u.blocks_movement),
-            repr(GC.u.hp), repr(GC.u.max_hp), repr(GC.u.mp), repr(GC.u.max_mp),
-            repr(None), repr(GC.u.death.__name__), inventory))
-    f.write('\n')
+#    inventory = repr([i.oid for i in GC.u.inventory])
+    f.write('u = ' + GC.u.serialize() + '\n')
+#    f.write("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},'blocks_movement':{5},'hp':{6},'max_hp':{7},'mp':{8},'max_mp':{9},'ai':{10},'death':{11},'inventory':{12}}}".format(
+#            repr(GC.u.oid), repr(GC.u.x), repr(GC.u.y), repr(GC.u.name),
+#            repr(GC.u.blocks_sight), repr(GC.u.blocks_movement),
+#            repr(GC.u.hp), repr(GC.u.max_hp), repr(GC.u.mp), repr(GC.u.max_mp),
+#            repr(None), repr(GC.u.death.__name__), inventory))
+#    f.write('\n')
 
 
     f.close()

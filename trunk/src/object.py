@@ -139,3 +139,12 @@ class Object:
                 break
             
         return can_move
+
+    def serialize(self):
+        """Convert Object to a string, suitable for saving or network
+        transmission.
+        """
+        return ("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},"
+                "'blocks_movement':{5},}}".format(
+                repr(self.oid), repr(self.x), repr(self.y), repr(self.name),
+                repr(self.blocks_sight), repr(self.blocks_movement)))
