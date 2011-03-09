@@ -1,3 +1,5 @@
+# Copyright (c) 2011, Andy Ruse
+
 import random
 import math
 

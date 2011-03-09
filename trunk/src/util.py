@@ -1,3 +1,5 @@
+# Copyright (c) 2011, Andy Ruse
+
 import os
 import time
 import re
@@ -9,6 +11,7 @@ from const import *
 from game import *
 
 def message(msg, color=GV.default_font_color):
+    """Add a message to the game log and tell the log surface to update."""
     if len(GC.msgs) >= MAX_MSGS:
         GC.msgs.pop(0)
 
@@ -16,50 +19,8 @@ def message(msg, color=GV.default_font_color):
     GC.log_updated = True
 
 
-def load_image(name):
-    """ Load image and return image object"""
-    fullname = os.path.join('images', name)
-    try:
-        image = pygame.image.load(fullname)
-        if image.get_alpha() is None:
-            image = image.convert()
-        else:
-            image = image.convert_alpha()
-    except pygame.error, message:
-        print 'Cannot load image:', fullname
-        raise SystemExit, message
-    return image
-
-def load_sound(name):
-    """Load sound and return sound object"""
-    class NoneSound:
-        def play(self): pass
-    if not pygame.mixer or not pygame.mixer.get_init():
-        return NoneSound()
-    fullname = os.path.join('sounds', name)
-    try:
-        sound = pygame.mixer.Sound(fullname)
-    except pygame.error, message:
-        print 'Cannot load sound:', fullname
-        raise SystemExit, message
-    return sound        
-
-def create_tile_dict():
-    tile_dict = {}
-
-    # Read in tile mapping document, line-by-line, and build a
-    # dictionary pointing to coordinates of the graphic
-    map = open('data/tiles.map')
-
-    for line in map:
-        (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
-        x = (int(loc) % 38) * TILE_W
-        y = (int(loc) / 38) * TILE_H        
-        tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
-
-    return tile_dict
-
 def convert_to_grayscale(surf):
+    """Convert a Surface to grayscale, pixel by pixel.  Quite slow."""
     gray = pygame.Surface(surf.get_size(), 0, 8)
     w, h = surf.get_size()
     for x in range(w):

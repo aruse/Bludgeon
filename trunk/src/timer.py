@@ -1,3 +1,4 @@
+# Copyright (c) 2011, Andy Ruse
 
 class Timer:
     """Used to count down to a specific event."""

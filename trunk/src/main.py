@@ -1,6 +1,6 @@
 # Copyright (c) 2011, Andy Ruse
 
-# Setup of game objects and main game loop.
+"""Setup of game objects and main game loop."""
 
 import os
 import sys
@@ -23,7 +23,8 @@ from ai import *
 from gui import *
 from spell import *
 from keys import *
-from actions import *
+from saveload import *
+from stuff import *
 
 
 def monster_at(x, y):
@@ -198,6 +199,7 @@ def handle_actions():
                 if GC.targeting_item and success:
                     GC.cmd_history.append(('u', GC.targeting_item.oid, x, y))
                     GC.u.inventory.remove(GC.targeting_item)
+                    del GC.obj_dict[GC.targeting_item.oid]
                     GC.targeting_item = None
                     GC.u_took_turn = True
                     

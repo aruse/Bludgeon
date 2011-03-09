@@ -1,3 +1,7 @@
+# Copyright (c) 2011, Andy Ruse
+
+"""Classes to implement custom GUI widgets."""
+
 import math
 
 import pygame

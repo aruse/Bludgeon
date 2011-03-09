@@ -1,3 +1,5 @@
+# Copyright (c) 2011, Andy Ruse
+
 import math
 
 import pygame
@@ -6,7 +8,6 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-from mon_class import *
 from fov import *
 from ai import *
 from object import *                    
@@ -15,7 +16,7 @@ from gui import *
 from spell import *
 
 class Item(Object):
-    """Anything that can be picked up."""
+    """Game items.  Anything that can be picked up."""
     
     def __init__(self, x, y, name, oid=None, use_function=None,
                  prev_monster=None):

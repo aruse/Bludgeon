@@ -1,4 +1,8 @@
-# AI routines.  Can be assigned to Monster objects to tell them how to behave.
+# Copyright (c) 2011, Andy Ruse
+
+"""AI routines.  Can be assigned to Monster objects to tell them how to 
+behave.
+"""
 
 from const import *
 from game import *

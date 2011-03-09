@@ -1,4 +1,6 @@
-# Routines for generating dungeon levels
+# Copyright (c) 2011, Andy Ruse
+
+"""Routines for generating dungeon levels."""
 
 import random
 

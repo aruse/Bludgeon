@@ -1,3 +1,5 @@
+# Copyright (c) 2011, Andy Ruse
+
 class Room:
     """A room in the dungeon level."""
     def __init__(self, x, y, w, h):

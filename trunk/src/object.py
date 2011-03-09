@@ -1,3 +1,5 @@
+# Copyright (c) 2011, Andy Ruse
+
 import random
 import math
 
@@ -7,7 +9,6 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-from mon_class import *
 from fov import *
 from ai import *
 
@@ -27,9 +28,6 @@ class Object:
         self.x = x
         self.y = y
         self.name = name
-
-        # The category of this Object: human, dwarf, lich, etc.
-#        self.obj_class = mon_class_dict[name]
 
         self.tile = GV.tile_dict[name]
         

@@ -1,3 +1,5 @@
+# Copyright (c) 2011, Andy Ruse
+
 import math
 
 import pygame
@@ -6,7 +8,6 @@ from pygame.locals import *
 from const import *
 from game import *
 from util import *
-from mon_class import *
 from fov import *
 from ai import *
 from object import *                    
@@ -104,6 +105,7 @@ class Monster(Object):
     def pick_up(self, item):
         self.inventory.append(item)
         GC.items.remove(item)
+        GC.map[item.x][item.y].items.remove(item)
         message('You picked up a ' + item.name + '.', GV.green)
 
     def set_fov_map(self, map):
@@ -140,6 +142,7 @@ class Monster(Object):
         """Use an item, targetted on the given coords."""
         item.use_function(item, x, y)
         self.inventory.remove(item)
+        del GC.obj_dict[item.oid]
 
     def use(self, item):
         """Use an item."""
@@ -151,6 +154,7 @@ class Monster(Object):
             if use_result != 'cancelled' and use_result != 'targeting':
                 # Destroy after use, but only if it was actually used.
                 self.inventory.remove(item)
+                del GC.obj_dict[item.oid]
             return use_result
 
     def drop(self, i):

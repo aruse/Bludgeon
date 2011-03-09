@@ -1,8 +1,6 @@
 # Copyright (c) 2011, Andy Ruse
 
-"""Player/monster actions other than fighting, using items, casting spells,
-or using techniques.
-"""
+"""Routines for saving and loading games, and doing file IO."""
 
 import pygame
 from pygame.locals import *
@@ -55,9 +53,6 @@ def save_game(file):
     # For references to Objects, just save the oid
     f.write('monsters = ' + repr([m.oid for m in GC.monsters]) + '\n')
     f.write('items = ' + repr([m.oid for m in GC.items]) + '\n')
-    print repr([m.oid for m in GC.monsters])
-    print repr([m.oid for m in GC.items])
-    print GC.u.oid
 
     # Save all monsters in existence.
     f.write('monster_defs = [')
@@ -74,18 +69,9 @@ def save_game(file):
     f.write(']\n')
 
     # Save the player's state.
-#    inventory = repr([i.oid for i in GC.u.inventory])
     f.write('u = ' + GC.u.serialize() + '\n')
-#    f.write("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},'blocks_movement':{5},'hp':{6},'max_hp':{7},'mp':{8},'max_mp':{9},'ai':{10},'death':{11},'inventory':{12}}}".format(
-#            repr(GC.u.oid), repr(GC.u.x), repr(GC.u.y), repr(GC.u.name),
-#            repr(GC.u.blocks_sight), repr(GC.u.blocks_movement),
-#            repr(GC.u.hp), repr(GC.u.max_hp), repr(GC.u.mp), repr(GC.u.max_mp),
-#            repr(None), repr(GC.u.death.__name__), inventory))
-#    f.write('\n')
-
 
     f.close()
-
     message('Saved game to {0}.'.format(file))
 
 
@@ -128,49 +114,46 @@ def load_game(file):
     GC.monsters = [GC.obj_dict[m] for m in monsters]
     GC.items = [GC.obj_dict[i] for i in items]
 
-    print monsters
-    print items
-    print GC.u.oid
 
+def load_image(name):
+    """Load image and return image object."""
+    fullname = os.path.join('images', name)
+    try:
+        image = pygame.image.load(fullname)
+        if image.get_alpha() is None:
+            image = image.convert()
+        else:
+            image = image.convert_alpha()
+    except pygame.error, message:
+        print 'Cannot load image:', fullname
+        raise SystemExit, message
+    return image
 
-def pick_up(m):
-    """Try to make m pick up an item at its feet."""
-    item_here = False
+def load_sound(name):
+    """Load sound and return sound object"""
+    class NoneSound:
+        def play(self): pass
+    if not pygame.mixer or not pygame.mixer.get_init():
+        return NoneSound()
+    fullname = os.path.join('sounds', name)
+    try:
+        sound = pygame.mixer.Sound(fullname)
+    except pygame.error, message:
+        print 'Cannot load sound:', fullname
+        raise SystemExit, message
+    return sound        
 
-    for i in GC.items:
-        if i.x == GC.u.x and i.y == GC.u.y:
-            GC.u.pick_up(i)
-            item_here = True
+def create_tile_dict():
+    tile_dict = {}
 
-    if item_here:
-        GC.u_took_turn = True
-    else:
-        GC.u_took_turn = False
-        message('Nothing to pick up!')
+    # Read in tile mapping document, line-by-line, and build a
+    # dictionary pointing to coordinates of the graphic
+    map = open('data/tiles.map')
 
-def magic_mapping():
-    """Reveal all tiles on the map."""
-    for x in range(MAP_W):
-        for y in range(MAP_H):
-            GC.map[x][y].explored = True
+    for line in map:
+        (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
+        x = (int(loc) % 38) * TILE_W
+        y = (int(loc) / 38) * TILE_H        
+        tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
 
-def quit_game(signum=None, frame=None):
-    """Gracefully exit."""
-    GC.state = ST_QUIT
-
-def show_fov():
-    """Toggle a flag to visually outline the FOV on the map."""
-    GC.fov_outline = not GC.fov_outline
-
-def scroll_map(coords):
-    """Scroll the map in the direction given."""
-    GV.x_scrollbar.move_slider(coords[0] * SCROLL_AMT)
-    GV.y_scrollbar.move_slider(coords[1] * SCROLL_AMT)
-
-def scroll_log(coords):
-    """Scroll the log window up or down."""
-    GV.log_scrollbar.move_slider(coords[1] * SCROLL_AMT)
-
-def scroll_log_end(coords):
-    """Scroll the log window all the way to the top or bottom."""
-    GV.log_scrollbar.move_slider(coords[1] * GV.log_rect.h)
+    return tile_dict

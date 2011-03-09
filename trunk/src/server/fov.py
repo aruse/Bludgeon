@@ -1,8 +1,11 @@
-# Routines for calculating field of view (FOV).
-# Based on Bjorn Bergstrom's recursive shadowcasting algorithm
+# Copyright (c) 2011, Andy Ruse
+
+"""Routines for calculating field of view (FOV).
+Based on Bjorn Bergstrom's recursive shadowcasting algorithm.
+"""
 
 class FOVMap(object):
-    # Multipliers for transforming coordinates to other octants:
+    # Multipliers for transforming coordinates to other octants.
     mult = [
                 [1,  0,  0, -1, -1,  0,  0,  1],
                 [0,  1, -1,  0,  0, -1,  1,  0],

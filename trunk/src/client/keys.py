@@ -15,7 +15,8 @@ from cell import *
 from ai import *
 from gui import *
 from spell import *
-from actions import *
+from saveload import *
+from stuff import *
 
 def test_handler(x, y):
     print "test " + str(x) + str(y)
