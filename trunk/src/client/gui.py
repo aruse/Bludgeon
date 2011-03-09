@@ -603,7 +603,15 @@ def draw_fov_outline(color):
 
 
 def render_decorations():
-    draw_box(GC.u.x, GC.u.y, GV.white)
+    if GC.state == ST_PLAYING:
+        draw_box(GC.u.x, GC.u.y, GV.white)
+
+    if GC.state == ST_TARGETING:
+        x, y = pygame.mouse.get_pos()
+        x, y = mouse_coords_to_map_coords(x, y)
+        draw_box(x, y, GV.white)
+
+
     pygame.draw.rect(GV.map_surf, GV.red, Rect(0, 0, GV.map_rect.w, GV.map_rect.h), 1)
 
     if GC.fov_outline:
