@@ -8,6 +8,7 @@ from pygame.locals import *
 
 from const import *
 from game import *
+from game_client import *
 from util import *
 from fov import *
 from ai import *

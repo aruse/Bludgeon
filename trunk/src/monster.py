@@ -15,7 +15,7 @@ from item import *
 from gui import *
 
 def die_leave_corpse(m):
-    message(m.name.capitalize() + ' dies!', GV.red)
+    message(m.name.capitalize() + ' dies!', GC.red)
     GC.monsters.remove(m)
     GC.map[m.x][m.y].monsters.remove(m)
 
@@ -25,7 +25,7 @@ def die_leave_corpse(m):
 
 
 def player_death(m):
-    message(m.name.capitalize() + ' dies!', GV.red)
+    message(m.name.capitalize() + ' dies!', GC.red)
     GC.monsters.remove(m)
     GC.map[m.x][m.y].monsters.remove(m)
 
@@ -106,7 +106,7 @@ class Monster(Object):
         self.inventory.append(item)
         GC.items.remove(item)
         GC.map[item.x][item.y].items.remove(item)
-        message('You picked up a ' + item.name + '.', GV.green)
+        message('You picked up a ' + item.name + '.', GC.green)
 
     def set_fov_map(self, map):
         self.fov_map = FOVMap(map)

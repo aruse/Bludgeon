@@ -298,6 +298,11 @@ class ScrollBar():
 
         if self.axis == 0:
             # The horizontal track
+            pygame.draw.rect(surf, ScrollBar.black,
+                             (self.track.x - th,
+                              self.track.y,
+                              self.track.w + th * 2,
+                              self.track.h), 0)
             pygame.draw.rect(surf, ScrollBar.track_bg,
                              (self.track.x - th * 0.5,
                               self.track.y,
@@ -353,6 +358,11 @@ class ScrollBar():
 
         elif self.axis == 1:
             # The vertical track
+            pygame.draw.rect(surf, ScrollBar.black,
+                             (self.track.x,
+                              self.track.y - th,
+                              self.track.w,
+                              self.track.h + th * 2), 0)
             pygame.draw.rect(surf, ScrollBar.track_bg,
                              (self.track.x,
                               self.track.y - th * 0.5,

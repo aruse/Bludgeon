@@ -14,6 +14,7 @@ from pygame.locals import *
 
 from const import *
 from game import *
+from game_client import *
 from util import *
 from monster import *
 from item import *
@@ -346,7 +347,7 @@ def main():
 
     attach_key_actions()
 
-    message('Welcome, {0}!'.format(uname), GV.gold)
+    message('Welcome, {0}!'.format(uname), GC.gold)
 
     # Main loop
     while GC.state != ST_QUIT:

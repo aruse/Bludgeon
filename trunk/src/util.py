@@ -10,7 +10,7 @@ from pygame.locals import *
 from const import *
 from game import *
 
-def message(msg, color=GV.default_font_color):
+def message(msg, color=GC.default_font_color):
     """Add a message to the game log and tell the log surface to update."""
     if len(GC.msgs) >= MAX_MSGS:
         GC.msgs.pop(0)

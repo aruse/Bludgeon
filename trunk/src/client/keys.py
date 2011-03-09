@@ -7,6 +7,7 @@ from pygame.locals import *
 
 from const import *
 from game import *
+from game_client import *
 from util import *
 from monster import *
 from item import *

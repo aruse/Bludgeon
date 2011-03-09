@@ -4,6 +4,7 @@ import re
 
 from const import *
 from game import *
+from game_client import *
 from util import *
 
 
