@@ -8,17 +8,17 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
+from server import Server as S
 from util import *
 from ai import *
 
 def cast_heal(item, x=None, y=None):
-    if GC.u.hp == GC.u.max_hp:
-        message('You are already at full health.', GC.light_violet)
+    if S.u.hp == S.u.max_hp:
+        message('You are already at full health.', S.light_violet)
         return 'cancelled'
  
-    message('Your wounds start to feel better!', GC.light_violet)
-    GC.u.heal(HEAL_AMOUNT)
+    message('Your wounds start to feel better!', S.light_violet)
+    S.u.heal(HEAL_AMOUNT)
     return 'success'
     
 def closest_monster(max_range):
@@ -27,9 +27,9 @@ def closest_monster(max_range):
     # Start just out of max range
     closest_dist = max_range + 1
 
-    for m in GC.monsters:
-        if m != GC.u and GC.u.fov_map.in_fov(m.x, m.y):
-            dist = GC.u.distance_to(m)
+    for m in S.monsters:
+        if m != S.u and S.u.fov_map.in_fov(m.x, m.y):
+            dist = S.u.distance_to(m)
             if dist < closest_dist:
                 closest_enemy = m
                 closest_dist = dist
@@ -41,12 +41,12 @@ def cast_lightning(item, x=None, y=None):
     target = closest_monster(5)
 
     if target is None:
-        target = GC.u
+        target = S.u
         message('A lightning bolt arcs out from you and then returns to '
-                'strike you in the head!', GC.light_blue)
+                'strike you in the head!', S.light_blue)
     else:
         message('A lighting bolt strikes the ' + target.name
-                + ' with a loud thunder!', GC.light_blue)
+                + ' with a loud thunder!', S.light_blue)
         
     target.take_damage(LIGHTNING_DAMAGE)
     return 'success'
@@ -58,10 +58,10 @@ def cast_fireball(item, x=None, y=None):
     """
     if x == None and y == None:
         message('Left-click a target for the fireball, or right-click to '
-                'cancel.', GC.light_cyan)
-        GC.state = ST_TARGETING
-        GC.targeting_function.append(finish_fireball)
-        GC.targeting_item = item
+                'cancel.', S.light_cyan)
+        S.state = ST_TARGETING
+        S.targeting_function.append(finish_fireball)
+        S.targeting_item = item
         return 'targeting'
     else:
         finish_fireball(item, x, y)
@@ -74,12 +74,12 @@ def finish_fireball(item, x=None, y=None):
     if x is None:
         return False
     message('The fireball explodes, burning everything within '
-            + str(FIREBALL_RADIUS) + ' spaces!', GC.orange)
+            + str(FIREBALL_RADIUS) + ' spaces!', S.orange)
  
-    for m in GC.monsters + [GC.u]:
+    for m in S.monsters + [S.u]:
         if m.distance(x, y) <= FIREBALL_RADIUS:
             message('The ' + m.name + ' gets burned for '
-                    + str(FIREBALL_DAMAGE) + ' hit points.', GC.orange)
+                    + str(FIREBALL_DAMAGE) + ' hit points.', S.orange)
             m.take_damage(FIREBALL_DAMAGE)
 
     return True
@@ -87,10 +87,10 @@ def finish_fireball(item, x=None, y=None):
 def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to '
-                'cancel.', GC.light_cyan)
-        GC.state = ST_TARGETING
-        GC.targeting_function.append(finish_confuse)
-        GC.targeting_item = item
+                'cancel.', S.light_cyan)
+        S.state = ST_TARGETING
+        S.targeting_function.append(finish_confuse)
+        S.targeting_item = item
         return 'targeting'
     else:
         finish_confuse(item, x, y)
@@ -98,9 +98,9 @@ def cast_confuse(item, x=None, y=None):
 def finish_confuse(item, x, y):
     # FIXME: should be able to target myself
     target = None
-    for m in GC.monsters:
+    for m in S.monsters:
         if (m.x == x and m.y == y
-            and m.distance(GC.u.x, GC.u.y) <= CONFUSE_RANGE):
+            and m.distance(S.u.x, S.u.y) <= CONFUSE_RANGE):
             target = m
             break
 
@@ -112,5 +112,5 @@ def finish_confuse(item, x, y):
     target.ai = ConfusedAI(old_ai)
     target.ai.owner = target  #tell the new component who owns it
     message('The eyes of the ' + target.name
-            + ' look vacant, as he starts to stumble around!', GC.light_green)
+            + ' look vacant, as he starts to stumble around!', S.light_green)
     return True

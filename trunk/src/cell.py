@@ -4,8 +4,8 @@
 import re
 
 from const import *
-from game import *
-from game_client import *
+from server import Server as S
+from client import Client as C
 from util import *
 
 
@@ -28,6 +28,9 @@ class Cell:
         self.monsters = []
         self.items = []
         
+        # Set to true if this cell has been modified in any way and needs
+        # to be updated in the C.
+        self.dirty = True
 
     def set_tile(self, name):
         self.name = name
@@ -44,18 +47,18 @@ class Cell:
             self.cell_class = 'floor'
 
 #        self.cell_class = tile_class_dict[name]
-        self.tile = GV.tile_dict[name]
+        self.tile = C.tile_dict[name]
         
     def draw(self, x, y):
         """Draw this Cell on the map at the given coords."""
         # Remember to offset by 1 tile so that there's room
         # for the border.
-        GV.map_surf.blit(GV.tiles_img,
+        C.map_surf.blit(C.tiles_img,
                          cell2pixel(x, y),
                          self.tile)
  
     def draw_gray(self, x, y):
         """Draw this Cell on the map at the given coords, grayed out."""
-        GV.map_surf.blit(GV.gray_tiles_img,
+        C.map_surf.blit(C.gray_tiles_img,
                          ((x + 1) * TILE_W, (y + 1) * TILE_H),
                          self.tile)

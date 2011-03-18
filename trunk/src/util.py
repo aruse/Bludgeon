@@ -9,35 +9,35 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
+from server import Server as S
 
 def request(req, args):
-    """Send a client request to the server.
+    """Send a client request to the S.
     Currently implemented as a local queue.
     Arguments:
     req -- The request type, a string.
     args -- The arguments for the request, a tuple.
     """
-    GC.client_requests.append((req, args))
-    print 'Requests:', GC.client_requests
+    S.client_requests.append((req, args))
+    print 'Requests:', S.client_requests
 
 
 def handle_requests():
-    while len(GC.client_requests):
-        req, args = GC.client_requests.popleft()
+    while len(S.client_requests):
+        req, args = S.client_requests.popleft()
 
-        response = GC.requests[req].do(args)
-#        GC.state = ST_QUIT
-#        GC.server_responses.append(response)
-        GC.cmd_history.append((req, args))
+        response = S.requests[req].do(args)
+#        S.state = ST_QUIT
+#        S.server_responses.append(response)
+        S.cmd_history.append((req, args))
 
-def message(msg, color=GC.default_font_color):
+def message(msg, color=S.default_font_color):
     """Add a message to the game log and tell the log surface to update."""
-    if len(GC.msgs) >= MAX_MSGS:
-        GC.msgs.pop(0)
+    if len(S.msgs) >= MAX_MSGS:
+        S.msgs.pop(0)
 
-    GC.msgs.append((msg, color))
-    GC.log_updated = True
+    S.msgs.append((msg, color))
+    S.log_updated = True
 
 
 def convert_to_grayscale(surf):

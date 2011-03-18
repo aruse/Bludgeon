@@ -7,7 +7,7 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
+from server import Server as S
 from util import *
 from fov import *
 from ai import *
@@ -16,23 +16,23 @@ from item import *
 from gui import *
 
 def die_leave_corpse(m):
-    message(m.name.capitalize() + ' dies!', GC.red)
-    GC.monsters.remove(m)
-    GC.map[m.x][m.y].monsters.remove(m)
+    message(m.name.capitalize() + ' dies!', S.red)
+    S.monsters.remove(m)
+    S.map[m.x][m.y].monsters.remove(m)
 
     corpse = Item(m.x, m.y, 'corpse', prev_monster=m, oid=m.oid)
-    GC.items.append(corpse)
-    GC.map[m.x][m.y].items.append(corpse)
+    S.items.append(corpse)
+    S.map[m.x][m.y].items.append(corpse)
 
 
 def player_death(m):
-    message(m.name.capitalize() + ' dies!', GC.red)
-    GC.monsters.remove(m)
-    GC.map[m.x][m.y].monsters.remove(m)
+    message(m.name.capitalize() + ' dies!', S.red)
+    S.monsters.remove(m)
+    S.map[m.x][m.y].monsters.remove(m)
 
     corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
-    GC.items.append(corpse)
-    GC.map[m.x][m.y].items.append(corpse)
+    S.items.append(corpse)
+    S.map[m.x][m.y].items.append(corpse)
     
 class Monster(Object):
     """Anything that moves and acts under its own power.  Players and
@@ -119,9 +119,10 @@ class Monster(Object):
 
     def pick_up(self, item):
         self.inventory.append(item)
-        GC.items.remove(item)
-        GC.map[item.x][item.y].items.remove(item)
-        message('You picked up a ' + item.name + '.', GC.green)
+        S.items.remove(item)
+        S.map[item.x][item.y].items.remove(item)
+        message('You picked up a ' + item.name + '.', S.green)
+        self.dirty = True
 
     def set_fov_map(self, map):
         self.fov_map = FOVMap(map)
@@ -137,6 +138,8 @@ class Monster(Object):
         else:
             message(self.name.capitalize() + ' attacks ' + target.name
                     + ' but it has no effect!')
+
+        self.dirty = True
  
     def take_damage(self, damage):
         if damage > 0:
@@ -145,49 +148,54 @@ class Monster(Object):
             # If dead, call death function
             if self.hp <= 0:
                 self.death(self)
- 
+
+            self.dirty = True
+
     def heal(self, amount):
         #heal by the given amount, without going over the maximum
         self.hp += amount
         if self.hp > self.max_hp:
             self.hp = self.max_hp
 
+        self.dirty = True
 
     def targeted_use(self, item, x, y):
         """Use an item, targetted on the given coords."""
         item.use_function(item, x, y)
         self.inventory.remove(item)
         del Object.obj_dict[item.oid]
+        self.dirty = True
 
     def use(self, item):
         """Use an item."""
 
         if item.use_function is None:
-                message('The ' + item.name + ' cannot be used.')
+            message('The ' + item.name + ' cannot be used.')
         else:
             use_result = item.use_function(item)
             if use_result != 'cancelled' and use_result != 'targeting':
                 # Destroy after use, but only if it was actually used.
                 self.inventory.remove(item)
                 del Object.obj_dict[item.oid]
+                self.dirty = True
             return use_result
 
     def drop(self, i):
         """Drop an item."""
         i.x, i.y = self.x, self.y
         self.inventory.remove(i)
-        GC.items.append(i)
-        GC.map[i.x][i.y].items.append(i)
-
+        S.items.append(i)
+        S.map[i.x][i.y].items.append(i)
         message('You dropped the ' + i.name + '.')
+        self.dirty = True
 
     def move(self, dx, dy=None):
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this monster has moved.
-            if self != GC.u:
-                GC.map[oldx][oldy].monsters.remove(self)
-                GC.map[self.x][self.y].monsters.append(self)
+            if self != S.u:
+                S.map[oldx][oldy].monsters.remove(self)
+                S.map[self.x][self.y].monsters.append(self)
 
     def serialize(self):
         """Convert Monster to a string, suitable for saving or network
@@ -208,7 +216,6 @@ class Monster(Object):
                 repr(self.max_mp), ai, repr(self.death.__name__), inventory))
 
         return o + m
-
 
 
 class Player(Monster):
@@ -244,7 +251,7 @@ class Player(Monster):
             Monster.attack(self, Object.obj_dict[target])
         else:
             request('F', (target.oid, True))
-#        GC.cmd_history.append(('a', target.oid))
+#        S.cmd_history.append(('a', target.oid))
 
     def move(self, dx, dy=None, server=False):
         # This is a hack necessary because I haven't split the client Player from the server Player yet.  When I separate them, I won't need the "server" variable any more.
@@ -257,16 +264,16 @@ class Player(Monster):
         self.move(0, 0)
 
     def pick_up(self, item):
-#        GC.cmd_history.append((',', item.oid))
+#        S.cmd_history.append((',', item.oid))
         Monster.pick_up(self, item)
 
     def targeted_use(self, item, x, y):
-        GC.cmd_history.append(('u', item.oid, x, y))
+        S.cmd_history.append(('u', item.oid, x, y))
         Monster.targeted_use(self, item, x, y)
 
     def drop(self, item):
         
-#        GC.cmd_history.append(('d', item.oid))
+#        S.cmd_history.append(('d', item.oid))
         Monster.drop(self, Object.obj_dict[item])
 
     def try_move(self, dx, dy=None):
@@ -283,7 +290,7 @@ class Player(Monster):
         # try to find an attackable object there
         target = None
 
-        for m in GC.monsters:
+        for m in S.monsters:
             if m.x == x and m.y == y:
                 target = m
                 break

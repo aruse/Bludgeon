@@ -7,7 +7,7 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
+from server import Server as S
 from util import *
 from fov import *
 from ai import *
@@ -64,8 +64,8 @@ class Item(Object):
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this item has moved.
-            GC.map[oldx][oldy].items.remove(self)
-            GC.map[self.x][self.y].items.append(self)
+            S.map[oldx][oldy].items.remove(self)
+            S.map[self.x][self.y].items.append(self)
 
     def serialize(self):
         """Convert Item to a string, suitable for saving or network

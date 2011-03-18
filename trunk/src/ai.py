@@ -6,7 +6,7 @@ behave.
 """
 
 from const import *
-from game import *
+from server import Server as S
 from util import *
 
 class StupidAI:
@@ -15,11 +15,11 @@ class StupidAI:
     def take_turn(self):
         # If I can see the monster, it can see me
         m = self.owner
-        if GC.u.fov_map.in_fov(m.x, m.y):
-            if m.distance_to(GC.u) >= 2:
-                m.move_towards(GC.u.x, GC.u.y)
-            elif GC.u.hp > 0:
-                m.attack(GC.u)
+        if S.u.fov_map.in_fov(m.x, m.y):
+            if m.distance_to(S.u) >= 2:
+                m.move_towards(S.u.x, S.u.y)
+            elif S.u.hp > 0:
+                m.attack(S.u)
         else:
             m.move_randomly()
 
@@ -43,5 +43,5 @@ class ConfusedAI:
             # Restore the previous AI
             self.owner.ai = self.old_ai
             message('The ' + self.owner.name + ' is no longer confused!',
-                    GV.red)
+                    C.red)
  

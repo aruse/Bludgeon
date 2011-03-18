@@ -9,8 +9,8 @@ from pygame.color import THECOLORS as colors
 
 from const import *
 
-class GC:
-    """Stores the controller state."""
+class Server:
+    """Stores the server state."""
     # Debug mode
     debug = True
 
@@ -82,9 +82,9 @@ class GC:
     # Whether or not the message log has been updated this cycle.
     log_updated = True
 
-    # Queue of requests coming from the client to the server.
+    # Queue of requests coming from the client to the S.
     client_requests = deque()
-    # Queue of responses from the server to the client.
+    # Queue of responses from the server to the C.
     server_responses = deque()
 
     requests = None

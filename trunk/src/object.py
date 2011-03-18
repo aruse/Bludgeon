@@ -8,8 +8,8 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
-from game_client import *
+from server import Server as S
+from client import Client as C
 from util import *
 from fov import *
 from ai import *
@@ -43,18 +43,24 @@ class Object:
         self.x = x
         self.y = y
 
-        self.tile = GV.tile_dict[name]
+        self.tile = C.tile_dict[name]
         
         # Which color to display in text mode
         self.color = None
 
         self.blocks_sight = False
         self.blocks_movement = False
+
+        # Set to true if this object has been modified in any way and needs
+        # to be updated in the C.
+        self.dirty = True
         
     def move(self, dx, dy=None):
         """Move dx and dy spaces, if possible."""
         if type(dx) == type(tuple()):
             dx, dy = dx[0], dx[1]
+
+        self.dirty = True
             
         if self.can_move_dir(dx, dy):
             self.x += dx
@@ -64,7 +70,7 @@ class Object:
             return False
 
     def move_randomly(self):
-        dir = GC.rand.randrange(len(DIR))
+        dir = S.rand.randrange(len(DIR))
         if self.can_move_dir(DIR[dir]):
             self.move(DIR[dir])
 
@@ -115,13 +121,13 @@ class Object:
 
     def draw(self):
         """Draw this Object on the map at the current location."""
-        GV.map_surf.blit(GV.tiles_img,
+        C.map_surf.blit(C.tiles_img,
                          cell2pixel(self.x, self.y),
                          self.tile)
  
     def draw_gray(self):
         """Draw this Object on the map at the current location, grayed out."""
-        GV.map_surf.blit(GV.gray_tiles_img,
+        C.map_surf.blit(C.gray_tiles_img,
                          cell2pixel(self.x, self.y),
                          self.tile)
 
@@ -142,10 +148,10 @@ class Object:
         if x < 0 or y < 0 or x >= MAP_W or y >= MAP_H:
             can_move = False
 
-        if GC.map[x][y].blocks_movement:
+        if S.map[x][y].blocks_movement:
             can_move = False
 
-        for m in GC.monsters + [GC.u]:
+        for m in S.monsters + [S.u]:
             if x == m.x and y == m.y:
                 can_move = False
                 break

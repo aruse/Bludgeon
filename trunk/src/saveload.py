@@ -7,7 +7,7 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
+from server import Server as S
 from util import *
 from cell import *
 from monster import *
@@ -15,21 +15,21 @@ from item import *
 
 
 simple_save_objs = [
-    'GC.dlevel',
-    'GC.branch',
+    'S.dlevel',
+    'S.branch',
     'Object.oid_seq',
-    'GC.random_seed',
-    'GC.cmd_history',
+    'S.random_seed',
+    'S.cmd_history',
     ]
 complex_save_objs = [
-    'GC.u',
-    'GC.map',
-    'GC.monsters',
-    'GC.items',
+    'S.u',
+    'S.map',
+    'S.monsters',
+    'S.items',
     ]
-#    'GC.dlevel_dict',
-#    'GC.monsters_dict',
-#    'GC.items_dict',
+#    'S.dlevel_dict',
+#    'S.monsters_dict',
+#    'S.items_dict',
 
 
 def save_game(file):
@@ -40,23 +40,23 @@ def save_game(file):
 
     f.write('map = [')
 
-    for x in range(len(GC.map)):
+    for x in range(len(S.map)):
         f.write('[')
-        for y in range(len(GC.map[0])):
+        for y in range(len(S.map[0])):
             f.write("{{'n': {0}, 'e': {1}}}, ".format(
-                    repr(GC.map[x][y].name),  repr(GC.map[x][y].explored)))
+                    repr(S.map[x][y].name),  repr(S.map[x][y].explored)))
         f.write('],')
     f.write(']\n')
 
 
     # For references to Objects, just save the oid
-    f.write('monsters = ' + repr([m.oid for m in GC.monsters]) + '\n')
-    f.write('items = ' + repr([m.oid for m in GC.items]) + '\n')
+    f.write('monsters = ' + repr([m.oid for m in S.monsters]) + '\n')
+    f.write('items = ' + repr([m.oid for m in S.items]) + '\n')
 
     # Save all monsters in existence.
     f.write('monster_defs = [')
     for oid, o in Object.obj_dict.iteritems():
-        if oid != GC.u.oid and o.__class__.__name__ == 'Monster':
+        if oid != S.u.oid and o.__class__.__name__ == 'Monster':
             f.write(repr(o.serialize()) + ',')
     f.write(']\n')
 
@@ -68,7 +68,7 @@ def save_game(file):
     f.write(']\n')
 
     # Save the player's state.
-    f.write('u = ' + repr(GC.u.serialize()) + '\n')
+    f.write('u = ' + repr(S.u.serialize()) + '\n')
 
     f.close()
     message('Saved game to {0}.'.format(file))
@@ -80,30 +80,30 @@ def load_game(file):
     f.close()
 
     # Replace the map structure in the save file with actual cells.
-    GC.map = map
+    S.map = map
 
-    for x in range(len(GC.map)):
-        for y in range(len(GC.map[0])):
-            GC.map[x][y] = Cell(GC.map[x][y]['n'], explored=GC.map[x][y]['e'])
+    for x in range(len(S.map)):
+        for y in range(len(S.map[0])):
+            S.map[x][y] = Cell(S.map[x][y]['n'], explored=S.map[x][y]['e'])
 
     # Re-create monsters
     for m_str in monster_defs:
         m = Monster.unserialize(m_str)
-        GC.map[m.x][m.y].monsters.append(m)
+        S.map[m.x][m.y].monsters.append(m)
         
     # Re-create items
     for i_str in item_defs:
         i = Item.unserialize(i_str)
-        GC.map[i.x][i.y].items.append(i)
+        S.map[i.x][i.y].items.append(i)
         
     # Re-create the player
-    GC.u = Player.unserialize(u)
+    S.u = Player.unserialize(u)
 
     # Replace oids with references to the actual objects.
     # FIXME: The inventory code should go into unserialize()
-    GC.u.inventory = [Object.obj_dict[i] for i in GC.u.inventory]
-    GC.monsters = [Object.obj_dict[m] for m in monsters]
-    GC.items = [Object.obj_dict[i] for i in items]
+    S.u.inventory = [Object.obj_dict[i] for i in S.u.inventory]
+    S.monsters = [Object.obj_dict[m] for m in monsters]
+    S.items = [Object.obj_dict[i] for i in items]
 
 
 def load_image(name):

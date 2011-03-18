@@ -9,8 +9,8 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from game import *
-from game_client import *
+from server import Server as S
+from client import Client as C
 from util import *
 from monster import *
 from item import *
@@ -27,7 +27,7 @@ class RequestHandler:
     """Handle a specific client request."""
     def __init__(self, action, turn, desc=None):
         """Arguments:
-        @param action: Action to performed by the server.
+        @param action: Action to performed by the S.
         @param turn: Whether or not this action counts as taking a turn.  
         If this depends on the outcome of the action, set it to None and let
         the action handler take care of it.
@@ -38,7 +38,7 @@ class RequestHandler:
 
     def do(self, args):
         """Perform the action associated with this request."""
-        GC.u_took_turn = self.turn
+        S.u_took_turn = self.turn
         print 'Running on server:', self.action, args
         return self.action(*args)
 
@@ -46,15 +46,15 @@ class RequestHandler:
 def attach_request_actions():
     """Set up dictionaries to map requests to actions."""
     
-    GC.requests = {
-        'm': RequestHandler(GC.u.move, True, "Move the player."),
-        'F': RequestHandler(GC.u.attack, True, "Attack a location."),
+    S.requests = {
+        'm': RequestHandler(S.u.move, True, "Move the player."),
+        'F': RequestHandler(S.u.attack, True, "Attack a location."),
         ',': RequestHandler(pick_up, None, "Pick up an item."),
-        'd': RequestHandler(GC.u.drop, None, "Drop an item."),
-        'a': RequestHandler(GC.u.use, None, "Use an item."),
+        'd': RequestHandler(S.u.drop, None, "Drop an item."),
+        'a': RequestHandler(S.u.use, None, "Use an item."),
         }
 
     # Define actions for special debug mode requests.
-    if GC.debug:
-        GC.requests['^f'] = RequestHandler(
+    if S.debug:
+        S.requests['^f'] = RequestHandler(
             magic_mapping, False, "Map the entire level.")
