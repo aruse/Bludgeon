@@ -8,9 +8,9 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
+from server.server import Server as S
 from util import *
-from ai import *
+from server.ai import *
 
 def cast_heal(item, x=None, y=None):
     if S.u.hp == S.u.max_hp:

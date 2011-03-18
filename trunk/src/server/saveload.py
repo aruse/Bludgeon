@@ -7,11 +7,11 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
+from server.server import Server as S
 from util import *
-from cell import *
-from monster import *
-from item import *
+from server.cell import *
+from server.monster import *
+from server.item import *
 
 
 simple_save_objs = [

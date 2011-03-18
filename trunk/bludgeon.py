@@ -14,7 +14,5 @@ dir = os.path.split(abspath)[0]
 os.chdir(dir)
 
 sys.path.append('src')
-sys.path.append(os.path.join('src', 'client'))
-sys.path.append(os.path.join('src', 'server'))
 import main
 main.main()

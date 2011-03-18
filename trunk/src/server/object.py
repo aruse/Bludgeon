@@ -8,11 +8,10 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
-from client import Client as C
+from server.server import Server as S
 from util import *
 from fov import *
-from ai import *
+from server.ai import *
 
 class Object:
     """Generic object.  Can be sub-classed into players, monsters,
@@ -43,8 +42,6 @@ class Object:
         self.x = x
         self.y = y
 
-        self.tile = C.tile_dict[name]
-        
         # Which color to display in text mode
         self.color = None
 
@@ -119,20 +116,8 @@ class Object:
             x, y = x[0], x[1]
         return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
-    def draw(self):
-        """Draw this Object on the map at the current location."""
-        C.map_surf.blit(C.tiles_img,
-                         cell2pixel(self.x, self.y),
-                         self.tile)
- 
-    def draw_gray(self):
-        """Draw this Object on the map at the current location, grayed out."""
-        C.map_surf.blit(C.gray_tiles_img,
-                         cell2pixel(self.x, self.y),
-                         self.tile)
-
     def can_move_dir(self, x, y=None):
-        """Can the character move in this direction?"""
+        """Can the object move in this direction?"""
         if type(x) == type(tuple()):
             x, y = x[0], x[1]
             

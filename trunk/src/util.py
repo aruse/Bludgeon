@@ -9,27 +9,8 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
+from server.server import Server as S
 
-def request(req, args):
-    """Send a client request to the S.
-    Currently implemented as a local queue.
-    Arguments:
-    req -- The request type, a string.
-    args -- The arguments for the request, a tuple.
-    """
-    S.client_requests.append((req, args))
-    print 'Requests:', S.client_requests
-
-
-def handle_requests():
-    while len(S.client_requests):
-        req, args = S.client_requests.popleft()
-
-        response = S.requests[req].do(args)
-#        S.state = ST_QUIT
-#        S.server_responses.append(response)
-        S.cmd_history.append((req, args))
 
 def message(msg, color=S.default_font_color):
     """Add a message to the game log and tell the log surface to update."""

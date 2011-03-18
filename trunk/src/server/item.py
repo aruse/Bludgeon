@@ -7,14 +7,11 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
+from server.server import Server as S
 from util import *
 from fov import *
-from ai import *
-from object import *                    
-from monster import *
-from gui import *
-from spell import *
+from server.ai import *
+from server.object import *                    
 
 class Item(Object):
     """Game items.  Anything that can be picked up."""

@@ -6,7 +6,7 @@ behave.
 """
 
 from const import *
-from server import Server as S
+from server.server import Server as S
 from util import *
 
 class StupidAI:

@@ -7,17 +7,12 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
-from client import Client as C
+from client.client import Client as C
 from util import *
-from monster import *
-from item import *
-from dlevel import *
-from cell import *
-from ai import *
-from gui import *
-from spell import *
-from saveload import *
+from client.monster import *
+from client.item import *
+from client.cell import *
+from client.gui import *
 from stuff import *
 
 
@@ -38,7 +33,7 @@ class KeyHandler:
 
     def do(self):
         """Perform the action associated with this key press."""
-        S.u_took_turn = self.turn
+        C.u_took_turn = self.turn
         self.action(*self.args)
 
 
@@ -48,17 +43,17 @@ def attach_key_actions():
     # Keystroke handlers for 'playing' mode.
     # Accessed like pkeys[mod][KEY]
     # mod can be one of KMOD_NONE, KMOD_CTRL, KMOD_ALT
-    S.pkeys = {
+    C.pkeys = {
         KMOD_NONE: {
-            K_KP1: KeyHandler(S.u.try_move, (DIRH['dl'],), True, ""),
-            K_KP2: KeyHandler(S.u.try_move, (DIRH['d'],), True, ""),
-            K_KP3: KeyHandler(S.u.try_move, (DIRH['dr'],), True, ""),
-            K_KP4: KeyHandler(S.u.try_move, (DIRH['l'],), True, ""),
+            K_KP1: KeyHandler(C.u.try_move, (DIRH['dl'],), True, ""),
+            K_KP2: KeyHandler(C.u.try_move, (DIRH['d'],), True, ""),
+            K_KP3: KeyHandler(C.u.try_move, (DIRH['dr'],), True, ""),
+            K_KP4: KeyHandler(C.u.try_move, (DIRH['l'],), True, ""),
             K_KP5: KeyHandler(None, (), True, ""),
-            K_KP6: KeyHandler(S.u.try_move, (DIRH['r'],), True, ""),
-            K_KP7: KeyHandler(S.u.try_move, (DIRH['ul'],), True, ""),
-            K_KP8: KeyHandler(S.u.try_move, (DIRH['u'],), True, ""),
-            K_KP9: KeyHandler(S.u.try_move, (DIRH['ur'],), True, ""),
+            K_KP6: KeyHandler(C.u.try_move, (DIRH['r'],), True, ""),
+            K_KP7: KeyHandler(C.u.try_move, (DIRH['ul'],), True, ""),
+            K_KP8: KeyHandler(C.u.try_move, (DIRH['u'],), True, ""),
+            K_KP9: KeyHandler(C.u.try_move, (DIRH['ur'],), True, ""),
 
             K_ESCAPE: KeyHandler(None, (), True, "Cancel command."),
             '^': KeyHandler(None, (), "Examine a trap."),
@@ -74,7 +69,7 @@ def attach_key_actions():
                              "List which objects have been discovered."),
             '_': KeyHandler(None, (), True,
                             "Travel to a particular point on the map."),
-            '.': KeyHandler(S.u.rest, (), True, "Rest for one turn."),
+            '.': KeyHandler(C.u.rest, (), True, "Rest for one turn."),
             ':': KeyHandler(None, (), True,
                             "Describe the floor at the current location."),
             ';': KeyHandler(None, (), True,
@@ -324,101 +319,101 @@ def attach_key_actions():
 
 
     # Key bindings that do the same as ones already defined above.
-    S.pkeys[KMOD_NONE][K_UP] = S.pkeys[KMOD_NONE][K_KP8]
-    S.pkeys[KMOD_NONE][K_DOWN] = S.pkeys[KMOD_NONE][K_KP2]
-    S.pkeys[KMOD_NONE][K_LEFT] = S.pkeys[KMOD_NONE][K_KP4]
-    S.pkeys[KMOD_NONE][K_RIGHT] = S.pkeys[KMOD_NONE][K_KP6]
-    S.pkeys[KMOD_NONE][K_HOME] = S.pkeys[KMOD_NONE][K_KP7]
-    S.pkeys[KMOD_NONE][K_END] = S.pkeys[KMOD_NONE][K_KP1]
-    S.pkeys[KMOD_NONE][K_PAGEUP] = S.pkeys[KMOD_NONE][K_KP9]
-    S.pkeys[KMOD_NONE][K_PAGEDOWN] = S.pkeys[KMOD_NONE][K_KP3]
+    C.pkeys[KMOD_NONE][K_UP] = C.pkeys[KMOD_NONE][K_KP8]
+    C.pkeys[KMOD_NONE][K_DOWN] = C.pkeys[KMOD_NONE][K_KP2]
+    C.pkeys[KMOD_NONE][K_LEFT] = C.pkeys[KMOD_NONE][K_KP4]
+    C.pkeys[KMOD_NONE][K_RIGHT] = C.pkeys[KMOD_NONE][K_KP6]
+    C.pkeys[KMOD_NONE][K_HOME] = C.pkeys[KMOD_NONE][K_KP7]
+    C.pkeys[KMOD_NONE][K_END] = C.pkeys[KMOD_NONE][K_KP1]
+    C.pkeys[KMOD_NONE][K_PAGEUP] = C.pkeys[KMOD_NONE][K_KP9]
+    C.pkeys[KMOD_NONE][K_PAGEDOWN] = C.pkeys[KMOD_NONE][K_KP3]
 
-    S.pkeys[KMOD_SHIFT][K_UP] = S.pkeys[KMOD_SHIFT][K_KP8]
-    S.pkeys[KMOD_SHIFT][K_DOWN] = S.pkeys[KMOD_SHIFT][K_KP2]
-    S.pkeys[KMOD_SHIFT][K_LEFT] = S.pkeys[KMOD_SHIFT][K_KP4]
-    S.pkeys[KMOD_SHIFT][K_RIGHT] = S.pkeys[KMOD_SHIFT][K_KP6]
+    C.pkeys[KMOD_SHIFT][K_UP] = C.pkeys[KMOD_SHIFT][K_KP8]
+    C.pkeys[KMOD_SHIFT][K_DOWN] = C.pkeys[KMOD_SHIFT][K_KP2]
+    C.pkeys[KMOD_SHIFT][K_LEFT] = C.pkeys[KMOD_SHIFT][K_KP4]
+    C.pkeys[KMOD_SHIFT][K_RIGHT] = C.pkeys[KMOD_SHIFT][K_KP6]
 
-    S.pkeys[KMOD_NONE][1] = S.pkeys[KMOD_NONE][K_KP1]
-    S.pkeys[KMOD_NONE][2] = S.pkeys[KMOD_NONE][K_KP2]
-    S.pkeys[KMOD_NONE][3] = S.pkeys[KMOD_NONE][K_KP3]
-    S.pkeys[KMOD_NONE][4] = S.pkeys[KMOD_NONE][K_KP4]
-    S.pkeys[KMOD_NONE][6] = S.pkeys[KMOD_NONE][K_KP6]
-    S.pkeys[KMOD_NONE][7] = S.pkeys[KMOD_NONE][K_KP7]
-    S.pkeys[KMOD_NONE][8] = S.pkeys[KMOD_NONE][K_KP8]
-    S.pkeys[KMOD_NONE][9] = S.pkeys[KMOD_NONE][K_KP9]
+    C.pkeys[KMOD_NONE][1] = C.pkeys[KMOD_NONE][K_KP1]
+    C.pkeys[KMOD_NONE][2] = C.pkeys[KMOD_NONE][K_KP2]
+    C.pkeys[KMOD_NONE][3] = C.pkeys[KMOD_NONE][K_KP3]
+    C.pkeys[KMOD_NONE][4] = C.pkeys[KMOD_NONE][K_KP4]
+    C.pkeys[KMOD_NONE][6] = C.pkeys[KMOD_NONE][K_KP6]
+    C.pkeys[KMOD_NONE][7] = C.pkeys[KMOD_NONE][K_KP7]
+    C.pkeys[KMOD_NONE][8] = C.pkeys[KMOD_NONE][K_KP8]
+    C.pkeys[KMOD_NONE][9] = C.pkeys[KMOD_NONE][K_KP9]
 
-    S.pkeys[KMOD_NONE][' '] = S.pkeys[KMOD_NONE]['.']
-    S.pkeys[KMOD_NONE]['+'] = S.pkeys[KMOD_NONE]['X']
+    C.pkeys[KMOD_NONE][' '] = C.pkeys[KMOD_NONE]['.']
+    C.pkeys[KMOD_NONE]['+'] = C.pkeys[KMOD_NONE]['X']
 
-    S.pkeys[KMOD_CTRL][K_c] = S.pkeys['ext']['quit'] 
-    S.pkeys[KMOD_NONE][K_y] = S.pkeys['ext']['youpoly']
-    S.pkeys[KMOD_ALT][K_2] = S.pkeys['ext']['2weapon']
-    S.pkeys[KMOD_ALT][K_a] = S.pkeys['ext']['adjust']
-    S.pkeys[KMOD_ALT][K_b] = S.pkeys['ext']['borrow']
-    S.pkeys[KMOD_ALT][K_c] = S.pkeys['ext']['chat']
-    S.pkeys[KMOD_ALT][K_d] = S.pkeys['ext']['dip']
-    S.pkeys[KMOD_ALT][K_e] = S.pkeys['ext']['enhance']
-    S.pkeys[KMOD_ALT][K_f] = S.pkeys['ext']['force']
-    S.pkeys[KMOD_ALT][K_i] = S.pkeys['ext']['invoke']
-    S.pkeys[KMOD_ALT][K_j] = S.pkeys['ext']['jump']
-    S.pkeys[KMOD_ALT][K_l] = S.pkeys['ext']['loot']
-    S.pkeys[KMOD_ALT][K_m] = S.pkeys['ext']['monster']
-    S.pkeys[KMOD_ALT][K_n] = S.pkeys['ext']['name']
-    S.pkeys[KMOD_ALT][K_o] = S.pkeys['ext']['offer']
-    S.pkeys[KMOD_ALT][K_p] = S.pkeys['ext']['pray']
-    S.pkeys[KMOD_ALT][K_q] = S.pkeys['ext']['quit']
-    S.pkeys[KMOD_ALT][K_r] = S.pkeys['ext']['rub']
-    S.pkeys[KMOD_ALT][K_s] = S.pkeys['ext']['sit']
-    S.pkeys[KMOD_ALT][K_t] = S.pkeys['ext']['technique']
-    S.pkeys[KMOD_ALT][K_u] = S.pkeys['ext']['untrap']
-    S.pkeys[KMOD_ALT][K_w] = S.pkeys['ext']['wipe']
-    S.pkeys[KMOD_ALT][K_y] = S.pkeys['ext']['youpoly']
+    C.pkeys[KMOD_CTRL][K_c] = C.pkeys['ext']['quit'] 
+    C.pkeys[KMOD_NONE][K_y] = C.pkeys['ext']['youpoly']
+    C.pkeys[KMOD_ALT][K_2] = C.pkeys['ext']['2weapon']
+    C.pkeys[KMOD_ALT][K_a] = C.pkeys['ext']['adjust']
+    C.pkeys[KMOD_ALT][K_b] = C.pkeys['ext']['borrow']
+    C.pkeys[KMOD_ALT][K_c] = C.pkeys['ext']['chat']
+    C.pkeys[KMOD_ALT][K_d] = C.pkeys['ext']['dip']
+    C.pkeys[KMOD_ALT][K_e] = C.pkeys['ext']['enhance']
+    C.pkeys[KMOD_ALT][K_f] = C.pkeys['ext']['force']
+    C.pkeys[KMOD_ALT][K_i] = C.pkeys['ext']['invoke']
+    C.pkeys[KMOD_ALT][K_j] = C.pkeys['ext']['jump']
+    C.pkeys[KMOD_ALT][K_l] = C.pkeys['ext']['loot']
+    C.pkeys[KMOD_ALT][K_m] = C.pkeys['ext']['monster']
+    C.pkeys[KMOD_ALT][K_n] = C.pkeys['ext']['name']
+    C.pkeys[KMOD_ALT][K_o] = C.pkeys['ext']['offer']
+    C.pkeys[KMOD_ALT][K_p] = C.pkeys['ext']['pray']
+    C.pkeys[KMOD_ALT][K_q] = C.pkeys['ext']['quit']
+    C.pkeys[KMOD_ALT][K_r] = C.pkeys['ext']['rub']
+    C.pkeys[KMOD_ALT][K_s] = C.pkeys['ext']['sit']
+    C.pkeys[KMOD_ALT][K_t] = C.pkeys['ext']['technique']
+    C.pkeys[KMOD_ALT][K_u] = C.pkeys['ext']['untrap']
+    C.pkeys[KMOD_ALT][K_w] = C.pkeys['ext']['wipe']
+    C.pkeys[KMOD_ALT][K_y] = C.pkeys['ext']['youpoly']
 
 
     # Define actions for special debug mode keystrokes.
-    if S.debug:
-        S.pkeys[KMOD_CTRL][K_e] = KeyHandler(
+    if C.debug:
+        C.pkeys[KMOD_CTRL][K_e] = KeyHandler(
             None, (), True, "Search an entire room.")
-#        S.pkeys[KMOD_CTRL][K_f] = KeyHandler(
+#        C.pkeys[KMOD_CTRL][K_f] = KeyHandler(
 #            magic_mapping, (), False, "Map the entire level.")
-        S.pkeys[KMOD_CTRL][K_f] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_f] = KeyHandler(
             request, ('^f', ()), False, "Map the entire level.")
-        S.pkeys[KMOD_CTRL][K_g] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_g] = KeyHandler(
             None, (), True, "Create a monster.")
-        S.pkeys[KMOD_CTRL][K_i] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_i] = KeyHandler(
             None, (), True, "Identify all items in inventory.")
-        S.pkeys[KMOD_CTRL][K_j] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_j] = KeyHandler(
             None, (), True, "Go up one experience level.")
-        S.pkeys[KMOD_CTRL][K_o] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_o] = KeyHandler(
             None, (), True, "Show the layout of the entire dungeon.")
-        S.pkeys[KMOD_CTRL][K_v] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_v] = KeyHandler(
             None, (5, 6), True, "Level teleport.")
-        S.pkeys[KMOD_CTRL][K_w] = KeyHandler(
+        C.pkeys[KMOD_CTRL][K_w] = KeyHandler(
             None, (), True, "Wish.")
 
-        S.pkeys['ext']['levelchange'] = KeyHandler(
+        C.pkeys['ext']['levelchange'] = KeyHandler(
             None, (), True, "Change experience level.")
-        S.pkeys['ext']['lightsources'] = KeyHandler(
+        C.pkeys['ext']['lightsources'] = KeyHandler(
             None, (), True, "Highlight light sources.")
-        S.pkeys['ext']['monpolycontrol'] = KeyHandler(
+        C.pkeys['ext']['monpolycontrol'] = KeyHandler(
             None, (), True, "Control polymorphs of monsters.")
-        S.pkeys['ext']['panic'] = KeyHandler(
+        C.pkeys['ext']['panic'] = KeyHandler(
             None, (), True, "Test the panic system.")
-        S.pkeys['ext']['polyself'] = KeyHandler(
+        C.pkeys['ext']['polyself'] = KeyHandler(
             None, (), True, "Polymorph self.")
-        S.pkeys['ext']['seenv'] = KeyHandler(
+        C.pkeys['ext']['seenv'] = KeyHandler(
             None, (), True, "Show seen vectors.")
-        S.pkeys['ext']['stats'] = KeyHandler(
+        C.pkeys['ext']['stats'] = KeyHandler(
             None, (), True, "Show memory statistics.")
-        S.pkeys['ext']['timeout'] = KeyHandler(
+        C.pkeys['ext']['timeout'] = KeyHandler(
             None, (), True, "Show timeout queue.")
-        S.pkeys['ext']['vision'] = KeyHandler(
+        C.pkeys['ext']['vision'] = KeyHandler(
             None, (), True, "Highlight field of view.")
-        S.pkeys['ext']['wmode'] = KeyHandler(
+        C.pkeys['ext']['wmode'] = KeyHandler(
             None, (), True, "Show all wall modes.")
 
         # FIXME: This should actually be handled under #vision
-        S.pkeys[KMOD_CTRL][K_z] = KeyHandler(show_fov, (), False)
+        C.pkeys[KMOD_CTRL][K_z] = KeyHandler(show_fov, (), False)
 
 
 # Dictionary of key presses to ignore.  Note that this includes modifier keys,

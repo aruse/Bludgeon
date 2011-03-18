@@ -6,12 +6,12 @@
 import random
 
 from const import *
-from cell import *
-from room import *
+from server.cell import *
+from server.room import *
 from util import *
-from monster import *
-from item import *
-from ai import *
+from server.monster import *
+from server.item import *
+from server.ai import *
 
 DIR_LEFT = 0
 DIR_RIGHT = 1

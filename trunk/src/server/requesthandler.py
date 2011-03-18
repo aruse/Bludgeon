@@ -9,17 +9,16 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
-from client import Client as C
+from server.server import Server as S
 from util import *
-from monster import *
-from item import *
-from dlevel import *
-from cell import *
-from ai import *
-from gui import *
-from spell import *
-from saveload import *
+from server.monster import *
+from server.item import *
+from server.dlevel import *
+from server.cell import *
+from server.ai import *
+from server.gui import *
+from server.spell import *
+from server.saveload import *
 from stuff import *
 
 

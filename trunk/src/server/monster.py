@@ -7,13 +7,12 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server import Server as S
+from server.server import Server as S
 from util import *
 from fov import *
-from ai import *
-from object import *                    
-from item import *
-from gui import *
+from server.ai import *
+from server.object import *                    
+from server.item import *
 
 def die_leave_corpse(m):
     message(m.name.capitalize() + ' dies!', S.red)
@@ -72,6 +71,7 @@ class Monster(Object):
         # Field of view map.
         self.fov_map = None
 
+        # FIXME: this should be loaded from a database
         if name == 'wizard':
             if hp is None:
                 self.hp = 30
@@ -245,20 +245,11 @@ class Player(Monster):
                          max_hp=max_hp, mp=mp, max_mp=max_mp, death=death,
                          fov_radius=fov_radius, inventory=inventory)
 
-    def attack(self, target, server=False):
-        # This is a hack necessary because I haven't split the client Player from the server Player yet.  When I separate them, I won't need the "server" variable any more.
-        if server:
-            Monster.attack(self, Object.obj_dict[target])
-        else:
-            request('F', (target.oid, True))
-#        S.cmd_history.append(('a', target.oid))
+    def attack(self, target):
+        Monster.attack(self, Object.obj_dict[target])
 
-    def move(self, dx, dy=None, server=False):
-        # This is a hack necessary because I haven't split the client Player from the server Player yet.  When I separate them, I won't need the "server" variable any more.
-        if server:
-            Monster.move(self, dx, dy)
-        else:
-            request('m', (dx, dy, True))
+    def move(self, dx, dy=None):
+        Monster.move(self, dx, dy)
 
     def rest(self):
         self.move(0, 0)
