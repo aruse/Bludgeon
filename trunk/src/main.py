@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 """Setup of game objects and main game loop."""
 
@@ -24,6 +25,7 @@ from ai import *
 from gui import *
 from spell import *
 from keys import *
+from requesthandler import *
 from saveload import *
 from stuff import *
 
@@ -44,13 +46,13 @@ def run_history():
         if cmd[0] == 'm':
             GC.u.move(cmd[1], cmd[2])
         elif cmd[0] == 'a':
-            GC.u.attack(GC.obj_dict[cmd[1]])
+            GC.u.attack(Object.obj_dict[cmd[1]])
         elif cmd[0] == ',':
-            GC.u.pick_up(GC.obj_dict[cmd[1]])
+            GC.u.pick_up(Object.obj_dict[cmd[1]])
         elif cmd[0] == 'd':
-            GC.u.drop(GC.obj_dict[cmd[1]])
+            GC.u.drop(Object.obj_dict[cmd[1]])
         elif cmd[0] == 'u':
-            GC.u.targeted_use(GC.obj_dict[cmd[1]], cmd[2], cmd[3])
+            GC.u.targeted_use(Object.obj_dict[cmd[1]], cmd[2], cmd[3])
 
         controller_tick()
         view_tick()
@@ -60,7 +62,7 @@ def run_history():
 def impossible(text):
     print 'Impossible area of code reached'
     print text
-    exit
+    exit(0)
     
 def handle_events():
     # Handle input events
@@ -164,13 +166,15 @@ def handle_actions():
                         if len(GC.u.inventory) > 0:
                             item = GC.u.inventory[index]
                             if item is not None:
-                                if GC.u.use(item) == 'success':
-                                    GC.cmd_history.append(('u',
-                                                           item.oid,
-                                                           None, None))
-                                    GC.u_took_turn = True
-                                else:
-                                    GC.u_took_turn = False
+                                request('a', (item.oid,))
+
+#                                if GC.u.use(item) == 'success':
+#                                    GC.cmd_history.append(('u',
+#                                                           item.oid,
+#                                                           None, None))
+#                                    GC.u_took_turn = True
+#                                else:
+#                                    GC.u_took_turn = False
                                 
                     elif GC.menu == 'drop':
                         GC.state = ST_PLAYING # Exit menu
@@ -178,7 +182,8 @@ def handle_actions():
                         if len(GC.u.inventory) > 0:
                             item = GC.u.inventory[index]
                             if item is not None:
-                                GC.u.drop(item)
+                                request('d', (item.oid,))
+#                                GC.u.drop(item)
                 else:
                     GC.state = ST_PLAYING # Exit menu
             else:        
@@ -200,7 +205,7 @@ def handle_actions():
                 if GC.targeting_item and success:
                     GC.cmd_history.append(('u', GC.targeting_item.oid, x, y))
                     GC.u.inventory.remove(GC.targeting_item)
-                    del GC.obj_dict[GC.targeting_item.oid]
+                    del Object.obj_dict[GC.targeting_item.oid]
                     GC.targeting_item = None
                     GC.u_took_turn = True
                     
@@ -215,6 +220,10 @@ def handle_actions():
         pass
     else:
         impossible('Unknown state: ' + GC.state)
+
+    # Let the server side do its thing with the client requests we generated.
+    handle_requests()
+
 
     if GC.u_took_turn:
         GC.fov_recompute = True
@@ -346,6 +355,7 @@ def main():
     handle_resize(GV.screen_rect.w, GV.screen_rect.h)
 
     attach_key_actions()
+    attach_request_actions()
 
     message('Welcome, {0}!'.format(uname), GC.gold)
 

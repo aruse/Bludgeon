@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import random
 import math

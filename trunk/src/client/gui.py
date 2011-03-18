@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import pygame
 from pygame.locals import *
@@ -703,6 +704,7 @@ def view_tick():
 
     # Partition off a piece of the map_surf and blit it on to the screen
     # at the location specified by the mapview_rect
+    GV.screen.fill(GC.black, GV.mapview_rect)
     GV.screen.blit(GV.map_surf, GV.mapview_rect,
                    Rect(GV.mapview_rect.x - GV.map_rect.x,
                         GV.mapview_rect.y - GV.map_rect.y,

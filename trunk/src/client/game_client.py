@@ -1,9 +1,11 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import pygame
 from pygame.locals import *
 
 from const import *
+
 
 def move_surface_locations():
     """Set the x,y coords for each of the game's surfaces."""
@@ -34,8 +36,12 @@ def init_gv():
     GV.eq_rect.h = GV.status_rect.h
 
     # Size of the full game screen
-    GV.screen_rect.w = GV.eq_rect.w + GV.status_rect.w + 400
-    GV.screen_rect.h = GV.status_rect.h + 400
+    GV.screen_rect.w = GV.eq_rect.w + GV.status_rect.w + MIN_LOG_W
+    if GV.screen_rect.w < INIT_SCREEN_W:
+        GV.screen_rect.w = INIT_SCREEN_W
+    GV.screen_rect.h = GV.status_rect.h + MIN_MAPVIEW_H
+    if GV.screen_rect.h < INIT_SCREEN_H:
+        GV.screen_rect.h = INIT_SCREEN_H
 
     # Size of the log surface
     GV.log_rect.w = GV.screen_rect.w - (GV.eq_rect.w + GV.status_rect.w) \
@@ -101,7 +107,6 @@ class GV:
     
     # What to blit over an area that's not visible
     blank_tile = None
-    
     
     # Cell locations to blit equipment on the equipment panel
     eq_hands = None

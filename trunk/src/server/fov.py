@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 """Routines for calculating field of view (FOV).
 Based on Bjorn Bergstrom's recursive shadowcasting algorithm.

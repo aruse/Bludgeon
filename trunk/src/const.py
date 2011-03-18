@@ -35,7 +35,10 @@ TILE_W, TILE_H = 16, 16
 # Surface sizes, in cells
 EQ_W, EQ_H = 7, STATUS_H
 #MAP_W, MAP_H = 120, 50
-MAP_W, MAP_H = 50, 35
+MAP_W, MAP_H = 45, 18
+
+# Initial size of the screen, in pixels
+INIT_SCREEN_W, INIT_SCREEN_H = 800, 600
 
 # Minimum width of the log surface, in pixels
 MIN_LOG_W = 200
@@ -46,16 +49,10 @@ MIN_MAPVIEW_H = 150
 BORDER_W = TILE_W
 PADDING = 3
 
-
 GAME_TITLE = GAME_NAME + ' ' + VERSION
 
 FRAME_RATE = 20
 
-
-# Some room generation constants
-ROOM_MAX_SIZE = 10
-ROOM_MIN_SIZE = 6
-MAX_ROOMS = 20
 
 # Field of View constants
 FOV_LIGHT_WALLS = True

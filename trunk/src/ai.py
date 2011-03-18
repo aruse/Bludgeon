@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 """AI routines.  Can be assigned to Monster objects to tell them how to 
 behave.

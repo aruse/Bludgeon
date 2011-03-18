@@ -1,4 +1,7 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
+
+from collections import deque
 
 import pygame
 from pygame.locals import *
@@ -74,25 +77,17 @@ class GC:
     # The random number generator used for everything else.
     rand = None
 
-    # The state of the random number generators
-    map_rand_state = None
-    rand_state = None
-
-    # Keeps track of the oid of the next object to be created
-    oid_seq = 1
-
-    # Mapping of oids to objects
-    obj_dict = {}
-
     fov_outline = False
 
     # Whether or not the message log has been updated this cycle.
     log_updated = True
 
-    # Queue of actions coming from the client to the server.
-    client_actions = None
+    # Queue of requests coming from the client to the server.
+    client_requests = deque()
     # Queue of responses from the server to the client.
-    server_updates = None
+    server_responses = deque()
+
+    requests = None
 
 
     # Color definitions

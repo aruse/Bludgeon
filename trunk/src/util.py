@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import os
 import time
@@ -9,6 +10,26 @@ from pygame.locals import *
 
 from const import *
 from game import *
+
+def request(req, args):
+    """Send a client request to the server.
+    Currently implemented as a local queue.
+    Arguments:
+    req -- The request type, a string.
+    args -- The arguments for the request, a tuple.
+    """
+    GC.client_requests.append((req, args))
+    print 'Requests:', GC.client_requests
+
+
+def handle_requests():
+    while len(GC.client_requests):
+        req, args = GC.client_requests.popleft()
+
+        response = GC.requests[req].do(args)
+#        GC.state = ST_QUIT
+#        GC.server_responses.append(response)
+        GC.cmd_history.append((req, args))
 
 def message(msg, color=GC.default_font_color):
     """Add a message to the game log and tell the log surface to update."""

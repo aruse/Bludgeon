@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import random
 import math
@@ -17,18 +18,30 @@ class Object:
     """Generic object.  Can be sub-classed into players, monsters,
     items, etc.
     """
+    # Keeps track of the oid of the next object to be created
+    oid_seq = 1
+
+    # Mapping of oids to objects
+    obj_dict = {}
+
     def __init__(self, x, y, name, oid=None):
         if oid:
             self.oid = oid
         else:
-            self.oid = GC.oid_seq
-            GC.oid_seq += 1
+            self.oid = Object.oid_seq
+            Object.oid_seq += 1
 
-        GC.obj_dict[self.oid] = self
+        Object.obj_dict[self.oid] = self
+
+        # What kind of object is this?  e.g. "potion"
+        self.kind = None
+        # What spedific object is this?  e.g. "potion of confusion"
+        self.name = name
+        # The name to display to the player
+        self.display_name = name
 
         self.x = x
         self.y = y
-        self.name = name
 
         self.tile = GV.tile_dict[name]
         

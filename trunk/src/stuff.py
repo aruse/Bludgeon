@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 """FIXME: need a better name for this stuff.  Used to be called "actions"."""
 
@@ -13,12 +14,19 @@ from monster import *
 from item import *
 
 
-def pick_up(m):
-    """Try to make m pick up an item at its feet."""
+def client_pick_up():
+    """Tell server to pick up an item at the player's feet."""
+    for i in GC.items:
+        if i.x == GC.u.x and i.y == GC.u.y:
+            request(',', (i.oid,))
+
+
+def pick_up(oid):
+    """Try to pick up an item at the player's feet."""
     item_here = False
 
     for i in GC.items:
-        if i.x == GC.u.x and i.y == GC.u.y:
+        if i.x == GC.u.x and i.y == GC.u.y and i.oid == oid:
             GC.u.pick_up(i)
             item_here = True
 

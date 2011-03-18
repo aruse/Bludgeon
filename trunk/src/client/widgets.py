@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 """Classes to implement custom GUI widgets."""
 
@@ -290,19 +291,30 @@ class ScrollBar():
 
     def draw(self, surf):
         """Render the scrollbar."""
-        if self.shown is False:
-            return
-
         # Some abbreviateions so the code doesn't take up so much visual space.
         th = self.thickness
 
+        # Black out the space where the bar will be rendered, whether or not
+        # we actually render the bar.
         if self.axis == 0:
-            # The horizontal track
             pygame.draw.rect(surf, ScrollBar.black,
                              (self.track.x - th,
                               self.track.y,
                               self.track.w + th * 2,
                               self.track.h), 0)
+        elif self.axis == 1:
+            pygame.draw.rect(surf, ScrollBar.black,
+                             (self.track.x,
+                              self.track.y - th,
+                              self.track.w,
+                              self.track.h + th * 2), 0)
+
+        if self.shown is False:
+            return
+
+
+        if self.axis == 0:
+            # The horizontal track
             pygame.draw.rect(surf, ScrollBar.track_bg,
                              (self.track.x - th * 0.5,
                               self.track.y,
@@ -358,11 +370,6 @@ class ScrollBar():
 
         elif self.axis == 1:
             # The vertical track
-            pygame.draw.rect(surf, ScrollBar.black,
-                             (self.track.x,
-                              self.track.y - th,
-                              self.track.w,
-                              self.track.h + th * 2), 0)
             pygame.draw.rect(surf, ScrollBar.track_bg,
                              (self.track.x,
                               self.track.y - th * 0.5,

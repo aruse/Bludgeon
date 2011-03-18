@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 """KeyHandler class and dictionaries use to map keys to handlers."""
 
@@ -19,19 +20,17 @@ from spell import *
 from saveload import *
 from stuff import *
 
-def test_handler(x, y):
-    print "test " + str(x) + str(y)
 
 class KeyHandler:
     """Handle the actions of a specific keystroke."""
     def __init__(self, action, args, turn, desc=None):
         """Arguments:
-        action -- Action to perform when the key is pressed.
-        args -- List of arguments to give to action
-        turn -- Whether or not this action counts as taking a turn.  If this
-                depends on the outcome of the action, set it to None and let
-                the action handler take care of it.
-        desc -- Short description of what this keystroke does.
+        @param action: Action to perform when the key is pressed.
+        @param args: List of arguments to give to action
+        @param turn: Whether or not this action counts as taking a turn.  If 
+        this depends on the outcome of the action, set it to None and let
+        the action handler take care of it.
+        @param desc: Short description of what this keystroke does.
         """
         self.action = action
         self.args = args
@@ -81,7 +80,7 @@ def attach_key_actions():
             ';': KeyHandler(None, (), True,
                             "How is this different than '/'?"),
             ',': KeyHandler(
-                pick_up, (GC.u,), None,
+                client_pick_up, (), None,
                 "Pick things up from the current location.  May be preceded "
                 "by 'm' to select which things to pick up."),
             '@': KeyHandler(None, (), True, "Toggle the autopickup option.  "
@@ -376,12 +375,14 @@ def attach_key_actions():
     GC.pkeys[KMOD_ALT][K_y] = GC.pkeys['ext']['youpoly']
 
 
-    # Define actions for special debug mode commands.
+    # Define actions for special debug mode keystrokes.
     if GC.debug:
         GC.pkeys[KMOD_CTRL][K_e] = KeyHandler(
             None, (), True, "Search an entire room.")
+#        GC.pkeys[KMOD_CTRL][K_f] = KeyHandler(
+#            magic_mapping, (), False, "Map the entire level.")
         GC.pkeys[KMOD_CTRL][K_f] = KeyHandler(
-            magic_mapping, (), False, "Map the entire level.")
+            request, ('^f', ()), False, "Map the entire level.")
         GC.pkeys[KMOD_CTRL][K_g] = KeyHandler(
             None, (), True, "Create a monster.")
         GC.pkeys[KMOD_CTRL][K_i] = KeyHandler(
@@ -391,7 +392,7 @@ def attach_key_actions():
         GC.pkeys[KMOD_CTRL][K_o] = KeyHandler(
             None, (), True, "Show the layout of the entire dungeon.")
         GC.pkeys[KMOD_CTRL][K_v] = KeyHandler(
-            test_handler, (5, 6), True, "Level teleport.")
+            None, (5, 6), True, "Level teleport.")
         GC.pkeys[KMOD_CTRL][K_w] = KeyHandler(
             None, (), True, "Wish.")
 

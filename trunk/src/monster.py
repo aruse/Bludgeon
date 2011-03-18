@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import math
 
@@ -38,9 +39,23 @@ class Monster(Object):
     NPCs count as monsters.  Pretty much any Object that's not an
     Item.
     """
+
+    @classmethod
+    def unserialize(cls, m_str):
+        """Unserialize a string, returning a Monster object."""
+        # Convert string to dict
+        m_dict = eval(m_str)
+
+        return Monster(
+            m_dict['x'], m_dict['y'], m_dict['name'], oid=m_dict['oid'], 
+            ai=eval(m_dict['ai'])(), hp=m_dict['hp'], max_hp=m_dict['max_hp'],
+            mp=m_dict['mp'], max_mp=m_dict['max_mp'],
+            death=eval(m_dict['death']))
+
     
     def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
-                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS):
+                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS,
+                 inventory=[]):
         Object.__init__(self, x, y, name, oid=oid)
 
         self.ai = ai
@@ -90,7 +105,7 @@ class Monster(Object):
         else:
             self.max_hp = max_hp
 
-        self.inventory = []
+        self.inventory = inventory
         
         # FIXME dummy values
         self.mp = 13
@@ -142,7 +157,7 @@ class Monster(Object):
         """Use an item, targetted on the given coords."""
         item.use_function(item, x, y)
         self.inventory.remove(item)
-        del GC.obj_dict[item.oid]
+        del Object.obj_dict[item.oid]
 
     def use(self, item):
         """Use an item."""
@@ -154,7 +169,7 @@ class Monster(Object):
             if use_result != 'cancelled' and use_result != 'targeting':
                 # Destroy after use, but only if it was actually used.
                 self.inventory.remove(item)
-                del GC.obj_dict[item.oid]
+                del Object.obj_dict[item.oid]
             return use_result
 
     def drop(self, i):
@@ -162,7 +177,7 @@ class Monster(Object):
         i.x, i.y = self.x, self.y
         self.inventory.remove(i)
         GC.items.append(i)
-        GC.map[i.x][i.y].append(i)
+        GC.map[i.x][i.y].items.append(i)
 
         message('You dropped the ' + i.name + '.')
 
@@ -197,27 +212,52 @@ class Monster(Object):
 
 
 class Player(Monster):
+    """Representation of the player character."""
+
+    @classmethod
+    def unserialize(cls, u_str):
+        """Unserialize a string, returning a Player object."""
+        # Convert string to dict
+        u_dict = eval(u_str)
+
+        if u_dict['ai'] is not None:
+            u_dict['ai'] = eval(u_dict['ai'])()
+
+        return Player(
+            u_dict['x'], u_dict['y'], u_dict['name'], oid=u_dict['oid'],
+            ai=u_dict['ai'], hp=u_dict['hp'], max_hp=u_dict['max_hp'],
+            mp=u_dict['mp'], max_mp=u_dict['max_mp'],
+            death=eval(u_dict['death']), inventory=u_dict['inventory'])
+
     def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
-                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS):
+                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS,
+                 inventory=[]):
         if death is None:
             death = player_death
-        Monster.__init__(self, x, y, name, oid=oid, ai=ai, hp=hp, max_hp=max_hp,
-                         mp=mp, max_mp=max_mp, death=death,
-                         fov_radius=fov_radius)
+        Monster.__init__(self, x, y, name, oid=oid, ai=ai, hp=hp,
+                         max_hp=max_hp, mp=mp, max_mp=max_mp, death=death,
+                         fov_radius=fov_radius, inventory=inventory)
 
-    def attack(self, target):
-        GC.cmd_history.append(('a', target.oid))
-        Monster.attack(self, target)
+    def attack(self, target, server=False):
+        # This is a hack necessary because I haven't split the client Player from the server Player yet.  When I separate them, I won't need the "server" variable any more.
+        if server:
+            Monster.attack(self, Object.obj_dict[target])
+        else:
+            request('F', (target.oid, True))
+#        GC.cmd_history.append(('a', target.oid))
 
-    def move(self, dx, dy=None):
-        GC.cmd_history.append(('m', dx, dy))
-        Monster.move(self, dx, dy)
+    def move(self, dx, dy=None, server=False):
+        # This is a hack necessary because I haven't split the client Player from the server Player yet.  When I separate them, I won't need the "server" variable any more.
+        if server:
+            Monster.move(self, dx, dy)
+        else:
+            request('m', (dx, dy, True))
 
     def rest(self):
         self.move(0, 0)
 
     def pick_up(self, item):
-        GC.cmd_history.append((',', item.oid))
+#        GC.cmd_history.append((',', item.oid))
         Monster.pick_up(self, item)
 
     def targeted_use(self, item, x, y):
@@ -225,8 +265,9 @@ class Player(Monster):
         Monster.targeted_use(self, item, x, y)
 
     def drop(self, item):
-        GC.cmd_history.append(('d', item.oid))
-        Monster.drop(self, item)
+        
+#        GC.cmd_history.append(('d', item.oid))
+        Monster.drop(self, Object.obj_dict[item])
 
     def try_move(self, dx, dy=None):
         """Try to move dx and dy spaces.  If there's a monster in the
@@ -258,3 +299,15 @@ class Player(Monster):
         transmission.
         """
         return Monster.serialize(self)
+
+    def use(self, item):
+        """Use an item."""
+        if item.use_function is None:
+                message('The ' + item.name + ' cannot be used.')
+
+#        elif needs target:
+#            pass
+#        elif needs direction:
+#            pass
+#        else:
+#            doesn't need any other input

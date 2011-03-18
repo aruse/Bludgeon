@@ -1,4 +1,5 @@
-# Copyright (c) 2011, Andy Ruse
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
 
 import math
 
@@ -18,6 +19,22 @@ from spell import *
 class Item(Object):
     """Game items.  Anything that can be picked up."""
     
+    @classmethod
+    def unserialize(cls, i_str):
+        """Unserialize a string, returning an Item object."""
+        # Convert string to dict
+        i_dict = eval(i_str)
+
+        if i_dict['use_function'] is None:
+            use_function = None
+        else:
+            use_function = eval(i_dict['use_function'])
+
+        return Item(
+            i_dict['x'], i_dict['y'], i_dict['name'], oid=i_dict['oid'],
+            use_function=use_function)
+
+
     def __init__(self, x, y, name, oid=None, use_function=None,
                  prev_monster=None):
         Object.__init__(self, x, y, name, oid=oid)
