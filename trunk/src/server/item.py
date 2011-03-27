@@ -7,14 +7,18 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server.server import Server as S
+from server import Server as S
+from ai import *
+from object import *                    
+from spell import *
+
 from util import *
 from fov import *
-from server.ai import *
-from server.object import *                    
 
 class Item(Object):
-    """Game items.  Anything that can be picked up."""
+    """
+    Game items.  Anything that can be picked up.
+    """
     
     @classmethod
     def unserialize(cls, i_str):
@@ -63,10 +67,11 @@ class Item(Object):
             # Let the map know that this item has moved.
             S.map[oldx][oldy].items.remove(self)
             S.map[self.x][self.y].items.append(self)
+            self.dirty = True
 
     def serialize(self):
-        """Convert Item to a string, suitable for saving or network
-        transmission.
+        """
+        Convert Item to a string, suitable for saving to a file.
         """
         # Need to trim off the trailing bracket from the Object serialization.
         o = Object.serialize(self)[:-1]
@@ -77,5 +82,16 @@ class Item(Object):
             use_function = self.use_function.__name__
 
         i = "'use_function':{0},}}".format(repr(use_function))
+
+        return o + i
+
+    def client_serialize(self):
+        """
+        Convert Item to a string, suitable for transmission to the client.
+        Only include attributes which the client cares about.
+        """
+        # Need to trim off the trailing bracket from the Object serialization.
+        o = Object.client_serialize(self)[:-1]
+        i = "}}".format()
 
         return o + i

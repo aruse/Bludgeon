@@ -4,16 +4,18 @@
 import re
 
 from const import *
-from client.client import Client as C
+from client import Client as C
 from util import *
 
 
 class ClientCell:
-    """Map cell, representing a single location on the map to be displayed
-    in the client."""
+    """
+    Map cell, representing a single location on the map to be displayed
+    in the client.
+    """
 
     def __init__(self, name, explored=False):
-        self.set_name_attr(name)
+        self.set_attr(name)
 
         self.explored = explored
                 
@@ -25,8 +27,12 @@ class ClientCell:
         self.items = []
 
 
-    def set_name_attr(self, name):
-        """Set cell attributes that are dependent on the name."""
+    def set_attr(self, name):
+        """
+        Set cell attributes.
+
+        @param name: Name of this cell.  Used as a key to look up attributes.
+        """
         self.name = name
         
         # FIXME: this is just dummy code.

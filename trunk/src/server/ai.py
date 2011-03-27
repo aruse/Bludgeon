@@ -6,7 +6,7 @@ behave.
 """
 
 from const import *
-from server.server import Server as S
+from server import Server as S
 from util import *
 
 class StupidAI:
@@ -43,5 +43,5 @@ class ConfusedAI:
             # Restore the previous AI
             self.owner.ai = self.old_ai
             message('The ' + self.owner.name + ' is no longer confused!',
-                    C.red)
+                    CLR['red'])
  

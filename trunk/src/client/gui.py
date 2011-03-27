@@ -5,9 +5,9 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from client.client import Client as C
+from client import Client as C
 from util import *
-from client.widgets import *
+from widgets import *
 
 
 def handle_resize(w, h):
@@ -76,14 +76,14 @@ def mouse_coords_to_map_coords(x, y):
         y = None
     return x, y
 
-def draw_box(x, y, color=C.white):
+def draw_box(x, y, color):
     """Draw a box around the cell at the given coords."""
     coords = cell2pixel(x, y)
     pygame.draw.rect(C.map_surf, color,
                      Rect((x + 1) * TILE_W, (y + 1) * TILE_H,
                           TILE_W, TILE_H), 1)
 
-def draw_line_between(x1, y1, x2, y2, color=C.white):
+def draw_line_between(x1, y1, x2, y2, color):
     """Draw a line between the two given adjacent cells."""
     # Horizontal line, (x1, y1) on the left
     if x1 < x2:
@@ -171,7 +171,7 @@ def menu(header, options, w):
 
     # Make it pretty
     add_surface_border(C.dialog_surf)
-    C.dialog_surf.set_colorkey(C.floor_blue)
+    C.dialog_surf.set_colorkey(CLR['floor_blue'])
 #    C.dialog_surf.set_alpha(TOOLTIP_ALPHA)
 
     C.dialog_rect.w, C.dialog_rect.h = w, h
@@ -304,7 +304,7 @@ def render_tooltips():
         else:
             text = 'You remember seeing: ' + obj.name
 
-        text_img = C.font.render(text, True, C.white)
+        text_img = C.font.render(text, True, CLR['white'])
         text_rect = text_img.get_rect()
 
         if hp_bar and text_rect.w < bar_len:
@@ -319,7 +319,7 @@ def render_tooltips():
             surf_h += C.font_h
 
         tooltip_surf = pygame.Surface((surf_w, surf_h)).convert()
-        tooltip_surf.fill(C.black)
+        tooltip_surf.fill(CLR['black'])
 
         text_rect.centerx = surf_w / 2
         text_rect.top = BORDER_W + PADDING
@@ -332,7 +332,7 @@ def render_tooltips():
                        bar_len, obj.hp, obj.max_hp,
                        C.hp_bar_color, C.hp_bar_bg_color)
             hp_img = C.font.render(str(obj.hp) + ' / ' + str(obj.max_hp),
-                                      True, C.white)
+                                      True, CLR['white'])
             hp_rect = hp_img.get_rect()
             hp_rect.centerx = BORDER_W + PADDING + bar_len / 2
             hp_rect.top = BORDER_W + PADDING + text_rect.h
@@ -350,7 +350,7 @@ def render_tooltips():
             rect.left = x
 
         add_surface_border(tooltip_surf)
-        tooltip_surf.set_colorkey(C.floor_blue)
+        tooltip_surf.set_colorkey(CLR['floor_blue'])
         tooltip_surf.set_alpha(TOOLTIP_ALPHA)
         C.screen.blit(tooltip_surf, rect)
 
@@ -358,7 +358,7 @@ def render_tooltips():
 def update_eq_surf():
     """Update the equipment surface, displaying what I'm wearing and the most
     valuable gear in my backpack."""
-    C.eq_surf.fill(C.black)
+    C.eq_surf.fill(CLR['black'])
     C.eq_surf.blit(C.tiles_img, C.eq_head, C.tile_dict['conical hat'])
     C.eq_surf.blit(C.tiles_img, C.eq_eyes, C.tile_dict['lenses'])
     C.eq_surf.blit(C.tiles_img, C.eq_neck, C.tile_dict['oval'])
@@ -467,14 +467,14 @@ def update_status_surf():
     write_text(surf, 'Weight', y, justify='left', column=0, padding=C.font_w)
     render_bar(surf, rect.w / 4,
              rect.top + y * C.font_h, rect.w * .75 - C.font_w,
-             C.u.weight, C.u.burdened, C.gray, C.darker_gray)
+             C.u.weight, C.u.burdened, CLR['gray'], CLR['darker_gray'])
     write_text(surf, str(C.u.weight) + ' / ' + str(C.u.burdened),
                y, justify='center', column=2)
     y += 1
     write_text(surf, 'Hunger', y, justify='left', column=0, padding=C.font_w)
     render_bar(surf, rect.w / 4,
              rect.top + y * C.font_h, rect.w * .75 - C.font_w,
-             C.u.hunger, C.u.max_hunger, C.gray, C.darker_gray)
+             C.u.hunger, C.u.max_hunger, CLR['gray'], CLR['darker_gray'])
     write_text(surf, str(C.u.hunger) + ' / ' + str(C.u.max_hunger),
                y, justify='center', column=2)
     y += 1
@@ -558,7 +558,7 @@ def update_log_surf():
     
 
 def render_map():
-    C.map_surf.fill(C.black)
+    C.map_surf.fill(CLR['black'])
 
     for x in range(MAP_W):
         for y in range(MAP_H):
@@ -606,18 +606,18 @@ def draw_fov_outline(color):
 
 def render_decorations():
     if C.state == ST_PLAYING:
-        draw_box(C.u.x, C.u.y, C.white)
+        draw_box(C.u.x, C.u.y, CLR['white'])
 
     if C.state == ST_TARGETING:
         x, y = pygame.mouse.get_pos()
         x, y = mouse_coords_to_map_coords(x, y)
-        draw_box(x, y, C.white)
+        draw_box(x, y, CLR['white'])
 
 
-    pygame.draw.rect(C.map_surf, C.red, Rect(0, 0, C.map_rect.w, C.map_rect.h), 1)
+    pygame.draw.rect(C.map_surf, CLR['red'], Rect(0, 0, C.map_rect.w, C.map_rect.h), 1)
 
     if C.fov_outline:
-        draw_fov_outline(C.red)
+        draw_fov_outline(CLR['red'])
 
     # Put an image in the corner where the scrollbars intersect
     # FIXME: this doesn't actually do anything
@@ -678,7 +678,7 @@ def center_map():
     center_map_y()
 
         
-def view_tick():
+def update_gui():
     """Handle all of the view actions in the game loop."""
     if C.log_updated:
         update_log_surf()
@@ -691,7 +691,7 @@ def view_tick():
     render_decorations()
 
     # Draw all of the game surfaces on to the screen
-    C.screen.fill(C.black, C.logview_rect)
+    C.screen.fill(CLR['black'], C.logview_rect)
     C.screen.blit(C.log_surf, C.logview_rect,
                    Rect(C.logview_rect.x - C.log_rect.x,
                         C.logview_rect.y - C.log_rect.y,
@@ -703,7 +703,7 @@ def view_tick():
 
     # Partition off a piece of the map_surf and blit it on to the screen
     # at the location specified by the mapview_rect
-    C.screen.fill(C.black, C.mapview_rect)
+    C.screen.fill(CLR['black'], C.mapview_rect)
     C.screen.blit(C.map_surf, C.mapview_rect,
                    Rect(C.mapview_rect.x - C.map_rect.x,
                         C.mapview_rect.y - C.map_rect.y,

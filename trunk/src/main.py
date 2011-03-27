@@ -1,7 +1,9 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-"""Setup of game objects and main game loop."""
+"""
+Setup of game objects and main game loop.
+"""
 
 import os
 import sys
@@ -15,54 +17,28 @@ from pygame.locals import *
 
 from const import *
 from server.server import Server as S
-from client.client import Client as C
-from util import *
-from client.monster import *
-from client.item import *
+from server.cell import *
+from server.monster import *
+from server.item import *
 from server.dlevel import *
-from client.cell import *
 from server.ai import *
-from client.gui import *
-from server.spell import *
-from client.keys import *
 from server.requesthandler import *
 from server.saveload import *
+from server.spell import *
+from server.server_main import *
+
+from client.client import Client as C
+from client.client_cell import *
+from client.client_monster import *
+from client.client_item import *
+from client.gui import *
+from client.keys import *
+
+from network import Network
+from util import *
 from stuff import *
 
 
-def monster_at(x, y):
-    """Return the monster at location x, y."""
-    for m in S.monsters:
-        if m.x == x and m.y ==y:
-            return m
-
-def run_history():
-    old_history = S.cmd_history
-    S.cmd_history = []
-    S.state = ST_PLAYBACK
-
-    for cmd in old_history:
-        print 'Running ' + str(cmd)
-        if cmd[0] == 'm':
-            S.u.move(cmd[1], cmd[2])
-        elif cmd[0] == 'a':
-            S.u.attack(Object.obj_dict[cmd[1]])
-        elif cmd[0] == ',':
-            S.u.pick_up(Object.obj_dict[cmd[1]])
-        elif cmd[0] == 'd':
-            S.u.drop(Object.obj_dict[cmd[1]])
-        elif cmd[0] == 'u':
-            S.u.targeted_use(Object.obj_dict[cmd[1]], cmd[2], cmd[3])
-
-        controller_tick()
-        view_tick()
-
-    S.state = ST_PLAYING
-
-def impossible(text):
-    print 'Impossible area of code reached'
-    print text
-    exit(0)
     
 def handle_events():
     # Handle input events
@@ -70,13 +46,13 @@ def handle_events():
         if event.type == QUIT:
             quit_game()
         elif event.type == KEYDOWN:
-            S.key = event
+            C.key = event
         elif event.type == KEYUP:
-            S.key = None
+            C.key = None
         elif event.type == MOUSEBUTTONDOWN:
-            S.button = event.button
+            C.button = event.button
         elif event.type == MOUSEBUTTONUP:
-            S.button = None
+            C.button = None
         elif event.type == MOUSEMOTION:
             pass
         elif event.type == VIDEORESIZE:
@@ -89,166 +65,190 @@ def handle_events():
 
         handle_actions()
 
-
-def monsters_take_turn():
-    for m in S.monsters:
-        if m.ai:
-            m.ai.take_turn()
         
 def handle_actions():
-    if S.key:
-        key_code, char, mod = S.key.key, S.key.unicode, S.key.mod
-        S.key = None
+    if C.key:
+        key_code, char, mod = C.key.key, C.key.unicode, C.key.mod
+        C.key = None
     else:
         key_code, char, mod = None, None, None
 
-    # Whether or not this keypress counts as taking a turn
-    S.u_took_turn = False
-    
-    if S.state == ST_PLAYING:
+    if C.state == ST_PLAYING:
         # Handle all keypresses
         if key_code:
             handled = False
             key_combo = ''
 
             if mod & KMOD_SHIFT:
-                if char not in S.pkeys[KMOD_NONE]:
+                if char not in C.pkeys[KMOD_NONE]:
                     key_combo = 'Shift + '
 
-                if (key_code in S.pkeys[KMOD_SHIFT]
-                    and S.pkeys[KMOD_SHIFT][key_code].action):
-                    S.pkeys[KMOD_SHIFT][key_code].do()
+                if (key_code in C.pkeys[KMOD_SHIFT]
+                    and C.pkeys[KMOD_SHIFT][key_code].action):
+                    C.pkeys[KMOD_SHIFT][key_code].do()
                     handled = True
 
             elif mod & KMOD_CTRL:
                 key_combo = 'Ctrl + '
 
-                if (key_code in S.pkeys[KMOD_CTRL]
-                    and S.pkeys[KMOD_CTRL][key_code].action):
-                    S.pkeys[KMOD_CTRL][key_code].do()
+                if (key_code in C.pkeys[KMOD_CTRL]
+                    and C.pkeys[KMOD_CTRL][key_code].action):
+                    C.pkeys[KMOD_CTRL][key_code].do()
                     handled = True
 
             elif mod & KMOD_ALT:
                 key_combo = 'Alt + '
 
-                if (key_code in S.pkeys[KMOD_ALT]
-                    and S.pkeys[KMOD_ALT][key_code].action):
-                    S.pkeys[KMOD_ALT][key_code].do()
+                if (key_code in C.pkeys[KMOD_ALT]
+                    and C.pkeys[KMOD_ALT][key_code].action):
+                    C.pkeys[KMOD_ALT][key_code].do()
                     handled = True
 
             if not handled:
                 # First, look up by char.  If it's not found, then look up by
                 # key_code.
-                if (char in S.pkeys[KMOD_NONE]
-                    and S.pkeys[KMOD_NONE][char].action):
-                    S.pkeys[KMOD_NONE][char].do()
+                if (char in C.pkeys[KMOD_NONE]
+                    and C.pkeys[KMOD_NONE][char].action):
+                    C.pkeys[KMOD_NONE][char].do()
                     handled = True
-                elif (key_code in S.pkeys[KMOD_NONE]
-                    and S.pkeys[KMOD_NONE][key_code].action):
-                    S.pkeys[KMOD_NONE][key_code].do()
+                elif (key_code in C.pkeys[KMOD_NONE]
+                    and C.pkeys[KMOD_NONE][key_code].action):
+                    C.pkeys[KMOD_NONE][key_code].do()
                     handled = True
 
             if key_code not in ignore_keys and handled is False:
-                if char in S.pkeys[KMOD_NONE]:
+                if char in C.pkeys[KMOD_NONE]:
                     key_to_print = char
                 else:
                     key_to_print = pygame.key.name(key_code)
                 message("Unknown command '{0}{1}'.".format(
                         key_combo, key_to_print))
 
-    elif S.state == ST_MENU:
+    elif C.state == ST_MENU:
         if key_code:
             if len(char) == 1:
                 index = ord(char) - ord('a')
-                if index >= 0 and index < len(S.menu_options):
-                    if S.menu == 'use':
-                        S.state = ST_PLAYING # Exit menu
-                        if len(S.u.inventory) > 0:
-                            item = S.u.inventory[index]
+                if index >= 0 and index < len(C.menu_options):
+                    if C.menu == 'use':
+                        C.state = ST_PLAYING # Exit menu
+                        if len(C.u.inventory) > 0:
+                            item = C.u.inventory[index]
                             if item is not None:
-                                request('a', (item.oid,))
+                                Network.request('a', (item.oid,))
 
-#                                if S.u.use(item) == 'success':
-#                                    S.cmd_history.append(('u',
-#                                                           item.oid,
-#                                                           None, None))
-#                                    S.u_took_turn = True
-#                                else:
-#                                    S.u_took_turn = False
-                                
-                    elif S.menu == 'drop':
-                        S.state = ST_PLAYING # Exit menu
-                        S.u_took_turn = True
-                        if len(S.u.inventory) > 0:
-                            item = S.u.inventory[index]
+                    elif C.menu == 'drop':
+                        C.state = ST_PLAYING # Exit menu
+                        if len(C.u.inventory) > 0:
+                            item = C.u.inventory[index]
                             if item is not None:
-                                request('d', (item.oid,))
-#                                S.u.drop(item)
+                                Network.request('d', (item.oid,))
                 else:
-                    S.state = ST_PLAYING # Exit menu
+                    C.state = ST_PLAYING # Exit menu
             else:        
-                S.state = ST_PLAYING # Exit menu
+                C.state = ST_PLAYING # Exit menu
 
-    elif S.state == ST_TARGETING:
-        if S.button:
+    elif C.state == ST_TARGETING:
+        if C.button:
             x, y = pygame.mouse.get_pos()
             x, y = mouse_coords_to_map_coords(x, y)
 
             # Accept the target if the player clicked in FOV, and in
             # case a range is specified, if it's in that range
-            if S.button == BUTTON_L and S.u.fov_map.in_fov(x, y):
-                targeting_function = S.targeting_function.pop(0)
-                success = targeting_function(S.targeting_item, x, y)
+            if C.button == BUTTON_L and C.u.fov_map.in_fov(x, y):
+                targeting_function = C.targeting_function.pop(0)
+                success = targeting_function(C.targeting_item, x, y)
 
                 # If this targeting is the result of an item use,
                 # destroy the item
-                if S.targeting_item and success:
-                    S.cmd_history.append(('u', S.targeting_item.oid, x, y))
-                    S.u.inventory.remove(S.targeting_item)
-                    del Object.obj_dict[S.targeting_item.oid]
-                    S.targeting_item = None
-                    S.u_took_turn = True
+                if C.targeting_item and success:
+                    C.cmd_history.append(('u', C.targeting_item.oid, x, y))
+                    C.u.inventory.remove(C.targeting_item)
+                    del Object.obj_dict[C.targeting_item.oid]
+                    C.targeting_item = None
                     
-            S.state = ST_PLAYING
+            C.state = ST_PLAYING
         elif key_code:
             message('Cancelled')
-            S.state = ST_PLAYING
-    elif S.state == ST_PLAYBACK:
-        S.u_took_turn = True
-    elif S.state == ST_QUIT:
+            C.state = ST_PLAYING
+    elif C.state == ST_PLAYBACK:
+        pass
+    elif C.state == ST_QUIT:
         # Do nothing; let the main loop exit on its own.
         pass
     else:
-        impossible('Unknown state: ' + S.state)
+        impossible('Unknown state: ' + C.state)
 
     # Let the server side do its thing with the client requests we generated.
     handle_requests()
 
 
-    if S.u_took_turn:
-        S.fov_recompute = True
-        center_map()
-        monsters_take_turn()
-    else:
-        S.fov_recompute = False
-        
+def client_tick(reel=False):
+    """
+    Handle server responses, player input, and updating the client gui.
+    """
 
-def controller_tick(reel=False):
-    """Handle all of the controller actions in the game loop."""
+    # If there are any server responses, handle them.
+    res = Network.get_response()
+    while res:
+        print "Response yo: ", res
 
-    if S.state == ST_PLAYBACK:
+        # Update log messages
+        if 'log' in res:
+            for msg in res['log']:
+                C.msgs.append(msg)
+
+            C.log_updated = True
+
+        # Update monsters
+        if 'm' in res:
+            for oid, m_str in res['m'].iteritems():
+                if oid in ClientObject.obj_dict:
+                    print "updating oid", oid
+                    ClientObject.obj_dict[oid].update_from_string(m_str)
+                else:
+                    m = ClientMonster.unserialize(m_str)
+                    C.monsters.append(m)
+                    C.map[m.x][m.y].monsters.append(m)
+
+        for m in C.monsters:
+            print "in monsters", m.oid, m.x, m.y
+        for x in xrange(len(C.map)):
+            for y in xrange(len(C.map[x])):
+                if len(C.map[x][y].monsters):
+                    print "in map", C.map[x][y].monsters[0].oid, x, y
+
+        # Update items
+        if 'i' in res:
+            for oid, i_str in res['i'].iteritems():
+                if oid in ClientObject.obj_dict:
+                    ClientObject.obj_dict[oid].update_from_string(i_str)
+                else:
+                    i = ClientItem.unserialize(i_str)
+                    C.items.append(i)
+                    C.map[i.x][i.y].items.append(i)
+
+        # Update the player object
+        if 'u' in res:
+            C.u.update_from_string(res['u'])
+            print "took turn", C.u.x, C.u.y
+            C.u.fov_map.do_fov(C.u.x, C.u.y, C.u.fov_radius)
+            center_map()
+            
+
+        res = Network.get_response()
+
+
+
+    if C.state == ST_PLAYBACK:
         # Don't call clock.tick() in playback mode in order to make it
         # as fast as possible.
         handle_actions()
     else:
-        S.clock.tick(FRAME_RATE)
-        S.keys_handled = 0
+        C.clock.tick(FRAME_RATE)
         # Player takes turn
         handle_events()
 
-    if S.fov_recompute:
-        S.u.fov_map.do_fov(S.u.x, S.u.y, S.u.fov_radius)
-        S.fov_recompute = False
+    update_gui()
 
 
 
@@ -285,14 +285,12 @@ def main():
 
     
     # Prepare game objects
-    S.clock = pygame.time.Clock()
+    C.clock = pygame.time.Clock()
 
        
     C.init_client()
     C.screen = pygame.display.set_mode(
         (C.screen_rect.w, C.screen_rect.h), pygame.RESIZABLE)
-
-#    C.log_surf = pygame.Surface((C.log_rect.w, C.log_rect.h)).convert()
     C.eq_surf = pygame.Surface((
         C.eq_rect.w, C.eq_rect.h)).convert()
     C.status_surf = pygame.Surface((
@@ -310,41 +308,7 @@ def main():
 
     C.tile_dict = create_tile_dict()
     C.blank_tile = C.tile_dict['cmap, wall, dark']
-
     
-    S.map_rand = random.Random()
-    S.rand = random.Random()
-
-    if options.save_file:
-        load_game(options.save_file)
-        S.map_rand.seed(S.random_seed)
-        S.rand.seed(S.random_seed)
-
-    else:
-        # We need to generate a random seed using the default-seeded random
-        # number generator, and then save that to seed the game's generators.
-        # This will allow us to easily use the same seed in order to duplicate
-        # games.
-        S.random_seed = str(random.randrange(sys.maxint))
-        S.map_rand.seed(S.random_seed)
-        S.rand.seed(S.random_seed)
-
-        S.u = Player(0, 0, 'wizard', fov_radius=10)
-        S.dlevel = 1
-        S.dlevel_dict['doom'] = []
-        S.dlevel_dict['doom'].append(gen_connected_rooms())
-        S.map = S.dlevel_dict['doom'][0]
-    
-
-    S.u.set_fov_map(S.map)
-    
-
-    # Have to call this once to before drawing the initial screen.
-    S.u.fov_map.do_fov(S.u.x, S.u.y, S.u.fov_radius)
-#    if options.save_file:
-#        run_history()
-
-
     C.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, C.map_rect,
                                C.mapview_rect, always_show=False)
     C.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, C.map_rect,
@@ -352,16 +316,29 @@ def main():
     C.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, C.log_rect,
                                  C.logview_rect, always_show=False)
 
+    init_server()
+
+
+    # FIX! - this should go in the response handler loop
+    C.map = [[ ClientCell('cmap, wall, dark') for y in range(MAP_H) ]
+           for x in range(MAP_W)]
+
+    for x in range(MAP_W):
+        for y in range(MAP_H):
+            C.map[x][y].set_attr(S.map[x][y].name)
+
+    C.u = ClientPlayer(S.u.x, S.u.y, S.u.name, S.u.oid, fov_radius=10)
+    C.u.set_fov_map(C.map)
+    C.u.fov_map.do_fov(C.u.x, C.u.y, C.u.fov_radius)
+    attach_key_actions()
+
+
     # Make sure everything is aligned correctly
     center_map()
     handle_resize(C.screen_rect.w, C.screen_rect.h)
 
-    attach_key_actions()
-    attach_request_actions()
-
-    message('Welcome, {0}!'.format(uname), S.gold)
 
     # Main loop
-    while S.state != ST_QUIT:
-        controller_tick()
-        view_tick()
+    while C.state != ST_QUIT:
+        server_tick()
+        client_tick()

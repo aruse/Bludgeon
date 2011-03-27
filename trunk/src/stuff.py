@@ -8,17 +8,18 @@ from pygame.locals import *
 
 from const import *
 from server.server import Server as S
+from network import Network
 from util import *
-from client.cell import *
-from client.monster import *
-from client.item import *
+from server.cell import *
+from server.monster import *
+from server.item import *
 
 
 def client_pick_up():
     """Tell server to pick up an item at the player's feet."""
     for i in S.items:
         if i.x == S.u.x and i.y == S.u.y:
-            request(',', (i.oid,))
+            Network.request(',', (i.oid,))
 
 
 def pick_up(oid):
@@ -41,10 +42,6 @@ def magic_mapping():
     for x in range(MAP_W):
         for y in range(MAP_H):
             S.map[x][y].explored = True
-
-def quit_game(signum=None, frame=None):
-    """Gracefully exit."""
-    S.state = ST_QUIT
 
 def show_fov():
     """Toggle a flag to visually outline the FOV on the map."""

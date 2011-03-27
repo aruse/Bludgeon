@@ -1,17 +1,20 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-"""Routines for generating dungeon levels."""
+"""
+Routines for generating dungeon levels.
+"""
 
 import random
 
 from const import *
-from server.cell import *
-from server.room import *
+from cell import *
+from room import *
+from monster import *
+from item import *
+from ai import *
+
 from util import *
-from server.monster import *
-from server.item import *
-from server.ai import *
 
 DIR_LEFT = 0
 DIR_RIGHT = 1
@@ -44,12 +47,12 @@ def place_objects(map, room):
         #only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
             if S.map_rand.randrange(0, 100) < 80:  #80% chance of getting an orc
-                monster = Monster(x, y, 'orc', ai=StupidAI())
+                m = Monster(x, y, 'orc', ai=StupidAI())
             else:
-                monster = Monster(x, y, 'troll', ai=StupidAI())
+                m = Monster(x, y, 'troll', ai=StupidAI())
  
-            S.monsters.append(monster)
-            map[x][y].monsters.append(monster)
+            S.monsters.append(m)
+            map[x][y].monsters.append(m)
 
     # Choose random number of items
     for i in range(S.map_rand.randrange(8)):
@@ -77,29 +80,29 @@ def create_rectangular_room(map, room):
     # Punch out the floor tiles
     for x in range(room.x1 + 1, room.x2):
        for y in range(room.y1 + 1, room.y2):
-            map[x][y].set_tile('cmap, floor of a room')
+            map[x][y].set_attr('cmap, floor of a room')
 
     # Add wall tiles surrounding the room
     for x in range(room.x1 + 1, room.x2):
-        map[x][room.y1].set_tile('cmap, wall, horizontal')
-        map[x][room.y2].set_tile('cmap, wall, horizontal')
+        map[x][room.y1].set_attr('cmap, wall, horizontal')
+        map[x][room.y2].set_attr('cmap, wall, horizontal')
     for y in range(room.y1 + 1, room.y2):
-        map[room.x1][y].set_tile('cmap, wall, vertical')
-        map[room.x2][y].set_tile('cmap, wall, vertical')
+        map[room.x1][y].set_attr('cmap, wall, vertical')
+        map[room.x2][y].set_attr('cmap, wall, vertical')
 
     # Add corner tiles
-    map[room.x1][room.y1].set_tile('cmap, wall, top left corner')
-    map[room.x2][room.y1].set_tile('cmap, wall, top right corner')
-    map[room.x1][room.y2].set_tile('cmap, wall, bottom left corner')
-    map[room.x2][room.y2].set_tile('cmap, wall, bottom right corner')
+    map[room.x1][room.y1].set_attr('cmap, wall, top left corner')
+    map[room.x2][room.y1].set_attr('cmap, wall, top right corner')
+    map[room.x1][room.y2].set_attr('cmap, wall, bottom left corner')
+    map[room.x2][room.y2].set_attr('cmap, wall, bottom right corner')
             
 def create_h_tunnel(map, x1, x2, y):
     for x in range(min(x1, x2), max(x1, x2) + 1):
-        map[x][y].set_tile('cmap, floor of a room')
+        map[x][y].set_attr('cmap, floor of a room')
  
 def create_v_tunnel(map, y1, y2, x):
     for y in range(min(y1, y2), max(y1, y2) + 1):
-        map[x][y].set_tile('cmap, floor of a room')
+        map[x][y].set_attr('cmap, floor of a room')
 
 
 
@@ -169,7 +172,7 @@ def gen_perfect_maze(w, h):
     total_cells = 0
     for x in range(0, w, 2):
         for y in range(0, h, 2):
-            map[x][y].set_tile('cmap, floor of a room')
+            map[x][y].set_attr('cmap, floor of a room')
             total_cells += 1
 
     # Starting at a random point, move out in a random direction,
@@ -218,19 +221,19 @@ def gen_perfect_maze(w, h):
             # Knock down wall in the move direction, and then move
             # past the wall into the next cell
             if move_direction == DIR_LEFT:
-                map[cur_cell[0] - 1][cur_cell[1]].set_tile(
+                map[cur_cell[0] - 1][cur_cell[1]].set_attr(
                     'cmap, floor of a room')
                 cur_cell[0] -= 2
             elif move_direction == DIR_RIGHT:
-                map[cur_cell[0] + 1][cur_cell[1]].set_tile(
+                map[cur_cell[0] + 1][cur_cell[1]].set_attr(
                     'cmap, floor of a room')
                 cur_cell[0] += 2
             elif move_direction == DIR_UP:
-                map[cur_cell[0]][cur_cell[1] - 1].set_tile(
+                map[cur_cell[0]][cur_cell[1] - 1].set_attr(
                     'cmap, floor of a room')
                 cur_cell[1] -= 2
             elif move_direction == DIR_DOWN:
-                map[cur_cell[0]][cur_cell[1] + 1].set_tile(
+                map[cur_cell[0]][cur_cell[1] + 1].set_attr(
                     'cmap, floor of a room')
                 cur_cell[1] += 2
             else:
@@ -280,13 +283,13 @@ def gen_braid_maze(w, h, braid_degree=1.0):
                 # If there is only one connection, it's a dead-end
                 if connections == 1 and S.map_rand.random() < braid_degree :
                     if connection == DIR_LEFT and x < w - 1:
-                        map[x + 1][y].set_tile('cmap, floor of a room')
+                        map[x + 1][y].set_attr('cmap, floor of a room')
                     if connection == DIR_RIGHT and x > 0:
-                        map[x - 1][y].set_tile('cmap, floor of a room')
+                        map[x - 1][y].set_attr('cmap, floor of a room')
                     if connection == DIR_UP and y < h - 1:
-                        map[x][y + 1].set_tile('cmap, floor of a room')
+                        map[x][y + 1].set_attr('cmap, floor of a room')
                     if connection == DIR_DOWN and y > 0 :
-                        map[x][y - 1].set_tile('cmap, floor of a room')
+                        map[x][y - 1].set_attr('cmap, floor of a room')
 
     return update_wall_tiles(map)
 
@@ -382,6 +385,6 @@ def update_wall_tiles(map):
                     and map[x][y + 1].cell_class == 'wall'):
                     wall_tile = 'cmap, wall, crosswall'
 
-                map[x][y].set_tile(wall_tile)
+                map[x][y].set_attr(wall_tile)
 
     return map

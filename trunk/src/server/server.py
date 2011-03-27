@@ -1,13 +1,18 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+from collections import deque
+
 import pygame
 from pygame.locals import *
 
 from const import *
 
 class Server:
-    """Stores the server state."""
+    """
+    Static class that stores any server state that needs to be shared      
+    everywhere.
+    """
     # Debug mode
     debug = True
     
@@ -43,9 +48,10 @@ class Server:
     state = ST_PLAYING
     
     u_action = None
+    u_took_turn = False
 
     # Messages in the game log.
-    msgs = []
+    msgs = deque()
 
     # The complete history of commands used in this game
     cmd_history = []
@@ -57,9 +63,4 @@ class Server:
     map_rand = None
     # The random number generator used for everything else.
     rand = None
-
-    fov_outline = False
-
-    # Whether or not the message log has been updated this cycle.
-    log_updated = True
 

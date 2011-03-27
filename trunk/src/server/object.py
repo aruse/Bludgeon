@@ -8,13 +8,15 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server.server import Server as S
+from server import Server as S
+from ai import *
+
 from util import *
 from fov import *
-from server.ai import *
 
 class Object:
-    """Generic object.  Can be sub-classed into players, monsters,
+    """
+    Generic object.  Can be sub-classed into players, monsters,
     items, etc.
     """
     # Keeps track of the oid of the next object to be created
@@ -48,8 +50,7 @@ class Object:
         self.blocks_sight = False
         self.blocks_movement = False
 
-        # Set to true if this object has been modified in any way and needs
-        # to be updated in the C.
+        # Set to true if this object has been modified.
         self.dirty = True
         
     def move(self, dx, dy=None):
@@ -144,10 +145,17 @@ class Object:
         return can_move
 
     def serialize(self):
-        """Convert Object to a string, suitable for saving or network
-        transmission.
+        """
+        Convert Object to a string, suitable for saving to a file.
         """
         return ("{{'oid':{0},'x':{1},'y':{2},'name':{3},'blocks_sight':{4},"
                 "'blocks_movement':{5},}}".format(
                 repr(self.oid), repr(self.x), repr(self.y), repr(self.name),
                 repr(self.blocks_sight), repr(self.blocks_movement)))
+
+    def client_serialize(self):
+        """
+        Convert Object to a string, suitable for transmission to the client.
+        Only include attributes which the client cares about.
+        """
+        return Object.serialize(self)

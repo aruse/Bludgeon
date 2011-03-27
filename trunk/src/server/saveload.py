@@ -7,12 +7,12 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server.server import Server as S
-from util import *
-from server.cell import *
-from server.monster import *
-from server.item import *
+from server import Server as S
+from cell import *
+from monster import *
+from item import *
 
+from util import *
 
 simple_save_objs = [
     'S.dlevel',
@@ -148,3 +148,26 @@ def create_tile_dict():
         tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
 
     return tile_dict
+
+def run_history():
+    old_history = S.cmd_history
+    S.cmd_history = []
+    S.state = ST_PLAYBACK
+
+    for cmd in old_history:
+        print 'Running ' + str(cmd)
+        if cmd[0] == 'm':
+            S.u.move(cmd[1], cmd[2])
+        elif cmd[0] == 'a':
+            S.u.attack(Object.obj_dict[cmd[1]])
+        elif cmd[0] == ',':
+            S.u.pick_up(Object.obj_dict[cmd[1]])
+        elif cmd[0] == 'd':
+            S.u.drop(Object.obj_dict[cmd[1]])
+        elif cmd[0] == 'u':
+            S.u.targeted_use(Object.obj_dict[cmd[1]], cmd[2], cmd[3])
+
+        server_tick()
+        client_tick()
+
+    S.state = ST_PLAYING

@@ -10,15 +10,26 @@ from pygame.locals import *
 
 from const import *
 from server.server import Server as S
+from client.client import Client as C
 
 
-def message(msg, color=S.default_font_color):
+def impossible(text):
+    print 'Impossible area of code reached'
+    print text
+    exit(0)
+
+def quit_game(signum=None, frame=None):
+    """
+    Gracefully exit.
+    """
+    C.state = ST_QUIT
+
+def message(msg, color=C.default_font_color):
     """Add a message to the game log and tell the log surface to update."""
     if len(S.msgs) >= MAX_MSGS:
         S.msgs.pop(0)
 
     S.msgs.append((msg, color))
-    S.log_updated = True
 
 
 def convert_to_grayscale(surf):

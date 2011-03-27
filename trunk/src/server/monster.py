@@ -7,15 +7,16 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server.server import Server as S
+from server import Server as S
+from ai import *
+from object import *                    
+from item import *
+
 from util import *
 from fov import *
-from server.ai import *
-from server.object import *                    
-from server.item import *
 
 def die_leave_corpse(m):
-    message(m.name.capitalize() + ' dies!', S.red)
+    message(m.name.capitalize() + ' dies!', CLR['red'])
     S.monsters.remove(m)
     S.map[m.x][m.y].monsters.remove(m)
 
@@ -25,7 +26,7 @@ def die_leave_corpse(m):
 
 
 def player_death(m):
-    message(m.name.capitalize() + ' dies!', S.red)
+    message(m.name.capitalize() + ' dies!', CLR['red'])
     S.monsters.remove(m)
     S.map[m.x][m.y].monsters.remove(m)
 
@@ -34,9 +35,9 @@ def player_death(m):
     S.map[m.x][m.y].items.append(corpse)
     
 class Monster(Object):
-    """Anything that moves and acts under its own power.  Players and
-    NPCs count as monsters.  Pretty much any Object that's not an
-    Item.
+    """
+    Anything that moves and acts under its own power.  Players and
+    NPCs count as monsters.
     """
 
     @classmethod
@@ -121,7 +122,7 @@ class Monster(Object):
         self.inventory.append(item)
         S.items.remove(item)
         S.map[item.x][item.y].items.remove(item)
-        message('You picked up a ' + item.name + '.', S.green)
+        message('You picked up a ' + item.name + '.', CLR['green'])
         self.dirty = True
 
     def set_fov_map(self, map):
@@ -198,24 +199,41 @@ class Monster(Object):
                 S.map[self.x][self.y].monsters.append(self)
 
     def serialize(self):
-        """Convert Monster to a string, suitable for saving or network
-        transmission.
+        """
+        Convert Monster to a string, suitable for saving to a file.
         """
         # Need to trim off the trailing bracket from the Object serialization.
         o = Object.serialize(self)[:-1]
 
-        inventory = repr([i.oid for i in self.inventory])
         if self.ai is None:
             ai = None
         else:
             ai = repr(self.ai.__class__.__name__)
 
+        inventory = repr([i.oid for i in self.inventory])
         m = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},'ai':{4},"
              "'death':{5},'inventory':{6}}}".format(
                 repr(self.hp), repr(self.max_hp), repr(self.mp),
                 repr(self.max_mp), ai, repr(self.death.__name__), inventory))
 
         return o + m
+
+    def client_serialize(self):
+        """
+        Convert Monster to a string, suitable for transmission to the client.
+        Only include attributes which the client cares about.
+        """
+        # Need to trim off the trailing bracket from the Object serialization.
+        o = Object.client_serialize(self)[:-1]
+
+        inventory = repr([i.oid for i in self.inventory])
+        m = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},"
+             "'inventory':{4}}}".format(
+                repr(self.hp), repr(self.max_hp), repr(self.mp),
+                repr(self.max_mp), inventory))
+
+        return o + m
+
 
 
 class Player(Monster):
@@ -248,55 +266,29 @@ class Player(Monster):
     def attack(self, target):
         Monster.attack(self, Object.obj_dict[target])
 
-    def move(self, dx, dy=None):
-        Monster.move(self, dx, dy)
-
     def rest(self):
         self.move(0, 0)
-
-    def pick_up(self, item):
-#        S.cmd_history.append((',', item.oid))
-        Monster.pick_up(self, item)
 
     def targeted_use(self, item, x, y):
         S.cmd_history.append(('u', item.oid, x, y))
         Monster.targeted_use(self, item, x, y)
 
     def drop(self, item):
-        
-#        S.cmd_history.append(('d', item.oid))
         Monster.drop(self, Object.obj_dict[item])
 
-    def try_move(self, dx, dy=None):
-        """Try to move dx and dy spaces.  If there's a monster in the
-        way, attack instead.
-        """
-        if type(dx) == type(tuple()):
-            dx, dy = dx[0], dx[1]
-
-        # the coordinates the player is moving to/attacking
-        x = self.x + dx
-        y = self.y + dy
-
-        # try to find an attackable object there
-        target = None
-
-        for m in S.monsters:
-            if m.x == x and m.y == y:
-                target = m
-                break
-
-        # attack if target found, move otherwise
-        if target is not None:
-            self.attack(target)
-        else:
-            self.move(dx, dy)
 
     def serialize(self):
-        """Convert Player object to a string, suitable for saving or network
-        transmission.
+        """
+        Convert Player object to a string, suitable for saving to a file.
         """
         return Monster.serialize(self)
+
+    def client_serialize(self):
+        """
+        Convert Player to a string, suitable for transmission to the client.
+        Only include attributes which the client cares about.
+        """
+        return Monster.client_serialize(self)
 
     def use(self, item):
         """Use an item."""

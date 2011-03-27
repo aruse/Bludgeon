@@ -8,16 +8,17 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server.server import Server as S
+from server import Server as S
+from ai import *
+
 from util import *
-from server.ai import *
 
 def cast_heal(item, x=None, y=None):
     if S.u.hp == S.u.max_hp:
-        message('You are already at full health.', S.light_violet)
+        message('You are already at full health.', CLR['light_violet'])
         return 'cancelled'
  
-    message('Your wounds start to feel better!', S.light_violet)
+    message('Your wounds start to feel better!', CLR['light_violet'])
     S.u.heal(HEAL_AMOUNT)
     return 'success'
     
@@ -43,10 +44,10 @@ def cast_lightning(item, x=None, y=None):
     if target is None:
         target = S.u
         message('A lightning bolt arcs out from you and then returns to '
-                'strike you in the head!', S.light_blue)
+                'strike you in the head!', CLR['light_blue'])
     else:
         message('A lighting bolt strikes the ' + target.name
-                + ' with a loud thunder!', S.light_blue)
+                + ' with a loud thunder!', CLR['light_blue'])
         
     target.take_damage(LIGHTNING_DAMAGE)
     return 'success'
@@ -58,7 +59,7 @@ def cast_fireball(item, x=None, y=None):
     """
     if x == None and y == None:
         message('Left-click a target for the fireball, or right-click to '
-                'cancel.', S.light_cyan)
+                'cancel.', CLR['light_cyan'])
         S.state = ST_TARGETING
         S.targeting_function.append(finish_fireball)
         S.targeting_item = item
@@ -74,12 +75,12 @@ def finish_fireball(item, x=None, y=None):
     if x is None:
         return False
     message('The fireball explodes, burning everything within '
-            + str(FIREBALL_RADIUS) + ' spaces!', S.orange)
+            + str(FIREBALL_RADIUS) + ' spaces!', CLR['orange'])
  
     for m in S.monsters + [S.u]:
         if m.distance(x, y) <= FIREBALL_RADIUS:
             message('The ' + m.name + ' gets burned for '
-                    + str(FIREBALL_DAMAGE) + ' hit points.', S.orange)
+                    + str(FIREBALL_DAMAGE) + ' hit points.', CLR['orange'])
             m.take_damage(FIREBALL_DAMAGE)
 
     return True
@@ -87,7 +88,7 @@ def finish_fireball(item, x=None, y=None):
 def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to '
-                'cancel.', S.light_cyan)
+                'cancel.', CLR['light_cyan'])
         S.state = ST_TARGETING
         S.targeting_function.append(finish_confuse)
         S.targeting_item = item
@@ -112,5 +113,6 @@ def finish_confuse(item, x, y):
     target.ai = ConfusedAI(old_ai)
     target.ai.owner = target  #tell the new component who owns it
     message('The eyes of the ' + target.name
-            + ' look vacant, as he starts to stumble around!', S.light_green)
+            + ' look vacant, as he starts to stumble around!',
+            CLR['light_green'])
     return True

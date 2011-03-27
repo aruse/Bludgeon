@@ -1,4 +1,11 @@
-# Constant declarations.
+# Copyright (c) 2011 Andy Ruse.
+# See LICENSE for details.
+
+"""
+Constant declarations.
+"""
+
+from color import CLR
 
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
@@ -36,6 +43,7 @@ TILE_W, TILE_H = 16, 16
 EQ_W, EQ_H = 7, STATUS_H
 #MAP_W, MAP_H = 120, 50
 MAP_W, MAP_H = 45, 18
+#MAP_W, MAP_H = 20, 18
 
 # Initial size of the screen, in pixels
 INIT_SCREEN_W, INIT_SCREEN_H = 800, 600
@@ -58,7 +66,7 @@ FRAME_RATE = 20
 FOV_LIGHT_WALLS = True
 TORCH_RADIUS = 10
 
-MAX_ROOM_MONSTERS = 3
+MAX_ROOM_MONSTERS = 2
 MAX_ROOM_ITEMS = 2
 
 MAX_MSGS = 100

@@ -1,7 +1,8 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-"""RequestHandler class and dictionaries use to map client requests to
+"""
+RequestHandler class and dictionaries use to map client requests to
 server actions.
 """
 
@@ -9,16 +10,16 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from server.server import Server as S
+from server import Server as S
+from monster import *
+from item import *
+from dlevel import *
+from cell import *
+from ai import *
+from spell import *
+from saveload import *
+
 from util import *
-from server.monster import *
-from server.item import *
-from server.dlevel import *
-from server.cell import *
-from server.ai import *
-from server.gui import *
-from server.spell import *
-from server.saveload import *
 from stuff import *
 
 

@@ -8,7 +8,7 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from client.client import Client as C
+from client import Client as C
 from util import *
 from fov import *
 
@@ -21,7 +21,7 @@ class ClientObject:
 
     def __init__(self, x, y, name, oid):
         self.oid = oid
-        Object.obj_dict[self.oid] = self
+        ClientObject.obj_dict[self.oid] = self
 
         # What kind of object is this?  e.g. "potion"
         self.kind = None
