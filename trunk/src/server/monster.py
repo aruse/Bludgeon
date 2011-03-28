@@ -18,20 +18,14 @@ from fov import *
 def die_leave_corpse(m):
     message(m.name.capitalize() + ' dies!', CLR['red'])
     m.delete()
-
     corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
-    S.items.append(corpse)
-    S.map[m.x][m.y].items.append(corpse)
-
+    corpse.place_on_map()
 
 def player_death(m):
     message(m.name.capitalize() + ' dies!', CLR['red'])
-    S.monsters.remove(m)
-    S.map[m.x][m.y].monsters.remove(m)
-
+    m.delete()
     corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
-    S.items.append(corpse)
-    S.map[m.x][m.y].items.append(corpse)
+    corpse.place_on_map()
     
 class Monster(Object):
     """
@@ -117,6 +111,15 @@ class Monster(Object):
         self.hunger = 450
         self.max_hunger = 1000
 
+
+    def place_on_map(self, map=None):
+        """Place the monster object on the current game map."""
+        if map is None:
+            map = S.map
+
+        S.monsters.append(self)
+        map[self.x][self.y].monsters.append(self)
+
     def delete(self, dict_remove=False):
         """
         Remove map references to this Monster.
@@ -195,8 +198,7 @@ class Monster(Object):
         """Drop an item."""
         i.x, i.y = self.x, self.y
         self.inventory.remove(i)
-        S.items.append(i)
-        S.map[i.x][i.y].items.append(i)
+        i.place_on_map()
         message('You dropped the ' + i.name + '.')
         self.dirty = True
 

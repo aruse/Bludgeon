@@ -201,8 +201,7 @@ def client_tick(reel=False):
                     ClientObject.obj_dict[oid].update_from_string(m_str)
                 else:
                     m = ClientMonster.unserialize(m_str)
-                    C.monsters.append(m)
-                    C.map[m.x][m.y].monsters.append(m)
+                    m.place_on_map()
 
         # Delete monsters
         if 'm_del' in res:
@@ -216,8 +215,7 @@ def client_tick(reel=False):
                     ClientObject.obj_dict[oid].update_from_string(i_str)
                 else:
                     i = ClientItem.unserialize(i_str)
-                    C.items.append(i)
-                    C.map[i.x][i.y].items.append(i)
+                    i.place_on_map()
 
         # Delete items
         if 'i_del' in res:

@@ -27,6 +27,14 @@ class ClientItem(ClientObject):
         self.blocks_sight = False
         self.blocks_movement = False
 
+    def place_on_map(self, map=None):
+        """Place the item object on the current game map."""
+        if map is None:
+            map = C.map
+
+        C.items.append(self)
+        map[self.x][self.y].items.append(self)
+
     def delete(self, dict_remove=False):
         """
         Remove map references to this Item.

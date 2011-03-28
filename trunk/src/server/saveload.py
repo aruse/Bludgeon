@@ -89,12 +89,12 @@ def load_game(file):
     # Re-create monsters
     for m_str in monster_defs:
         m = Monster.unserialize(m_str)
-        S.map[m.x][m.y].monsters.append(m)
+        m.place_on_map()
         
     # Re-create items
     for i_str in item_defs:
         i = Item.unserialize(i_str)
-        S.map[i.x][i.y].items.append(i)
+        i.place_on_map()
         
     # Re-create the player
     S.u = Player.unserialize(u)
@@ -102,8 +102,11 @@ def load_game(file):
     # Replace oids with references to the actual objects.
     # FIXME: The inventory code should go into unserialize()
     S.u.inventory = [Object.obj_dict[i] for i in S.u.inventory]
-    S.monsters = [Object.obj_dict[m] for m in monsters]
-    S.items = [Object.obj_dict[i] for i in items]
+
+
+# FIXME: This is now handled by place_on_map().  I'm not sure if I need to save these at all.
+#    S.monsters = [Object.obj_dict[m] for m in monsters]
+#    S.items = [Object.obj_dict[i] for i in items]
 
 
 def load_image(name):

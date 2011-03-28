@@ -60,6 +60,14 @@ class Item(Object):
         else:
             self.use_function = use_function
 
+    def place_on_map(self, map=None):
+        """Place the item object on the current game map."""
+        if map is None:
+            map = S.map
+
+        S.items.append(self)
+        map[self.x][self.y].items.append(self)
+
     def delete(self, dict_remove=False):
         """
         Remove map references to this Item.

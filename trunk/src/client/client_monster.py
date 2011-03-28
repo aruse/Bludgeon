@@ -78,6 +78,14 @@ class ClientMonster(ClientObject):
         self.hunger = 450
         self.max_hunger = 1000
 
+    def place_on_map(self, map=None):
+        """Place the monster object on the current game map."""
+        if map is None:
+            map = C.map
+
+        C.monsters.append(self)
+        map[self.x][self.y].monsters.append(self)
+
     def delete(self, dict_remove=False):
         """
         Remove map references to this Monster.

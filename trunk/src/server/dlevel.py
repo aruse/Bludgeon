@@ -39,27 +39,24 @@ def blocks_movement(map, x, y):
 
 
 def place_objects(map, room):
+    # Choose random number of monsters
     for i in range(S.map_rand.randrange(3)):
-        #choose random spot for this monster
         x = S.map_rand.randrange(room.x1 + 1, room.x2 - 1)
         y = S.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
-        #only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
-            if S.map_rand.randrange(0, 100) < 80:  #80% chance of getting an orc
+            if S.map_rand.randrange(0, 100) < 80:
                 m = Monster(x, y, 'orc', ai=StupidAI())
             else:
                 m = Monster(x, y, 'troll', ai=StupidAI())
  
-            S.monsters.append(m)
-            map[x][y].monsters.append(m)
+                m.place_on_map(map)
 
     # Choose random number of items
     for i in range(S.map_rand.randrange(8)):
         x = S.map_rand.randrange(room.x1 + 1, room.x2 - 1)
         y = S.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
-        # Only place it if the cell is not blocked
         if not blocks_movement(map, x, y):
             dice = S.map_rand.randrange(0, 100)
             if dice < 40:
@@ -71,8 +68,7 @@ def place_objects(map, room):
             else:
                 item = Item(x, y, 'scroll of confusion')
 
-            S.items.append(item)
-            map[x][y].items.append(item)
+            item.place_on_map(map)
  
 
 
