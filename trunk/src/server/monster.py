@@ -131,8 +131,7 @@ class Monster(Object):
 
     def pick_up(self, item):
         self.inventory.append(item)
-        S.items.remove(item)
-        S.map[item.x][item.y].items.remove(item)
+        item.delete()
         message('You picked up a ' + item.name + '.', CLR['green'])
         self.dirty = True
 

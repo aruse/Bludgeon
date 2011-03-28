@@ -1,7 +1,7 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-"""FIXME: need a better name for this stuff.  Used to be called "actions"."""
+"""FIXME: need a better name for this stuff.  Used to be called "actions".  Needs to be split into client and server functions."""
 
 import pygame
 from pygame.locals import *
@@ -17,17 +17,21 @@ from server.item import *
 
 def client_pick_up():
     """Tell server to pick up an item at the player's feet."""
-    for i in S.items:
-        if i.x == S.u.x and i.y == S.u.y:
-            Network.request(',', (i.oid,))
+    items = []
+    for i in C.map[C.u.x][C.u.y].items:
+        items.append(i.oid)
+
+    Network.request(',', (tuple(items),))
 
 
-def pick_up(oid):
-    """Try to pick up an item at the player's feet."""
+def pick_up(oids):
+    """Try to pick up one or more items at the player's feet."""
+    print oids
+    items = [Object.obj_dict[oid] for oid in oids]
     item_here = False
 
-    for i in S.items:
-        if i.x == S.u.x and i.y == S.u.y and i.oid == oid:
+    for i in items:
+        if i.x == S.u.x and i.y == S.u.y:
             S.u.pick_up(i)
             item_here = True
 

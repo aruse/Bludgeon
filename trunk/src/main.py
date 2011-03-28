@@ -206,12 +206,9 @@ def client_tick(reel=False):
 
         # Delete monsters
         if 'm_del' in res:
-            print 'yo'
             for oid, flags in res['m_del']:
                 ClientObject.obj_dict[oid].delete(flags)
     
-
-
         # Update items
         if 'i' in res:
             for oid, i_str in res['i'].iteritems():
@@ -221,6 +218,11 @@ def client_tick(reel=False):
                     i = ClientItem.unserialize(i_str)
                     C.items.append(i)
                     C.map[i.x][i.y].items.append(i)
+
+        # Delete items
+        if 'i_del' in res:
+            for oid, flags in res['i_del']:
+                ClientObject.obj_dict[oid].delete(flags)
 
         # Update the player object
         if 'u' in res:

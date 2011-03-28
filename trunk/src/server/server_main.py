@@ -102,6 +102,7 @@ def server_tick():
             i.dirty = False
 
     for i in S.items_to_delete:
+        print "hi", i
         if 'i_del' not in response:
             response['i_del'] = []
         response['i_del'].append(i)

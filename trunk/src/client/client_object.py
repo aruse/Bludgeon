@@ -13,8 +13,10 @@ from util import *
 from fov import *
 
 class ClientObject:
-    """Generic object to be displayed in the client.  Base class for Item
-    and Monster."""
+    """
+    Generic object to be displayed in the client.  Base class for Item
+    and Monster.
+    """
 
     # Mapping of oids to objects
     obj_dict = {}
@@ -41,7 +43,6 @@ class ClientObject:
         self.blocks_sight = False
         self.blocks_movement = False
         
-
     def distance_to(self, obj):
         """Distance to another object."""
         return self.distance(obj.x, obj.y)

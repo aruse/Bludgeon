@@ -11,7 +11,8 @@ from widgets import *
 
 
 def handle_resize(w, h):
-    """Shuffle surfaces around to their correct places when the game
+    """
+    Shuffle surfaces around to their correct places when the game window
     is resized.
     """
     if w < MIN_LOG_W + C.eq_rect.w + C.status_rect.w:
@@ -102,8 +103,7 @@ def draw_line_between(x1, y1, x2, y2, color):
         coords1 = cell2pixel(x1, y1)
         coords2 = cell2pixel(x1 + 1, y1)
 
-    pygame.draw.line(C.map_surf, color,
-                     coords1, coords2, 1)
+    pygame.draw.line(C.map_surf, color, coords1, coords2, 1)
 
 
 def img_fill(surf, img, rect=None):
@@ -181,9 +181,10 @@ def menu(header, options, w):
     C.state = ST_MENU
  
 def inventory_menu(header, menu_type):
-    """Display an inventory menu.
-    header -- Text to display at the top of the menu.
-    menu_type -- Keyword identifying the type of menu.
+    """
+    Display an inventory menu.
+    @param header: Text to display at the top of the menu.
+    @param menu_type: Keyword identifying the type of menu.
     """
     C.menu = menu_type
 
@@ -216,7 +217,8 @@ def object_under_mouse():
 
 
 def wordwrap_img(text, w, antialias, color, justify='left'):
-    """Return a surface with the rendered text on it, wordwrapped to
+    """
+    Return a surface with the rendered text on it, wordwrapped to
     fit the given pixel width.
     """
 
@@ -356,8 +358,10 @@ def render_tooltips():
 
 
 def update_eq_surf():
-    """Update the equipment surface, displaying what I'm wearing and the most
-    valuable gear in my backpack."""
+    """
+    Update the equipment surface, displaying what I'm wearing and the most
+    valuable gear in my backpack.
+    """
     C.eq_surf.fill(CLR['black'])
     C.eq_surf.blit(C.tiles_img, C.eq_head, C.tile_dict['conical hat'])
     C.eq_surf.blit(C.tiles_img, C.eq_eyes, C.tile_dict['lenses'])

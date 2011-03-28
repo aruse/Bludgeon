@@ -83,11 +83,6 @@ class ClientMonster(ClientObject):
         Remove map references to this Monster.
         @param dict_remove: Also remove the Monster from the object dictionary.
         """
-        print "oids",
-        for m in C.monsters:
-            print m.oid,
-        print
-
         C.monsters.remove(self)
         C.map[self.x][self.y].monsters.remove(self)
         if dict_remove:
@@ -120,6 +115,9 @@ class ClientMonster(ClientObject):
             self.max_mp = m_dict['max_mp']
         if 'inventory' in m_dict:
             self.inventory = m_dict['inventory']
+            # Convert oids to Items
+            for i in range(len(self.inventory)):
+                self.inventory[i] = ClientObject.obj_dict[self.inventory[i]]
 
         if self.x != old_x or self.y != old_y:
             C.map[old_x][old_y].monsters.remove(self)
@@ -188,3 +186,6 @@ class ClientPlayer(ClientMonster):
             self.max_mp = u_dict['max_mp']
         if 'inventory' in u_dict:
             self.inventory = u_dict['inventory']
+            # Convert oids to Items
+            for i in range(len(self.inventory)):
+                self.inventory[i] = ClientObject.obj_dict[self.inventory[i]]
