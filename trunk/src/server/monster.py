@@ -17,10 +17,9 @@ from fov import *
 
 def die_leave_corpse(m):
     message(m.name.capitalize() + ' dies!', CLR['red'])
-    S.monsters.remove(m)
-    S.map[m.x][m.y].monsters.remove(m)
+    m.delete()
 
-    corpse = Item(m.x, m.y, 'corpse', prev_monster=m, oid=m.oid)
+    corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
     S.items.append(corpse)
     S.map[m.x][m.y].items.append(corpse)
 
@@ -117,6 +116,18 @@ class Monster(Object):
         self.burdened = 1000
         self.hunger = 450
         self.max_hunger = 1000
+
+    def delete(self, dict_remove=False):
+        """
+        Remove map references to this Monster.
+        @param dict_remove: Also remove the Monster from the object dictionary.
+        """
+        S.monsters.remove(self)
+        S.map[self.x][self.y].monsters.remove(self)
+        if dict_remove:
+            del Object.obj_dict[self.oid]
+            
+        S.monsters_to_delete.append((self.oid, dict_remove))
 
     def pick_up(self, item):
         self.inventory.append(item)

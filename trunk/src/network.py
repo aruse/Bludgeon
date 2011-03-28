@@ -31,7 +31,7 @@ class Network:
         Send a response to the client.
         """
         Network.responses.append(res)
-#        print 'Responses:', Network.responses
+        print 'Responses:', Network.responses
 
     @classmethod
     def get_response(cls):

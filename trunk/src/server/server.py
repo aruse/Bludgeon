@@ -38,7 +38,10 @@ class Server:
     # All free items (not in inventory) on the current level
     items = []
 
-    # two dimensional array showing which locations are in the field of view
+    monsters_to_delete = []
+    items_to_delete = []
+
+    # Two dimensional array showing which locations are in the field of view
     fov_map = None
 
     # Whether or not we need to recompute the FOV

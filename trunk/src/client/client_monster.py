@@ -78,6 +78,23 @@ class ClientMonster(ClientObject):
         self.hunger = 450
         self.max_hunger = 1000
 
+    def delete(self, dict_remove=False):
+        """
+        Remove map references to this Monster.
+        @param dict_remove: Also remove the Monster from the object dictionary.
+        """
+        print "oids",
+        for m in C.monsters:
+            print m.oid,
+        print
+
+        C.monsters.remove(self)
+        C.map[self.x][self.y].monsters.remove(self)
+        if dict_remove:
+            del ClientObject.obj_dict[self.oid]
+
+
+
     def set_fov_map(self, map):
         self.fov_map = FOVMap(map)
 

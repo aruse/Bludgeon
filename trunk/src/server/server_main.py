@@ -86,6 +86,13 @@ def server_tick():
             response['m'][m.oid] = m.client_serialize()
             m.dirty = False
 
+    for m in S.monsters_to_delete:
+        if 'm_del' not in response:
+            response['m_del'] = []
+        response['m_del'].append(m)
+    del S.monsters_to_delete[:]
+
+
     # Tell the client which items to update.
     for i in S.items:
         if i.dirty:
@@ -94,21 +101,17 @@ def server_tick():
             response['i'][i.oid] = i.client_serialize()
             i.dirty = False
 
+    for i in S.items_to_delete:
+        if 'i_del' not in response:
+            response['i_del'] = []
+        response['i_del'].append(i)
+    del S.items_to_delete[:]
+
 
     # Send the updated player to the client.
     if S.u.dirty:
         response['u'] = S.u.client_serialize()
         S.u.dirty = False
-        
-
-    # Pass new monsters to the client.
-
-    # Pass new items to the client.
-
-    # Pass the player object to the client.
-
-    # Tell the client which objects to delete.
-
 
     if len(S.msgs):
         response['log'] = []
@@ -116,4 +119,5 @@ def server_tick():
             response['log'].append(msg)
         S.msgs.clear()
 
-    Network.send_response(response)
+    if response:
+        Network.send_response(response)

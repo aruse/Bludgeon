@@ -204,6 +204,14 @@ def client_tick(reel=False):
                     C.monsters.append(m)
                     C.map[m.x][m.y].monsters.append(m)
 
+        # Delete monsters
+        if 'm_del' in res:
+            print 'yo'
+            for oid, flags in res['m_del']:
+                ClientObject.obj_dict[oid].delete(flags)
+    
+
+
         # Update items
         if 'i' in res:
             for oid, i_str in res['i'].iteritems():

@@ -60,6 +60,18 @@ class Item(Object):
         else:
             self.use_function = use_function
 
+    def delete(self, dict_remove=False):
+        """
+        Remove map references to this Item.
+        @param dict_remove: Also remove the Item from the object dictionary.
+        """
+        S.items.remove(self)
+        S.map[self.x][self.y].items.remove(self)
+        if dict_remove:
+            del Object.obj_dict[self.oid]
+            
+        S.items_to_delete.append((self.oid, dict_remove))
+
     def move(self, dx, dy=None):
         """Move item by dx, dy amounts."""
         oldx, oldy = self.x, self.y

@@ -26,3 +26,13 @@ class ClientItem(ClientObject):
         ClientObject.__init__(self, x, y, name, oid)
         self.blocks_sight = False
         self.blocks_movement = False
+
+    def delete(self, dict_remove=False):
+        """
+        Remove map references to this Item.
+        @param dict_remove: Also remove the Item from the object dictionary.
+        """
+        C.items.remove(self)
+        C.map[self.x][self.y].items.remove(self)
+        if dict_remove:
+            del ClientObject.obj_dict[self.oid]
