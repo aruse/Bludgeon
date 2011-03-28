@@ -88,7 +88,6 @@ def server_tick():
 
     # Tell the client which items to update.
     for i in S.items:
-#        print i.oid
         if i.dirty:
             if 'i' not in response:
                 response['i'] = {}

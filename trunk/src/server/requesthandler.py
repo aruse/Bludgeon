@@ -39,7 +39,6 @@ class RequestHandler:
     def do(self, args):
         """Perform the action associated with this request."""
         S.u_took_turn = self.turn
-        print 'Running on server:', self.action, args
         return self.action(*args)
 
 

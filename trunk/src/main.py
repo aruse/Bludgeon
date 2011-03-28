@@ -63,10 +63,6 @@ def handle_events():
         C.y_scrollbar.handle_event(event)
         C.log_scrollbar.handle_event(event)
 
-        handle_actions()
-
-        
-def handle_actions():
     if C.key:
         key_code, char, mod = C.key.key, C.key.unicode, C.key.mod
         C.key = None
@@ -190,7 +186,6 @@ def client_tick(reel=False):
     # If there are any server responses, handle them.
     res = Network.get_response()
     while res:
-        print "Response yo: ", res
 
         # Update log messages
         if 'log' in res:
@@ -203,19 +198,11 @@ def client_tick(reel=False):
         if 'm' in res:
             for oid, m_str in res['m'].iteritems():
                 if oid in ClientObject.obj_dict:
-                    print "updating oid", oid
                     ClientObject.obj_dict[oid].update_from_string(m_str)
                 else:
                     m = ClientMonster.unserialize(m_str)
                     C.monsters.append(m)
                     C.map[m.x][m.y].monsters.append(m)
-
-        for m in C.monsters:
-            print "in monsters", m.oid, m.x, m.y
-        for x in xrange(len(C.map)):
-            for y in xrange(len(C.map[x])):
-                if len(C.map[x][y].monsters):
-                    print "in map", C.map[x][y].monsters[0].oid, x, y
 
         # Update items
         if 'i' in res:
@@ -230,7 +217,6 @@ def client_tick(reel=False):
         # Update the player object
         if 'u' in res:
             C.u.update_from_string(res['u'])
-            print "took turn", C.u.x, C.u.y
             C.u.fov_map.do_fov(C.u.x, C.u.y, C.u.fov_radius)
             center_map()
             
@@ -239,11 +225,7 @@ def client_tick(reel=False):
 
 
 
-    if C.state == ST_PLAYBACK:
-        # Don't call clock.tick() in playback mode in order to make it
-        # as fast as possible.
-        handle_actions()
-    else:
+    if C.state != ST_PLAYBACK:
         C.clock.tick(FRAME_RATE)
         # Player takes turn
         handle_events()

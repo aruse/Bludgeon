@@ -119,7 +119,7 @@ class ClientPlayer(ClientMonster):
                          fov_radius=fov_radius, inventory=inventory)
 
     def attack(self, target):
-        Network.request('F', (target.oid))
+        Network.request('F', (target.oid,))
 
     def move(self, dx, dy=None):
         Network.request('m', (dx, dy))
@@ -141,7 +141,6 @@ class ClientPlayer(ClientMonster):
         # Search for an attackable object.
         target = None
         for m in C.map[x][y].monsters:
-            print m.x, m.y, m.oid
             target = m
 
         # attack if target found, move otherwise
