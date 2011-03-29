@@ -126,6 +126,10 @@ class ClientMonster(ClientObject):
             # Convert oids to Items
             for i in range(len(self.inventory)):
                 self.inventory[i] = ClientObject.obj_dict[self.inventory[i]]
+        if 'blocks_sight' in m_dict:
+            self.blocks_sight = m_dict['blocks_sight']
+        if 'blocks_movement' in m_dict:
+            self.blocks_movement = m_dict['blocks_movement']
 
         if self.x != old_x or self.y != old_y:
             C.map[old_x][old_y].monsters.remove(self)

@@ -50,7 +50,7 @@ def place_objects(map, room):
             else:
                 m = Monster(x, y, 'troll', ai=StupidAI())
  
-                m.place_on_map(map)
+            m.place_on_map(map)
 
     # Choose random number of items
     for i in range(S.map_rand.randrange(8)):

@@ -194,12 +194,12 @@ class Monster(Object):
                 self.dirty = True
             return use_result
 
-    def drop(self, i):
+    def drop(self, item):
         """Drop an item."""
-        i.x, i.y = self.x, self.y
-        self.inventory.remove(i)
-        i.place_on_map()
-        message('You dropped the ' + i.name + '.')
+        item.x, item.y = self.x, self.y
+        self.inventory.remove(item)
+        item.place_on_map()
+        item.dirty = True
         self.dirty = True
 
     def move(self, dx, dy=None):
@@ -286,7 +286,9 @@ class Player(Monster):
         Monster.targeted_use(self, item, x, y)
 
     def drop(self, item):
-        Monster.drop(self, Object.obj_dict[item])
+        item = Object.obj_dict[item]
+        Monster.drop(self, item)
+        message('You dropped the ' + item.name + '.')
 
 
     def serialize(self):

@@ -44,3 +44,28 @@ class ClientItem(ClientObject):
         C.map[self.x][self.y].items.remove(self)
         if dict_remove:
             del ClientObject.obj_dict[self.oid]
+
+    def update_from_string(self, i_str):
+        """Update attributes from a serialized string."""
+        # Convert string to dict
+        i_dict = eval(i_str)
+        old_x, old_y = self.x, self.y
+
+        if 'x' in i_dict:
+            self.x = i_dict['x']
+        if 'y' in i_dict:
+            self.y = i_dict['y']
+        if 'name' in i_dict:
+            self.name = i_dict['name']
+        if 'blocks_sight' in i_dict:
+            self.blocks_sight = i_dict['blocks_sight']
+        if 'blocks_movement' in i_dict:
+            self.blocks_movement = i_dict['blocks_movement']
+
+        if self.x != old_x or self.y != old_y:
+            if self in C.map[old_x][old_y].items:
+                C.map[old_x][old_y].items.remove(self)
+            C.map[self.x][self.y].items.append(self)
+
+            if self not in C.items:
+                C.items.append(self)

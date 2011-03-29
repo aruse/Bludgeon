@@ -52,6 +52,10 @@ class Object:
 
         # Set to true if this object has been modified.
         self.dirty = True
+
+        # Set to true to delete.  This won't actually happen until after the
+        # client is informed.
+        self.delete_me = False
         
     def move(self, dx, dy=None):
         """Move dx and dy spaces, if possible."""
