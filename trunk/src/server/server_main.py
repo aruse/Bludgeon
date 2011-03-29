@@ -79,33 +79,32 @@ def server_tick():
     # FIXME: We currently send the whole monster object, but this needs to be
     # modified to only send the attributes which have changed since the last
     # update.
-    for m in S.monsters:
-        if m.dirty:
+    for mon in S.monsters:
+        if mon.dirty:
             if 'm' not in response:
                 response['m'] = {}
-            response['m'][m.oid] = m.client_serialize()
-            m.dirty = False
+            response['m'][mon.oid] = mon.client_serialize()
+            mon.dirty = False
 
-    for m in S.monsters_to_delete:
+    for mon in S.monsters_to_delete:
         if 'm_del' not in response:
             response['m_del'] = []
-        response['m_del'].append(m)
+        response['m_del'].append(mon)
     del S.monsters_to_delete[:]
 
 
     # Tell the client which items to update.
-    for i in S.items:
-        if i.dirty:
+    for item in S.items:
+        if item.dirty:
             if 'i' not in response:
                 response['i'] = {}
-            response['i'][i.oid] = i.client_serialize()
-            i.dirty = False
+            response['i'][item.oid] = item.client_serialize()
+            item.dirty = False
 
-    for i in S.items_to_delete:
-        print "hi", i
+    for item in S.items_to_delete:
         if 'i_del' not in response:
             response['i_del'] = []
-        response['i_del'].append(i)
+        response['i_del'].append(item)
     del S.items_to_delete[:]
 
 

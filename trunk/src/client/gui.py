@@ -192,7 +192,7 @@ def inventory_menu(header, menu_type):
     if len(inv) == 0:
         options = ['Inventory is empty.']
     else:
-        options = [i.name for i in inv]
+        options = [item.name for item in inv]
  
     menu(header, options, MIN_INVENTORY_W)
  
@@ -205,13 +205,11 @@ def object_under_mouse():
     if x is not None and y is not None and (
         C.u.fov_map.in_fov(x, y) or C.map[x][y].explored):
     
-        for m in C.monsters + [C.u]:
-            if m.x == x and m.y == y:
-                return m
+        if len(C.map[x][y].monsters):
+            return C.map[x][y].monsters[0]
+        if len(C.map[x][y].items):
+            return C.map[x][y].items[0]
 
-        for i in C.items:
-            if i.x == x and i.y == y:
-                return i
     else:
         return None
 
@@ -584,9 +582,9 @@ def render_objects():
             if C.map[item.x][item.y].explored:
                 item.draw_gray()
 
-    for m in C.monsters:
-        if C.u.fov_map.in_fov(m.x, m.y):
-            m.draw()
+    for mon in C.monsters:
+        if C.u.fov_map.in_fov(mon.x, mon.y):
+            mon.draw()
 
     # Always draw the player
     C.u.draw()
@@ -594,17 +592,17 @@ def render_objects():
 
 def draw_fov_outline(color):
     """Draws an outline around the outside of any FOV maps in play."""
-    for m in C.monsters + [C.u]:
-        if m.fov_map is None:
+    for mon in C.monsters + [C.u]:
+        if mon.fov_map is None:
             continue
 
-        for x in range(m.x - m.fov_radius, m.x + m.fov_radius):
-            for y in range(m.y - m.fov_radius, m.y + m.fov_radius):
-                if (m.fov_map.in_fov(x, y)
-                    != m.fov_map.in_fov(x + 1, y)):
+        for x in range(mon.x - mon.fov_radius, mon.x + mon.fov_radius):
+            for y in range(mon.y - mon.fov_radius, mon.y + mon.fov_radius):
+                if (mon.fov_map.in_fov(x, y)
+                    != mon.fov_map.in_fov(x + 1, y)):
                     draw_line_between(x, y, x + 1, y, color)
-                if (m.fov_map.in_fov(x, y)
-                    != m.fov_map.in_fov(x, y + 1)):
+                if (mon.fov_map.in_fov(x, y)
+                    != mon.fov_map.in_fov(x, y + 1)):
                     draw_line_between(x, y, x, y + 1, color)
 
 

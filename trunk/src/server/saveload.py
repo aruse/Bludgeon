@@ -50,8 +50,8 @@ def save_game(file):
 
 
     # For references to Objects, just save the oid
-    f.write('monsters = ' + repr([m.oid for m in S.monsters]) + '\n')
-    f.write('items = ' + repr([m.oid for m in S.items]) + '\n')
+    f.write('monsters = ' + repr([mon.oid for mon in S.monsters]) + '\n')
+    f.write('items = ' + repr([item.oid for item in S.items]) + '\n')
 
     # Save all monsters in existence.
     f.write('monster_defs = [')
@@ -88,20 +88,16 @@ def load_game(file):
 
     # Re-create monsters
     for m_str in monster_defs:
-        m = Monster.unserialize(m_str)
-        m.place_on_map()
+        mon = Monster.unserialize(m_str)
+        mon.place_on_map()
         
     # Re-create items
     for i_str in item_defs:
-        i = Item.unserialize(i_str)
-        i.place_on_map()
+        item = Item.unserialize(i_str)
+        item.place_on_map()
         
     # Re-create the player
     S.u = Player.unserialize(u)
-
-    # Replace oids with references to the actual objects.
-    # FIXME: The inventory code should go into unserialize()
-    S.u.inventory = [Object.obj_dict[i] for i in S.u.inventory]
 
 
 # FIXME: This is now handled by place_on_map().  I'm not sure if I need to save these at all.

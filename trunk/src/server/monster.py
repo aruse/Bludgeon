@@ -15,16 +15,16 @@ from item import *
 from util import *
 from fov import *
 
-def die_leave_corpse(m):
-    message(m.name.capitalize() + ' dies!', CLR['red'])
-    m.delete()
-    corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
+def die_leave_corpse(mon):
+    message(mon.name.capitalize() + ' dies!', CLR['red'])
+    mon.delete()
+    corpse = Item(mon.x, mon.y, 'corpse', prev_monster=mon)
     corpse.place_on_map()
 
-def player_death(m):
-    message(m.name.capitalize() + ' dies!', CLR['red'])
-    m.delete()
-    corpse = Item(m.x, m.y, 'corpse', prev_monster=m)
+def player_death(mon):
+    message(mon.name.capitalize() + ' dies!', CLR['red'])
+    mon.delete()
+    corpse = Item(mon.x, mon.y, 'corpse', prev_monster=m)
     corpse.place_on_map()
     
 class Monster(Object):
@@ -38,12 +38,15 @@ class Monster(Object):
         """Unserialize a string, returning a Monster object."""
         # Convert string to dict
         m_dict = eval(m_str)
+        # Replace inventory oids with references to actual objects
+        inv = [Object.obj_dict[oid] for oid in m_dict['inventory']]
+
 
         return Monster(
             m_dict['x'], m_dict['y'], m_dict['name'], oid=m_dict['oid'], 
             ai=eval(m_dict['ai'])(), hp=m_dict['hp'], max_hp=m_dict['max_hp'],
             mp=m_dict['mp'], max_mp=m_dict['max_mp'],
-            death=eval(m_dict['death']))
+            death=eval(m_dict['death']), inventory=inv)
 
     
     def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
@@ -215,20 +218,20 @@ class Monster(Object):
         Convert Monster to a string, suitable for saving to a file.
         """
         # Need to trim off the trailing bracket from the Object serialization.
-        o = Object.serialize(self)[:-1]
+        obj = Object.serialize(self)[:-1]
 
         if self.ai is None:
             ai = None
         else:
             ai = repr(self.ai.__class__.__name__)
 
-        inventory = repr([i.oid for i in self.inventory])
-        m = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},'ai':{4},"
-             "'death':{5},'inventory':{6}}}".format(
+        inventory = repr([item.oid for item in self.inventory])
+        mon = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},'ai':{4},"
+               "'death':{5},'inventory':{6}}}".format(
                 repr(self.hp), repr(self.max_hp), repr(self.mp),
                 repr(self.max_mp), ai, repr(self.death.__name__), inventory))
 
-        return o + m
+        return obj + mon
 
     def client_serialize(self):
         """
@@ -236,15 +239,15 @@ class Monster(Object):
         Only include attributes which the client cares about.
         """
         # Need to trim off the trailing bracket from the Object serialization.
-        o = Object.client_serialize(self)[:-1]
+        obj = Object.client_serialize(self)[:-1]
 
-        inventory = repr([i.oid for i in self.inventory])
-        m = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},"
-             "'inventory':{4}}}".format(
+        inventory = repr([item.oid for item in self.inventory])
+        mon = ("'hp':{0},'max_hp':{1},'mp':{2},'max_mp':{3},"
+               "'inventory':{4}}}".format(
                 repr(self.hp), repr(self.max_hp), repr(self.mp),
                 repr(self.max_mp), inventory))
 
-        return o + m
+        return obj + mon
 
 
 

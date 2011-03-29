@@ -141,10 +141,14 @@ class Object:
         if S.map[x][y].blocks_movement:
             can_move = False
 
-        for m in S.monsters + [S.u]:
-            if x == m.x and y == m.y:
+        for mon in S.map[x][y].monsters:
+            if mon.blocks_movement:
                 can_move = False
                 break
+
+        if S.u.x == x and S.u.y == y:
+            can_move = False
+
             
         return can_move
 

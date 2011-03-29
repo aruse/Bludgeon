@@ -26,12 +26,12 @@ def blocks_movement(map, x, y):
     if map[x][y].blocks_movement:
         return True
 
-    for m in S.monsters + [S.u]:
-        if m.x == x and m.y == y and m.blocks_movement:
+    for mon in S.monsters + [S.u]:
+        if mon.x == x and mon.y == y and mon.blocks_movement:
             return True
 
-    for i in S.items:
-        if i.x == x and i.y == y and i.blocks_movement:
+    for item in S.items:
+        if item.x == x and item.y == y and item.blocks_movement:
             return True
 
     return False
@@ -46,11 +46,11 @@ def place_objects(map, room):
  
         if not blocks_movement(map, x, y):
             if S.map_rand.randrange(0, 100) < 80:
-                m = Monster(x, y, 'orc', ai=StupidAI())
+                mon = Monster(x, y, 'orc', ai=StupidAI())
             else:
-                m = Monster(x, y, 'troll', ai=StupidAI())
+                mon = Monster(x, y, 'troll', ai=StupidAI())
  
-            m.place_on_map(map)
+            mon.place_on_map(map)
 
     # Choose random number of items
     for i in range(S.map_rand.randrange(8)):

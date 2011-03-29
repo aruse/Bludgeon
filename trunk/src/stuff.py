@@ -18,8 +18,8 @@ from server.item import *
 def client_pick_up():
     """Tell server to pick up an item at the player's feet."""
     items = []
-    for i in C.map[C.u.x][C.u.y].items:
-        items.append(i.oid)
+    for item in C.map[C.u.x][C.u.y].items:
+        items.append(item.oid)
 
     Network.request(',', (tuple(items),))
 
@@ -30,10 +30,9 @@ def pick_up(oids):
     items = [Object.obj_dict[oid] for oid in oids]
     item_here = False
 
-    for i in items:
-        if i.x == S.u.x and i.y == S.u.y:
-            S.u.pick_up(i)
-            item_here = True
+    for i in C.map[x][y].items:
+        S.u.pick_up(i)
+        item_here = True
 
     if item_here:
         S.u_took_turn = True
