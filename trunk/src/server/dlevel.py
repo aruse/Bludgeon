@@ -40,7 +40,7 @@ def blocks_movement(map, x, y):
 
 def place_objects(map, room):
     # Choose random number of monsters
-    for i in range(S.map_rand.randrange(3)):
+    for i in xrange(S.map_rand.randrange(3)):
         x = S.map_rand.randrange(room.x1 + 1, room.x2 - 1)
         y = S.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
@@ -53,7 +53,7 @@ def place_objects(map, room):
             mon.place_on_map(map)
 
     # Choose random number of items
-    for i in range(S.map_rand.randrange(8)):
+    for i in xrange(S.map_rand.randrange(8)):
         x = S.map_rand.randrange(room.x1 + 1, room.x2 - 1)
         y = S.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
@@ -74,15 +74,15 @@ def place_objects(map, room):
 
 def create_rectangular_room(map, room):
     # Punch out the floor tiles
-    for x in range(room.x1 + 1, room.x2):
-       for y in range(room.y1 + 1, room.y2):
+    for x in xrange(room.x1 + 1, room.x2):
+       for y in xrange(room.y1 + 1, room.y2):
             map[x][y].set_attr('cmap, floor of a room')
 
     # Add wall tiles surrounding the room
-    for x in range(room.x1 + 1, room.x2):
+    for x in xrange(room.x1 + 1, room.x2):
         map[x][room.y1].set_attr('cmap, wall, horizontal')
         map[x][room.y2].set_attr('cmap, wall, horizontal')
-    for y in range(room.y1 + 1, room.y2):
+    for y in xrange(room.y1 + 1, room.y2):
         map[room.x1][y].set_attr('cmap, wall, vertical')
         map[room.x2][y].set_attr('cmap, wall, vertical')
 
@@ -93,11 +93,11 @@ def create_rectangular_room(map, room):
     map[room.x2][room.y2].set_attr('cmap, wall, bottom right corner')
             
 def create_h_tunnel(map, x1, x2, y):
-    for x in range(min(x1, x2), max(x1, x2) + 1):
+    for x in xrange(min(x1, x2), max(x1, x2) + 1):
         map[x][y].set_attr('cmap, floor of a room')
  
 def create_v_tunnel(map, y1, y2, x):
-    for y in range(min(y1, y2), max(y1, y2) + 1):
+    for y in xrange(min(y1, y2), max(y1, y2) + 1):
         map[x][y].set_attr('cmap, floor of a room')
 
 
@@ -110,11 +110,11 @@ def gen_level(type):
 
 
 def gen_connected_rooms():
-    map = [[ Cell('cmap, wall, dark') for y in range(MAP_H) ]
-           for x in range(MAP_W)]
+    map = [[ Cell('cmap, wall, dark') for y in xrange(MAP_H) ]
+           for x in xrange(MAP_W)]
     rooms = []
     
-    for r in range(MAX_ROOMS):
+    for r in xrange(MAX_ROOMS):
         w = S.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
         h = S.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
 
@@ -143,7 +143,7 @@ def gen_connected_rooms():
             rooms.append(new_room)
 
     # Connect the rooms
-    for i in range(1, len(rooms)):
+    for i in xrange(1, len(rooms)):
         (new_x, new_y) = rooms[i].center()
         (prev_x, prev_y) = rooms[i - 1].center()
         if S.map_rand.randrange(0, 2):
@@ -159,15 +159,15 @@ def gen_connected_rooms():
 def gen_perfect_maze(w, h):
     """Generate a perfect maze and return it"""
     # Create multi-dimensional list of dimensions w x h filled with walls
-    map = [[ Cell('cmap, wall, dark') for y in range(h) ] for x in range(w)]
+    map = [[ Cell('cmap, wall, dark') for y in xrange(h) ] for x in xrange(w)]
 
     # Map of all visited locations
-    visited_map = [[ 0 for y in range(h) ] for x in range(w)]
+    visited_map = [[ 0 for y in xrange(h) ] for x in xrange(w)]
     
     # Knock out a grid of holes in the walls
     total_cells = 0
-    for x in range(0, w, 2):
-        for y in range(0, h, 2):
+    for x in xrange(0, w, 2):
+        for y in xrange(0, h, 2):
             map[x][y].set_attr('cmap, floor of a room')
             total_cells += 1
 
@@ -259,8 +259,8 @@ def gen_braid_maze(w, h, braid_degree=1.0):
     map = gen_perfect_maze(w, h)
 
     # Go through the maze, looking for dead-ends, and extend them
-    for x in range(0, w, 2):
-        for y in range(0, h, 2):
+    for x in xrange(0, w, 2):
+        for y in xrange(0, h, 2):
             connections = 0
             if map[x][y].cell_class != 'wall':
                 if x > 0 and map[x - 1][y].cell_class != 'wall':
@@ -294,8 +294,8 @@ def gen_sparse_maze(w, h, sparse_degree=0.1, braid_degree=0.9):
 
     map = gen_braid_maze(w, h, braid_degree)
 
-    for x in range(0, w):
-        for y in range(0, h):
+    for x in xrange(0, w):
+        for y in xrange(0, h):
             if map[x][y] == 1:
                 # Only punch out walls if there is a wall to either side
                 walls_hor = 0
@@ -321,8 +321,8 @@ def update_wall_tiles(map):
     """Goes through a level map and makes sure the correct tiles are
     used for walls, depending on what's in the adjacent spaces.
     """
-    for x in range(MAP_W):
-        for y in range(MAP_H):
+    for x in xrange(MAP_W):
+        for y in xrange(MAP_H):
             if map[x][y].cell_class == 'wall':
                 wall_tile = 'cmap, wall, horizontal'
                 tee = 0

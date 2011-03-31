@@ -44,11 +44,7 @@ class Server:
     # Two dimensional array showing which locations are in the field of view
     fov_map = None
 
-    # Whether or not we need to recompute the FOV
-    fov_recompute = True
-
-    # State of the game.
-    state = ST_PLAYING
+    mode = ST_PLAYING
     
     u_action = None
     u_took_turn = False

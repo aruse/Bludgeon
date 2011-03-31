@@ -1,7 +1,9 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-"""Routines for saving and loading games, and doing file IO."""
+"""
+Routines for saving and loading games.
+"""
 
 import pygame
 from pygame.locals import *
@@ -11,7 +13,6 @@ from server import Server as S
 from cell import *
 from monster import *
 from item import *
-
 from util import *
 
 simple_save_objs = [
@@ -40,9 +41,9 @@ def save_game(file):
 
     f.write('map = [')
 
-    for x in range(len(S.map)):
+    for x in xrange(len(S.map)):
         f.write('[')
-        for y in range(len(S.map[0])):
+        for y in xrange(len(S.map[0])):
             f.write("{{'n': {0}, 'e': {1}}}, ".format(
                     repr(S.map[x][y].name),  repr(S.map[x][y].explored)))
         f.write('],')
@@ -82,8 +83,8 @@ def load_game(file):
     # Replace the map structure in the save file with actual cells.
     S.map = map
 
-    for x in range(len(S.map)):
-        for y in range(len(S.map[0])):
+    for x in xrange(len(S.map)):
+        for y in xrange(len(S.map[0])):
             S.map[x][y] = Cell(S.map[x][y]['n'], explored=S.map[x][y]['e'])
 
     # Re-create monsters
@@ -104,54 +105,10 @@ def load_game(file):
 #    S.monsters = [Object.obj_dict[m] for m in monsters]
 #    S.items = [Object.obj_dict[i] for i in items]
 
-
-def load_image(name):
-    """Load image and return image object."""
-    fullname = os.path.join('images', name)
-    try:
-        image = pygame.image.load(fullname)
-        if image.get_alpha() is None:
-            image = image.convert()
-        else:
-            image = image.convert_alpha()
-    except pygame.error, message:
-        print 'Cannot load image:', fullname
-        raise SystemExit, message
-    return image
-
-def load_sound(name):
-    """Load sound and return sound object"""
-    class NoneSound:
-        def play(self): pass
-    if not pygame.mixer or not pygame.mixer.get_init():
-        return NoneSound()
-    fullname = os.path.join('sounds', name)
-    try:
-        sound = pygame.mixer.Sound(fullname)
-    except pygame.error, message:
-        print 'Cannot load sound:', fullname
-        raise SystemExit, message
-    return sound        
-
-def create_tile_dict():
-    tile_dict = {}
-
-    # Read in tile mapping document, line-by-line, and build a
-    # dictionary pointing to coordinates of the graphic
-    map = open('data/tiles.map')
-
-    for line in map:
-        (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
-        x = (int(loc) % 38) * TILE_W
-        y = (int(loc) / 38) * TILE_H        
-        tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
-
-    return tile_dict
-
 def run_history():
     old_history = S.cmd_history
     S.cmd_history = []
-    S.state = ST_PLAYBACK
+    S.mode = ST_PLAYBACK
 
     for cmd in old_history:
         print 'Running ' + str(cmd)
@@ -169,4 +126,4 @@ def run_history():
         server_tick()
         client_tick()
 
-    S.state = ST_PLAYING
+    S.mode = ST_PLAYING

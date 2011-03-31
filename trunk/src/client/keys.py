@@ -10,13 +10,37 @@ from const import *
 from client import Client as C
 from network import Network
 
-from util import *
+from client_util import *
 from client_monster import *
 from client_item import *
 from client_cell import *
 from gui import *
-from stuff import *
 
+
+def show_fov():
+    """Toggle a flag to visually outline the FOV on the map."""
+    C.fov_outline = not C.fov_outline
+
+def scroll_map(coords):
+    """Scroll the map in the direction given."""
+    C.x_scrollbar.move_slider(coords[0] * SCROLL_AMT)
+    C.y_scrollbar.move_slider(coords[1] * SCROLL_AMT)
+
+def scroll_log(coords):
+    """Scroll the log window up or down."""
+    C.log_scrollbar.move_slider(coords[1] * SCROLL_AMT)
+
+def scroll_log_end(coords):
+    """Scroll the log window all the way to the top or bottom."""
+    C.log_scrollbar.move_slider(coords[1] * C.log_rect.h)
+
+def request_pick_up():
+    """Tell server to pick up an item at the player's feet."""
+    items = []
+    for item in C.map[C.u.x][C.u.y].items:
+        items.append(item.oid)
+
+    Network.request(',', (tuple(items),))
 
 class KeyHandler:
     """Handle the actions of a specific keystroke."""
@@ -72,7 +96,7 @@ def attach_key_actions():
             ';': KeyHandler(None, (),
                             "How is this different than '/'?"),
             ',': KeyHandler(
-                client_pick_up, (),
+                request_pick_up, (),
                 "Pick things up from the current location.  May be preceded "
                 "by 'm' to select which things to pick up."),
             '@': KeyHandler(None, (), "Toggle the autopickup option.  "

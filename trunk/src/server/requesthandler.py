@@ -18,9 +18,30 @@ from cell import *
 from ai import *
 from spell import *
 from saveload import *
-
 from util import *
-from stuff import *
+
+
+def pick_up(oids):
+    """Try to pick up one or more items at the player's feet."""
+    item_here = False
+
+    for oid in oids:
+        item = Object.obj_dict[oid]
+        if item in S.map[S.u.x][S.u.y].items:
+            S.u.pick_up(item)
+            item_here = True
+
+    if item_here:
+        S.u_took_turn = True
+    else:
+        S.u_took_turn = False
+        message('Nothing to pick up!')
+
+def magic_mapping():
+    """Reveal all tiles on the map."""
+    for x in xrange(len(S.map)):
+        for y in xrange(len(S.map[0])):
+            S.map[x][y].explored = True
 
 
 class RequestHandler:

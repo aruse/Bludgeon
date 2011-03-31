@@ -135,7 +135,7 @@ class Object:
             
         can_move = True
 
-        if x < 0 or y < 0 or x >= MAP_W or y >= MAP_H:
+        if x < 0 or y < 0 or x >= len(S.map) or y >= len(S.map[0]):
             can_move = False
 
         if S.map[x][y].blocks_movement:

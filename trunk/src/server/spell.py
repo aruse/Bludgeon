@@ -60,7 +60,7 @@ def cast_fireball(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click a target for the fireball, or right-click to '
                 'cancel.', CLR['light_cyan'])
-        S.state = ST_TARGETING
+        S.mode = ST_TARGETING
         S.targeting_function.append(finish_fireball)
         S.targeting_item = item
         return 'targeting'
@@ -89,7 +89,7 @@ def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to '
                 'cancel.', CLR['light_cyan'])
-        S.state = ST_TARGETING
+        S.mode = ST_TARGETING
         S.targeting_function.append(finish_confuse)
         S.targeting_item = item
         return 'targeting'

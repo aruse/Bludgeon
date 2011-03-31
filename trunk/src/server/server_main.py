@@ -5,6 +5,7 @@ import sys
 import random
 
 from const import *
+from network import Network
 from server import Server as S
 from monster import *
 from dlevel import *

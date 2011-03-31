@@ -9,7 +9,7 @@ from pygame.locals import *
 
 from const import *
 from client import Client as C
-from util import *
+from client_util import *
 from fov import *
 
 class ClientObject:
@@ -79,7 +79,7 @@ class ClientObject:
             
         can_move = True
 
-        if x < 0 or y < 0 or x >= MAP_W or y >= MAP_H:
+        if x < 0 or y < 0 or x >= len(C.map) or y >= len(C.map[0]):
             can_move = False
 
         if S.map[x][y].blocks_movement:

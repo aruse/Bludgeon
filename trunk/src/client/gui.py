@@ -6,7 +6,7 @@ from pygame.locals import *
 
 from const import *
 from client import Client as C
-from util import *
+from client_util import *
 from widgets import *
 
 
@@ -71,9 +71,9 @@ def mouse_coords_to_map_coords(x, y):
     x /= TILE_W
     y /= TILE_H
 
-    if x < 0 or x > MAP_W - 1:
+    if x < 0 or x >= len(C.map):
         x = None
-    if y < 0 or y > MAP_H - 1:
+    if y < 0 or y >= len(C.map[0]):
         y = None
     return x, y
 
@@ -178,7 +178,7 @@ def menu(header, options, w):
     set_dialog_size()
 
     C.menu_options = options
-    C.state = ST_MENU
+    C.mode = ST_MENU
  
 def inventory_menu(header, menu_type):
     """
@@ -219,6 +219,8 @@ def wordwrap_img(text, w, antialias, color, justify='left'):
     Return a surface with the rendered text on it, wordwrapped to
     fit the given pixel width.
     """
+    if color is None:
+        color = C.default_font_color
 
     lines = []
     line = ""
@@ -268,12 +270,12 @@ def add_surface_border(surf):
     left_x, right_x = 0, rect.w - BORDER_W
     top_y, bottom_y = 0, rect.h - BORDER_W
     
-    for x in range(1, rect.w / BORDER_W):
+    for x in xrange(1, rect.w / BORDER_W):
         surf.blit(C.tiles_img, (x * BORDER_W, top_y),
                   C.tile_dict['explosion, fiery, top center'])
         surf.blit(C.tiles_img, (x * BORDER_W, bottom_y),
                   C.tile_dict['explosion, fiery, bottom center'])
-    for y in range(1, rect.h / BORDER_W):
+    for y in xrange(1, rect.h / BORDER_W):
         surf.blit(C.tiles_img, (left_x, y * BORDER_W),
                   C.tile_dict['explosion, fiery, middle left'])
         surf.blit(C.tiles_img, (right_x, y * BORDER_W),
@@ -562,8 +564,8 @@ def update_log_surf():
 def render_map():
     C.map_surf.fill(CLR['black'])
 
-    for x in range(MAP_W):
-        for y in range(MAP_H):
+    for x in xrange(len(C.map)):
+        for y in xrange(len(C.map[0])):
             if C.u.fov_map.in_fov(x, y):
                 C.map[x][y].draw(x, y)
                 C.map[x][y].explored = True
@@ -596,8 +598,8 @@ def draw_fov_outline(color):
         if mon.fov_map is None:
             continue
 
-        for x in range(mon.x - mon.fov_radius, mon.x + mon.fov_radius):
-            for y in range(mon.y - mon.fov_radius, mon.y + mon.fov_radius):
+        for x in xrange(mon.x - mon.fov_radius, mon.x + mon.fov_radius):
+            for y in xrange(mon.y - mon.fov_radius, mon.y + mon.fov_radius):
                 if (mon.fov_map.in_fov(x, y)
                     != mon.fov_map.in_fov(x + 1, y)):
                     draw_line_between(x, y, x + 1, y, color)
@@ -607,10 +609,10 @@ def draw_fov_outline(color):
 
 
 def render_decorations():
-    if C.state == ST_PLAYING:
+    if C.mode == ST_PLAYING:
         draw_box(C.u.x, C.u.y, CLR['white'])
 
-    if C.state == ST_TARGETING:
+    if C.mode == ST_TARGETING:
         x, y = pygame.mouse.get_pos()
         x, y = mouse_coords_to_map_coords(x, y)
         draw_box(x, y, CLR['white'])
@@ -717,7 +719,7 @@ def update_gui():
     C.y_scrollbar.update(C.screen)
     C.log_scrollbar.update(C.screen)
 
-    if C.state == ST_MENU:
+    if C.mode == ST_MENU:
         C.screen.blit(C.dialog_surf, C.dialog_rect)
     else:
         render_tooltips()

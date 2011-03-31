@@ -33,12 +33,11 @@ from client.client_monster import *
 from client.client_item import *
 from client.gui import *
 from client.keys import *
+import client.image as image
+from client.client_util import *
 
 from network import Network
-from util import *
-from stuff import *
-
-
+from common import *
     
 def handle_events():
     # Handle input events
@@ -69,7 +68,7 @@ def handle_events():
     else:
         key_code, char, mod = None, None, None
 
-    if C.state == ST_PLAYING:
+    if C.mode == ST_PLAYING:
         # Handle all keypresses
         if key_code:
             handled = False
@@ -117,33 +116,33 @@ def handle_events():
                     key_to_print = char
                 else:
                     key_to_print = pygame.key.name(key_code)
-                message("Unknown command '{0}{1}'.".format(
-                        key_combo, key_to_print))
+                    client_message("Unknown command '{0}{1}'.".format(
+                            key_combo, key_to_print))
 
-    elif C.state == ST_MENU:
+    elif C.mode == ST_MENU:
         if key_code:
             if len(char) == 1:
                 index = ord(char) - ord('a')
                 if index >= 0 and index < len(C.menu_options):
                     if C.menu == 'use':
-                        C.state = ST_PLAYING # Exit menu
+                        C.mode = ST_PLAYING # Exit menu
                         if len(C.u.inventory) > 0:
                             item = C.u.inventory[index]
                             if item is not None:
                                 Network.request('a', (item.oid,))
 
                     elif C.menu == 'drop':
-                        C.state = ST_PLAYING # Exit menu
+                        C.mode = ST_PLAYING # Exit menu
                         if len(C.u.inventory) > 0:
                             item = C.u.inventory[index]
                             if item is not None:
                                 Network.request('d', (item.oid,))
                 else:
-                    C.state = ST_PLAYING # Exit menu
+                    C.mode = ST_PLAYING # Exit menu
             else:        
-                C.state = ST_PLAYING # Exit menu
+                C.mode = ST_PLAYING # Exit menu
 
-    elif C.state == ST_TARGETING:
+    elif C.mode == ST_TARGETING:
         if C.button:
             x, y = pygame.mouse.get_pos()
             x, y = mouse_coords_to_map_coords(x, y)
@@ -162,23 +161,23 @@ def handle_events():
                     del Object.obj_dict[C.targeting_item.oid]
                     C.targeting_item = None
                     
-            C.state = ST_PLAYING
+            C.mode = ST_PLAYING
         elif key_code:
-            message('Cancelled')
-            C.state = ST_PLAYING
-    elif C.state == ST_PLAYBACK:
+            client_message('Cancelled')
+            C.mode = ST_PLAYING
+    elif C.mode == ST_PLAYBACK:
         pass
-    elif C.state == ST_QUIT:
+    elif C.mode == ST_QUIT:
         # Do nothing; let the main loop exit on its own.
         pass
     else:
-        impossible('Unknown state: ' + C.state)
+        impossible('Unknown state: ' + C.mode)
 
     # Let the server side do its thing with the client requests we generated.
     handle_requests()
 
 
-def client_tick(reel=False):
+def client_tick():
     """
     Handle server responses, player input, and updating the client gui.
     """
@@ -186,7 +185,6 @@ def client_tick(reel=False):
     # If there are any server responses, handle them.
     res = Network.get_response()
     while res:
-
         # Update log messages
         if 'log' in res:
             for msg in res['log']:
@@ -228,12 +226,14 @@ def client_tick(reel=False):
             C.u.fov_map.do_fov(C.u.x, C.u.y, C.u.fov_radius)
             center_map()
             
+#        print 'C', [i.oid for i in C.items], [i.oid for i in C.map[C.u.x][C.u.y].items]
+#        print 'S', [i.oid for i in S.items], [i.oid for i in S.map[S.u.x][S.u.y].items]
 
         res = Network.get_response()
 
 
 
-    if C.state != ST_PLAYBACK:
+    if C.mode != ST_PLAYBACK:
         C.clock.tick(FRAME_RATE)
         # Player takes turn
         handle_events()
@@ -289,14 +289,14 @@ def main():
         C.map_rect.w, C.map_rect.h)).convert()
 
     # Set the system icon
-    system_icon = load_image('icon.xpm')
+    system_icon = image.load_image('icon.xpm')
     pygame.display.set_icon(system_icon)
     
-    C.tiles_img = load_image('tiles16.xpm')
-    C.gray_tiles_img = load_image('tiles16_gray.xpm')
-    C.menu_bg_img = load_image('parchment.jpg')
+    C.tiles_img = image.load_image('tiles16.xpm')
+    C.gray_tiles_img = image.load_image('tiles16_gray.xpm')
+    C.menu_bg_img = image.load_image('parchment.jpg')
 
-    C.tile_dict = create_tile_dict()
+    C.tile_dict = image.create_tile_dict()
     C.blank_tile = C.tile_dict['cmap, wall, dark']
     
     C.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, C.map_rect,
@@ -310,11 +310,11 @@ def main():
 
 
     # FIX! - this should go in the response handler loop
-    C.map = [[ ClientCell('cmap, wall, dark') for y in range(MAP_H) ]
-           for x in range(MAP_W)]
+    C.map = [[ ClientCell('cmap, wall, dark') for y in xrange(MAP_H) ]
+           for x in xrange(MAP_W)]
 
-    for x in range(MAP_W):
-        for y in range(MAP_H):
+    for x in xrange(MAP_W):
+        for y in xrange(MAP_H):
             C.map[x][y].set_attr(S.map[x][y].name)
 
     C.u = ClientPlayer(S.u.x, S.u.y, S.u.name, S.u.oid, fov_radius=10)
@@ -329,6 +329,6 @@ def main():
 
 
     # Main loop
-    while C.state != ST_QUIT:
+    while C.mode != ST_QUIT:
         server_tick()
         client_tick()

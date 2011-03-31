@@ -9,7 +9,7 @@ from pygame.locals import *
 from const import *
 from client import Client as C
 from network import Network
-from util import *
+from client_util import *
 from fov import *
 from client_object import *                    
 from gui import *
@@ -124,16 +124,19 @@ class ClientMonster(ClientObject):
         if 'inventory' in m_dict:
             self.inventory = m_dict['inventory']
             # Convert oids to Items
-            for i in range(len(self.inventory)):
+            for i in xrange(len(self.inventory)):
                 self.inventory[i] = ClientObject.obj_dict[self.inventory[i]]
         if 'blocks_sight' in m_dict:
             self.blocks_sight = m_dict['blocks_sight']
         if 'blocks_movement' in m_dict:
             self.blocks_movement = m_dict['blocks_movement']
 
-        if self.x != old_x or self.y != old_y:
+        if self in C.map[old_x][old_y].monsters:
             C.map[old_x][old_y].monsters.remove(self)
+        if self not in C.map[self.x][self.y].monsters:
             C.map[self.x][self.y].monsters.append(self)
+        if self not in C.monsters:
+            C.monsters.append(self)
 
 class ClientPlayer(ClientMonster):
     """Representation of the player character in the client."""
@@ -199,5 +202,5 @@ class ClientPlayer(ClientMonster):
         if 'inventory' in u_dict:
             self.inventory = u_dict['inventory']
             # Convert oids to Items
-            for i in range(len(self.inventory)):
+            for i in xrange(len(self.inventory)):
                 self.inventory[i] = ClientObject.obj_dict[self.inventory[i]]

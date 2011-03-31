@@ -5,7 +5,7 @@ import re
 
 from const import *
 from client import Client as C
-from util import *
+from client_util import *
 
 
 class ClientCell:
@@ -39,11 +39,11 @@ class ClientCell:
         # Need a real database of tiles to load from.
         if re.findall('wall', name):
             self.blocks_movement = True
-            self.block_sight = True
+            self.blocks_sight = True
             self.kind = 'wall'
         else:
             self.blocks_movement = False
-            self.block_sight = False
+            self.blocks_sight = False
             self.kind = 'floor'
 
         self.tile = C.tile_dict[name]

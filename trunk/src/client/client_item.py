@@ -62,10 +62,9 @@ class ClientItem(ClientObject):
         if 'blocks_movement' in i_dict:
             self.blocks_movement = i_dict['blocks_movement']
 
-        if self.x != old_x or self.y != old_y:
-            if self in C.map[old_x][old_y].items:
-                C.map[old_x][old_y].items.remove(self)
+        if self in C.map[old_x][old_y].items:
+            C.map[old_x][old_y].items.remove(self)
+        if self not in C.map[self.x][self.y].items:
             C.map[self.x][self.y].items.append(self)
-
-            if self not in C.items:
-                C.items.append(self)
+        if self not in C.items:
+            C.items.append(self)

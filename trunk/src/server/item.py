@@ -73,6 +73,7 @@ class Item(Object):
         Remove map references to this Item.
         @param dict_remove: Also remove the Item from the object dictionary.
         """
+        print 'in delete', self.oid
         S.items.remove(self)
         S.map[self.x][self.y].items.remove(self)
         if dict_remove:

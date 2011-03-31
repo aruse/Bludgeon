@@ -100,12 +100,10 @@ class Client():
 
     branch = 'doom'
     dlevel = 1
-
-
     
     fov_outline = False
 
-    state = ST_PLAYING
+    mode = ST_PLAYING
     msgs = deque()
 
 
@@ -179,7 +177,7 @@ class Client():
         C.log_rect.w = C.screen_rect.w - (
             C.eq_rect.w + C.status_rect.w) - SCROLLBAR_W - 50
         C.log_rect.h = C.status_rect.h
-        C.logview_rect.w, C.logview_rect.h = (C.log_rect.w, C.log_rect.h)
+        C.logview_rect.w, C.logview_rect.h = C.log_rect.w, C.log_rect.h
 
 
         # The mapview size.  May be smaller or larger than the actual map size.
@@ -192,7 +190,6 @@ class Client():
         # Locations to blit equipment on the equipment panel
         eq_cent = (int(C.eq_rect.w / 2.0 - TILE_W / 2),
                    int(C.eq_rect.h / 2.0 - TILE_W / 2))
-        C.eq_hands = (eq_cent[0], eq_cent[1])
         C.eq_hands = (eq_cent[0], C.eq_rect.y + TILE_H / 2 + 3 * TILE_H)
         C.eq_rweap = (C.eq_hands[0] - TILE_W, C.eq_hands[1])
         C.eq_lweap = (C.eq_hands[0] + TILE_W, C.eq_hands[1])
