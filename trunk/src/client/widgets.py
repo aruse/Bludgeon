@@ -16,7 +16,7 @@ BUTTON_SCROLL_U = 4
 BUTTON_SCROLL_D = 5
 
 
-class ScrollBar():
+class ScrollBar(object):
     # Colors
     white = [255] * 3
     black = [0] * 3
@@ -461,28 +461,8 @@ class ScrollBar():
                                 self.slider.y + self.slider.h - int(th * 0.5)),
                                int(th * 0.5 - 2), 0)
 
-        # The highlight on the top and left
-#        pygame.draw.lines(surf, ScrollBar.white, False,
-#                          ((self.slider.x + 1,
-#                            self.slider.y + self.slider.h - 2),
-#                           (self.slider.x + 1, self.slider.y + 1),
-#                           (self.slider.x + self.slider.w - 2,
-#                            self.slider.y + 1)
-#                           ), 1)
 
-        # The shadow on the bottom and right
-#        pygame.draw.lines(surf, ScrollBar.black, False,
-#                          ((self.slider.x + self.slider.w - 2,
-#                            self.slider.y + 1),
-#                           (self.slider.x + self.slider.w - 2,
-#                            self.slider.y + self.slider.h - 2),
-#                           (self.slider.x + 1,
-#                            self.slider.y + self.slider.h - 2)
-#                           ), 1)
-
-
-
-class ScrollView():
+class ScrollView(object):
     """Implements a scrollable area with scrollbars that appear if the
     surface is larger than the view.
     """

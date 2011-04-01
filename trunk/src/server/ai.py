@@ -6,25 +6,25 @@ behave.
 """
 
 from const import *
-from server import Server as S
+from server_state import ServerState as SS
 from util import *
 
-class StupidAI:
+class StupidAI(object):
     """AI for a monster that tries to move next to the player and whack him."""
 
     def take_turn(self):
         # If I can see the monster, it can see me
         mon = self.owner
-        if S.u.fov_map.in_fov(mon.x, mon.y):
-            if mon.distance_to(S.u) >= 2:
-                mon.move_towards(S.u.x, S.u.y)
-            elif S.u.hp > 0:
-                mon.attack(S.u)
+        if SS.u.fov_map.in_fov(mon.x, mon.y):
+            if mon.distance_to(SS.u) >= 2:
+                mon.move_towards(SS.u.x, SS.u.y)
+            elif SS.u.hp > 0:
+                mon.attack(SS.u)
         else:
             mon.move_randomly()
 
 
-class ConfusedAI:
+class ConfusedAI(object):
     """
     AI for a temporarily confused monster (reverts to previous AI
     after a while).

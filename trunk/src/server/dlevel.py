@@ -26,11 +26,11 @@ def blocks_movement(map, x, y):
     if map[x][y].blocks_movement:
         return True
 
-    for mon in S.monsters + [S.u]:
+    for mon in SS.monsters + [SS.u]:
         if mon.x == x and mon.y == y and mon.blocks_movement:
             return True
 
-    for item in S.items:
+    for item in SS.items:
         if item.x == x and item.y == y and item.blocks_movement:
             return True
 
@@ -40,12 +40,12 @@ def blocks_movement(map, x, y):
 
 def place_objects(map, room):
     # Choose random number of monsters
-    for i in xrange(S.map_rand.randrange(3)):
-        x = S.map_rand.randrange(room.x1 + 1, room.x2 - 1)
-        y = S.map_rand.randrange(room.y1 + 1, room.y2 - 1)
+    for i in xrange(SS.map_rand.randrange(3)):
+        x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
+        y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
         if not blocks_movement(map, x, y):
-            if S.map_rand.randrange(0, 100) < 80:
+            if SS.map_rand.randrange(0, 100) < 80:
                 mon = Monster(x, y, 'orc', ai=StupidAI())
             else:
                 mon = Monster(x, y, 'troll', ai=StupidAI())
@@ -53,12 +53,12 @@ def place_objects(map, room):
             mon.place_on_map(map)
 
     # Choose random number of items
-    for i in xrange(S.map_rand.randrange(8)):
-        x = S.map_rand.randrange(room.x1 + 1, room.x2 - 1)
-        y = S.map_rand.randrange(room.y1 + 1, room.y2 - 1)
+    for i in xrange(SS.map_rand.randrange(8)):
+        x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
+        y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
  
         if not blocks_movement(map, x, y):
-            dice = S.map_rand.randrange(0, 100)
+            dice = SS.map_rand.randrange(0, 100)
             if dice < 40:
                 item = Item(x, y, 'healing potion')
             elif dice < 40 + 20:
@@ -115,11 +115,11 @@ def gen_connected_rooms():
     rooms = []
     
     for r in xrange(MAX_ROOMS):
-        w = S.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
-        h = S.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        w = SS.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        h = SS.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
 
-        x = S.map_rand.randrange(0, MAP_W - w - 1)
-        y = S.map_rand.randrange(0, MAP_H - h - 1)
+        x = SS.map_rand.randrange(0, MAP_W - w - 1)
+        y = SS.map_rand.randrange(0, MAP_H - h - 1)
  
         new_room = Room(x, y, w, h)
         
@@ -137,8 +137,8 @@ def gen_connected_rooms():
             # First room
             if len(rooms) == 0:
                 (new_x, new_y) = new_room.center()
-                S.u.x = new_x
-                S.u.y = new_y
+                SS.u.x = new_x
+                SS.u.y = new_y
  
             rooms.append(new_room)
 
@@ -146,7 +146,7 @@ def gen_connected_rooms():
     for i in xrange(1, len(rooms)):
         (new_x, new_y) = rooms[i].center()
         (prev_x, prev_y) = rooms[i - 1].center()
-        if S.map_rand.randrange(0, 2):
+        if SS.map_rand.randrange(0, 2):
             create_h_tunnel(map, prev_x, new_x, prev_y)
             create_v_tunnel(map, prev_y, new_y, new_x)
         else:
@@ -174,7 +174,7 @@ def gen_perfect_maze(w, h):
     # Starting at a random point, move out in a random direction,
     # knocking down walls as you go.  If you've been to a wall
     # previously, backtrack.
-    cur_cell = [S.map_rand.randrange(w - 1), S.map_rand.randrange(h - 1)]
+    cur_cell = [SS.map_rand.randrange(w - 1), SS.map_rand.randrange(h - 1)]
     if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
         cur_cell[0] += 1
     if map[cur_cell[0]][cur_cell[1]].cell_class == 'wall':
@@ -208,7 +208,7 @@ def gen_perfect_maze(w, h):
         # If there are moves to make, select a random direction
         if possible_moves.count(1):
             # Select a number from 0 to number of possible moves - 1
-            move_direction = S.map_rand.randrange(possible_moves.count(1))
+            move_direction = SS.map_rand.randrange(possible_moves.count(1))
             # Map the direction to an index of the possible_moves list
             move_direction = possible_moves.index(1, move_direction)
 
@@ -277,7 +277,7 @@ def gen_braid_maze(w, h, braid_degree=1.0):
                     connection = DIR_DOWN
 
                 # If there is only one connection, it's a dead-end
-                if connections == 1 and S.map_rand.random() < braid_degree :
+                if connections == 1 and SS.map_rand.random() < braid_degree :
                     if connection == DIR_LEFT and x < w - 1:
                         map[x + 1][y].set_attr('cmap, floor of a room')
                     if connection == DIR_RIGHT and x > 0:
@@ -312,7 +312,7 @@ def gen_sparse_maze(w, h, sparse_degree=0.1, braid_degree=0.9):
 
                 if ((walls_hor == 2 and walls_ver == 0) or \
                     (walls_ver == 2 and walls_hor == 0)) and \
-                    S.map_rand.random() < sparse_degree:
+                    SS.map_rand.random() < sparse_degree:
                     map[x][y] = 0
                 
     return update_wall_tiles(map)

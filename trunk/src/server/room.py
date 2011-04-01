@@ -1,7 +1,7 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-class Room:
+class Room(object):
     """A room in the dungeon level."""
     def __init__(self, x, y, w, h):
         self.x1 = x

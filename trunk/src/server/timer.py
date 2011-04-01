@@ -1,7 +1,7 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-class Timer:
+class Timer(object):
     """
     Used to count down to a specific event.
     """

@@ -4,11 +4,11 @@
 import re
 
 from const import *
-from server import Server as S
+from server_state import ServerState as SS
 from util import *
 
 
-class Cell:
+class Cell(object):
     """
     Map cell, representing a single location on the map.
     """

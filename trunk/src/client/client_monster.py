@@ -7,12 +7,13 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from client import Client as C
+from client_state import ClientState as CS
 from network import Network
 from client_util import *
 from fov import *
 from client_object import *                    
 from gui import *
+from common import *
 
 class ClientMonster(ClientObject):
     """Monster representation for the client."""
@@ -81,9 +82,9 @@ class ClientMonster(ClientObject):
     def place_on_map(self, map=None):
         """Place the monster object on the current game map."""
         if map is None:
-            map = C.map
+            map = CS.map
 
-        C.monsters.append(self)
+        CS.monsters.append(self)
         map[self.x][self.y].monsters.append(self)
 
     def delete(self, dict_remove=False):
@@ -91,8 +92,8 @@ class ClientMonster(ClientObject):
         Remove map references to this Monster.
         @param dict_remove: Also remove the Monster from the object dictionary.
         """
-        C.monsters.remove(self)
-        C.map[self.x][self.y].monsters.remove(self)
+        CS.monsters.remove(self)
+        CS.map[self.x][self.y].monsters.remove(self)
         if dict_remove:
             del ClientObject.obj_dict[self.oid]
 
@@ -131,12 +132,12 @@ class ClientMonster(ClientObject):
         if 'blocks_movement' in m_dict:
             self.blocks_movement = m_dict['blocks_movement']
 
-        if self in C.map[old_x][old_y].monsters:
-            C.map[old_x][old_y].monsters.remove(self)
-        if self not in C.map[self.x][self.y].monsters:
-            C.map[self.x][self.y].monsters.append(self)
-        if self not in C.monsters:
-            C.monsters.append(self)
+        if self in CS.map[old_x][old_y].monsters:
+            CS.map[old_x][old_y].monsters.remove(self)
+        if self not in CS.map[self.x][self.y].monsters:
+            CS.map[self.x][self.y].monsters.append(self)
+        if self not in CS.monsters:
+            CS.monsters.append(self)
 
 class ClientPlayer(ClientMonster):
     """Representation of the player character in the client."""
@@ -152,6 +153,7 @@ class ClientPlayer(ClientMonster):
         Network.request('F', (target.oid,))
 
     def move(self, dx, dy=None):
+        dx, dy = flatten_args(dx, dy)
         Network.request('m', (dx, dy))
 
     def rest(self):
@@ -162,15 +164,13 @@ class ClientPlayer(ClientMonster):
         Try to move dx and dy spaces.  If there's a monster in the
         way, attack instead.
         """
-        if type(dx) == type(tuple()):
-            dx, dy = dx[0], dx[1]
-
+        dx, dy = flatten_args(dx, dy)
         x = self.x + dx
         y = self.y + dy
 
         # Search for an attackable object.
         target = None
-        for m in C.map[x][y].monsters:
+        for m in CS.map[x][y].monsters:
             target = m
 
         # attack if target found, move otherwise

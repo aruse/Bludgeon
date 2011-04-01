@@ -3,12 +3,9 @@
 
 from collections import deque
 
-import pygame
-from pygame.locals import *
-
 from const import *
 
-class Server:
+class ServerState(object):
     """
     Static class that stores any server state that needs to be shared      
     everywhere.
@@ -62,4 +59,3 @@ class Server:
     map_rand = None
     # The random number generator used for everything else.
     rand = None
-

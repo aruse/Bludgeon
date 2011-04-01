@@ -7,7 +7,7 @@ import pygame
 from pygame.locals import *
 
 from const import *
-from client import Client as C
+from client_state import ClientState as CS
 from client_object import *                    
 
 class ClientItem(ClientObject):
@@ -30,9 +30,9 @@ class ClientItem(ClientObject):
     def place_on_map(self, map=None):
         """Place the item object on the current game map."""
         if map is None:
-            map = C.map
+            map = CS.map
 
-        C.items.append(self)
+        CS.items.append(self)
         map[self.x][self.y].items.append(self)
 
     def delete(self, dict_remove=False):
@@ -40,8 +40,8 @@ class ClientItem(ClientObject):
         Remove map references to this Item.
         @param dict_remove: Also remove the Item from the object dictionary.
         """
-        C.items.remove(self)
-        C.map[self.x][self.y].items.remove(self)
+        CS.items.remove(self)
+        CS.map[self.x][self.y].items.remove(self)
         if dict_remove:
             del ClientObject.obj_dict[self.oid]
 
@@ -62,9 +62,9 @@ class ClientItem(ClientObject):
         if 'blocks_movement' in i_dict:
             self.blocks_movement = i_dict['blocks_movement']
 
-        if self in C.map[old_x][old_y].items:
-            C.map[old_x][old_y].items.remove(self)
-        if self not in C.map[self.x][self.y].items:
-            C.map[self.x][self.y].items.append(self)
-        if self not in C.items:
-            C.items.append(self)
+        if self in CS.map[old_x][old_y].items:
+            CS.map[old_x][old_y].items.remove(self)
+        if self not in CS.map[self.x][self.y].items:
+            CS.map[self.x][self.y].items.append(self)
+        if self not in CS.items:
+            CS.items.append(self)

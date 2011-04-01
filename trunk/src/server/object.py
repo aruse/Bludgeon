@@ -4,17 +4,15 @@
 import random
 import math
 
-import pygame
-from pygame.locals import *
-
 from const import *
-from server import Server as S
+from server_state import ServerState as SS
 from ai import *
-
 from util import *
+
+from common import *
 from fov import *
 
-class Object:
+class Object(object):
     """
     Generic object.  Can be sub-classed into players, monsters,
     items, etc.
@@ -59,9 +57,7 @@ class Object:
         
     def move(self, dx, dy=None):
         """Move dx and dy spaces, if possible."""
-        if type(dx) == type(tuple()):
-            dx, dy = dx[0], dx[1]
-
+        dx, dy = flatten_args(dx, dy)
         self.dirty = True
             
         if self.can_move_dir(dx, dy):
@@ -72,15 +68,13 @@ class Object:
             return False
 
     def move_randomly(self):
-        dir = S.rand.randrange(len(DIR))
+        dir = SS.rand.randrange(len(DIR))
         if self.can_move_dir(DIR[dir]):
             self.move(DIR[dir])
 
     def move_towards(self, x, y=None):
         """Move towards the x, y coords, if possible."""
-        if type(x) == type(tuple()):
-            x, y = x[0], x[1]
-
+        x, y = flatten_args(x, y)
         dx = x - self.x
         dy = y - self.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
@@ -117,36 +111,30 @@ class Object:
 
     def distance(self, x, y):
         """Distance to coords."""
-        if type(x) == type(tuple()):
-            x, y = x[0], x[1]
         return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
     def can_move_dir(self, x, y=None):
         """Can the object move in this direction?"""
-        if type(x) == type(tuple()):
-            x, y = x[0], x[1]
-            
+        x, y = flatten_args(x, y)
         return self.can_move(self.x + x, self.y + y)
         
     def can_move(self, x, y=None):
         """Can the object move into this location?"""
-        if type(x) == type(tuple()):
-            x, y = x[0], x[1]
-            
+        x, y = flatten_args(x, y)
         can_move = True
 
-        if x < 0 or y < 0 or x >= len(S.map) or y >= len(S.map[0]):
+        if x < 0 or y < 0 or x >= len(SS.map) or y >= len(SS.map[0]):
             can_move = False
 
-        if S.map[x][y].blocks_movement:
+        if SS.map[x][y].blocks_movement:
             can_move = False
 
-        for mon in S.map[x][y].monsters:
+        for mon in SS.map[x][y].monsters:
             if mon.blocks_movement:
                 can_move = False
                 break
 
-        if S.u.x == x and S.u.y == y:
+        if SS.u.x == x and SS.u.y == y:
             can_move = False
 
             

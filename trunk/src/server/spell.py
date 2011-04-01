@@ -2,24 +2,20 @@
 # See LICENSE for details.
 
 import random
-import math
-
-import pygame
-from pygame.locals import *
 
 from const import *
-from server import Server as S
+from server_state import ServerState as SS
 from ai import *
 
 from util import *
 
 def cast_heal(item, x=None, y=None):
-    if S.u.hp == S.u.max_hp:
+    if SS.u.hp == SS.u.max_hp:
         message('You are already at full health.', CLR['light_violet'])
         return 'cancelled'
  
     message('Your wounds start to feel better!', CLR['light_violet'])
-    S.u.heal(HEAL_AMOUNT)
+    SS.u.heal(HEAL_AMOUNT)
     return 'success'
     
 def closest_monster(max_range):
@@ -28,9 +24,9 @@ def closest_monster(max_range):
     # Start just out of max range
     closest_dist = max_range + 1
 
-    for mon in S.monsters:
-        if mon != S.u and S.u.fov_map.in_fov(mon.x, mon.y):
-            dist = S.u.distance_to(mon)
+    for mon in SS.monsters:
+        if mon != SS.u and SS.u.fov_map.in_fov(mon.x, mon.y):
+            dist = SS.u.distance_to(mon)
             if dist < closest_dist:
                 closest_enemy = mon
                 closest_dist = dist
@@ -42,7 +38,7 @@ def cast_lightning(item, x=None, y=None):
     target = closest_monster(5)
 
     if target is None:
-        target = S.u
+        target = SS.u
         message('A lightning bolt arcs out from you and then returns to '
                 'strike you in the head!', CLR['light_blue'])
     else:
@@ -60,9 +56,9 @@ def cast_fireball(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click a target for the fireball, or right-click to '
                 'cancel.', CLR['light_cyan'])
-        S.mode = ST_TARGETING
-        S.targeting_function.append(finish_fireball)
-        S.targeting_item = item
+        SS.mode = ST_TARGETING
+        SS.targeting_function.append(finish_fireball)
+        SS.targeting_item = item
         return 'targeting'
     else:
         finish_fireball(item, x, y)
@@ -77,7 +73,7 @@ def finish_fireball(item, x=None, y=None):
     message('The fireball explodes, burning everything within '
             + str(FIREBALL_RADIUS) + ' spaces!', CLR['orange'])
  
-    for mon in S.monsters + [S.u]:
+    for mon in SS.monsters + [SS.u]:
         if mon.distance(x, y) <= FIREBALL_RADIUS:
             message('The ' + mon.name + ' gets burned for '
                     + str(FIREBALL_DAMAGE) + ' hit points.', CLR['orange'])
@@ -89,9 +85,9 @@ def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to '
                 'cancel.', CLR['light_cyan'])
-        S.mode = ST_TARGETING
-        S.targeting_function.append(finish_confuse)
-        S.targeting_item = item
+        SS.mode = ST_TARGETING
+        SS.targeting_function.append(finish_confuse)
+        SS.targeting_item = item
         return 'targeting'
     else:
         finish_confuse(item, x, y)
@@ -99,9 +95,9 @@ def cast_confuse(item, x=None, y=None):
 def finish_confuse(item, x, y):
     # FIXME: should be able to target myself
     target = None
-    for mon in S.monsters:
+    for mon in SS.monsters:
         if (mon.x == x and mon.y == y
-            and mon.distance(S.u.x, S.u.y) <= CONFUSE_RANGE):
+            and mon.distance(SS.u.x, SS.u.y) <= CONFUSE_RANGE):
             target = mon
             break
 

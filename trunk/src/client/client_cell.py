@@ -4,11 +4,11 @@
 import re
 
 from const import *
-from client import Client as C
+from client_state import ClientState as CS
 from client_util import *
 
 
-class ClientCell:
+class ClientCell(object):
     """
     Map cell, representing a single location on the map to be displayed
     in the client.
@@ -46,12 +46,12 @@ class ClientCell:
             self.blocks_sight = False
             self.kind = 'floor'
 
-        self.tile = C.tile_dict[name]
+        self.tile = CS.tile_dict[name]
         
     def draw(self, x, y):
         """Draw this Cell on the map at the given coords."""
-        C.map_surf.blit(C.tiles_img, cell2pixel(x, y), self.tile)
+        CS.map_surf.blit(CS.tiles_img, cell2pixel(x, y), self.tile)
  
     def draw_gray(self, x, y):
         """Draw this Cell on the map at the given coords, grayed out."""
-        C.map_surf.blit(C.gray_tiles_img, cell2pixel(x, y), self.tile)
+        CS.map_surf.blit(CS.gray_tiles_img, cell2pixel(x, y), self.tile)

@@ -1,13 +1,8 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import math
-
-import pygame
-from pygame.locals import *
-
 from const import *
-from server import Server as S
+from server_state import ServerState as SS
 from ai import *
 from object import *                    
 from spell import *
@@ -63,9 +58,9 @@ class Item(Object):
     def place_on_map(self, map=None):
         """Place the item object on the current game map."""
         if map is None:
-            map = S.map
+            map = SS.map
 
-        S.items.append(self)
+        SS.items.append(self)
         map[self.x][self.y].items.append(self)
 
     def delete(self, dict_remove=False):
@@ -74,20 +69,20 @@ class Item(Object):
         @param dict_remove: Also remove the Item from the object dictionary.
         """
         print 'in delete', self.oid
-        S.items.remove(self)
-        S.map[self.x][self.y].items.remove(self)
+        SS.items.remove(self)
+        SS.map[self.x][self.y].items.remove(self)
         if dict_remove:
             del Object.obj_dict[self.oid]
             
-        S.items_to_delete.append((self.oid, dict_remove))
+        SS.items_to_delete.append((self.oid, dict_remove))
 
     def move(self, dx, dy=None):
         """Move item by dx, dy amounts."""
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this item has moved.
-            S.map[oldx][oldy].items.remove(self)
-            S.map[self.x][self.y].items.append(self)
+            SS.map[oldx][oldy].items.remove(self)
+            SS.map[self.x][self.y].items.append(self)
             self.dirty = True
 
     def serialize(self):

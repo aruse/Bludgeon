@@ -3,7 +3,7 @@
 
 from collections import deque
 
-class Network:
+class Network(object):
     """
     Static class defining an interface to the network, either local
     or remote.

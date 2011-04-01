@@ -1,13 +1,8 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import math
-
-import pygame
-from pygame.locals import *
-
 from const import *
-from server import Server as S
+from server_state import ServerState as SS
 from ai import *
 from object import *                    
 from item import *
@@ -118,9 +113,9 @@ class Monster(Object):
     def place_on_map(self, map=None):
         """Place the monster object on the current game map."""
         if map is None:
-            map = S.map
+            map = SS.map
 
-        S.monsters.append(self)
+        SS.monsters.append(self)
         map[self.x][self.y].monsters.append(self)
 
     def delete(self, dict_remove=False):
@@ -128,12 +123,12 @@ class Monster(Object):
         Remove map references to this Monster.
         @param dict_remove: Also remove the Monster from the object dictionary.
         """
-        S.monsters.remove(self)
-        S.map[self.x][self.y].monsters.remove(self)
+        SS.monsters.remove(self)
+        SS.map[self.x][self.y].monsters.remove(self)
         if dict_remove:
             del Object.obj_dict[self.oid]
             
-        S.monsters_to_delete.append((self.oid, dict_remove))
+        SS.monsters_to_delete.append((self.oid, dict_remove))
 
     def pick_up(self, item):
         self.inventory.append(item)
@@ -209,9 +204,9 @@ class Monster(Object):
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this monster has moved.
-            if self != S.u:
-                S.map[oldx][oldy].monsters.remove(self)
-                S.map[self.x][self.y].monsters.append(self)
+            if self != SS.u:
+                SS.map[oldx][oldy].monsters.remove(self)
+                SS.map[self.x][self.y].monsters.append(self)
 
     def serialize(self):
         """
@@ -285,7 +280,7 @@ class Player(Monster):
         self.move(0, 0)
 
     def targeted_use(self, item, x, y):
-        S.cmd_history.append(('u', item.oid, x, y))
+        SS.cmd_history.append(('u', item.oid, x, y))
         Monster.targeted_use(self, item, x, y)
 
     def drop(self, item):

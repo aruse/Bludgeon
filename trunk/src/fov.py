@@ -61,7 +61,7 @@ class FOVMap(object):
                     break
                 else:
                     # Our light beam is touching this square, so light it.
-                    if dx**2 + dy**2 < radius**2:
+                    if dx ** 2 + dy ** 2 < radius ** 2:
                         self.set_marked(x, y)
                     if blocked:
                         # We're scanning a row of blocked squares.
