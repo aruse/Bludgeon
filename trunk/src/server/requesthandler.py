@@ -8,10 +8,10 @@ server actions.
 
 from const import *
 from server_state import ServerState as SS
-from monster import *
-from item import *
+from monster import Monster
+from item import Item
 from dlevel import *
-from cell import *
+from cell import Cell
 from ai import *
 from spell import *
 from saveload import *

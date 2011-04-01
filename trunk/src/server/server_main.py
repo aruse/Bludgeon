@@ -7,7 +7,8 @@ import random
 from const import *
 from network import Network
 from server_state import ServerState as SS
-from monster import *
+from monster import Monster
+from player import Player
 from dlevel import *
 from requesthandler import *
 
@@ -60,7 +61,10 @@ def init_server():
 
 
 def server_tick():
-    """Main loop for the server."""
+    """
+    Called from the main game loop to handle server functionality.
+    Handle client requests, monster turns, and send responses to client.
+    """
     handle_requests()
 
     if SS.u_took_turn:

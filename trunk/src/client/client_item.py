@@ -8,7 +8,7 @@ from pygame.locals import *
 
 from const import *
 from client_state import ClientState as CS
-from client_object import *                    
+from client_object import ClientObject                    
 
 class ClientItem(ClientObject):
     """Game items to be displayed in the client."""

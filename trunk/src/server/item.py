@@ -4,7 +4,7 @@
 from const import *
 from server_state import ServerState as SS
 from ai import *
-from object import *                    
+from object import Object                    
 from spell import *
 
 from util import *

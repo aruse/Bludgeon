@@ -11,9 +11,9 @@ from client_state import ClientState as CS
 from network import Network
 
 from client_util import *
-from client_monster import *
-from client_item import *
-from client_cell import *
+from client_monster import ClientMonster
+from client_item import ClientItem
+from client_cell import ClientCell
 from gui import *
 
 

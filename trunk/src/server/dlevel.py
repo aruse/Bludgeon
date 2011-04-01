@@ -8,10 +8,10 @@ Routines for generating dungeon levels.
 import random
 
 from const import *
-from cell import *
+from cell import Cell
 from room import *
-from monster import *
-from item import *
+from monster import Monster
+from item import Item
 from ai import *
 
 from util import *
@@ -100,13 +100,9 @@ def create_v_tunnel(map, y1, y2, x):
     for y in xrange(min(y1, y2), max(y1, y2) + 1):
         map[x][y].set_attr('cmap, floor of a room')
 
-
-
-def gen_level(type):
+def gen_level(layout):
     """Type can be 'connected_rooms'."""
     map = gen_connected_rooms()
-
-    
 
 
 def gen_connected_rooms():

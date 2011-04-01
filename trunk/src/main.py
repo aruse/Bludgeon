@@ -22,7 +22,8 @@ from server.server_state import ServerState as SS
 from server.server_main import *
 
 from client.client_state import ClientState as CS
-from client.client_cell import *
+from client.client_cell import ClientCell
+from client.client_monster import ClientMonster
 from client.client_main import *
 
     
@@ -35,7 +36,7 @@ def main():
     init_server()
     init_client()
 
-    # FIX! - this should go in the response handler loop
+    # FIXME! - this should go in the response handler loop
     CS.map = [[ ClientCell('cmap, wall, dark') for y in xrange(MAP_H) ]
            for x in xrange(MAP_W)]
 
@@ -43,6 +44,7 @@ def main():
         for y in xrange(MAP_H):
             CS.map[x][y].set_attr(SS.map[x][y].name)
 
+    from client.client_player import ClientPlayer
     CS.u = ClientPlayer(SS.u.x, SS.u.y, SS.u.name, SS.u.oid, fov_radius=10)
     CS.u.set_fov_map(CS.map)
     CS.u.fov_map.do_fov(CS.u.x, CS.u.y, CS.u.fov_radius)

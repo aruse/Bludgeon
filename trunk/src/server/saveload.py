@@ -7,9 +7,10 @@ Routines for saving and loading games.
 
 from const import *
 from server_state import ServerState as SS
-from cell import *
-from monster import *
-from item import *
+from cell import Cell
+from item import Item
+from monster import Monster
+from player import Player
 from util import *
 
 simple_save_objs = [

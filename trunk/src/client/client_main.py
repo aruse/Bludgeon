@@ -15,8 +15,10 @@ from common import *
 from network import Network
 
 from client_state import ClientState as CS
-from client_monster import *
-from client_item import *
+from client_object import ClientObject
+from client_item import ClientItem
+from client_monster import ClientMonster
+from client_player import ClientPlayer
 from gui import *
 from keys import *
 import image
@@ -270,6 +272,7 @@ def handle_events():
 
 def client_tick():
     """
+    Called from the main game loop to handle client functionality.
     Handle server responses, player input, and updating the client gui.
     """
 
