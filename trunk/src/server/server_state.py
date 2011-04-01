@@ -1,6 +1,7 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+import random
 from collections import deque
 
 from const import *
@@ -25,16 +26,6 @@ class ServerState(object):
     # The player object
     u = None
 
-    # Dict of all monsters and all items across all levels
-    monsters_dict = {}
-    items_dict = {}
-    
-    # List of all monsters on the current level
-    monsters = []
-
-    # All free items (not in inventory) on the current level
-    items = []
-
     monsters_to_delete = []
     items_to_delete = []
 
@@ -56,6 +47,6 @@ class ServerState(object):
 
     # The random number generator used for building maps and other data that
     # needs to be the same for all games using the same random seed.
-    map_rand = None
+    map_rand = random.Random()
     # The random number generator used for everything else.
-    rand = None
+    rand = random.Random()

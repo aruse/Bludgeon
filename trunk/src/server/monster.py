@@ -109,16 +109,16 @@ class Monster(Object):
         if map is None:
             map = SS.map
 
-        SS.monsters.append(self)
-        map[self.x][self.y].monsters.append(self)
+        map.monsters.append(self)
+        map.grid[self.x][self.y].monsters.append(self)
 
     def delete(self, dict_remove=False):
         """
         Remove map references to this Monster.
         @param dict_remove: Also remove the Monster from the object dictionary.
         """
-        SS.monsters.remove(self)
-        SS.map[self.x][self.y].monsters.remove(self)
+        SS.map.monsters.remove(self)
+        SS.map.grid[self.x][self.y].monsters.remove(self)
         if dict_remove:
             del Object.obj_dict[self.oid]
             
@@ -199,8 +199,8 @@ class Monster(Object):
         if Object.move(self, dx, dy):
             # Let the map know that this monster has moved.
             if self != SS.u:
-                SS.map[oldx][oldy].monsters.remove(self)
-                SS.map[self.x][self.y].monsters.append(self)
+                SS.map.grid[oldx][oldy].monsters.remove(self)
+                SS.map.grid[self.x][self.y].monsters.append(self)
 
     def serialize(self):
         """

@@ -24,7 +24,7 @@ def closest_monster(max_range):
     # Start just out of max range
     closest_dist = max_range + 1
 
-    for mon in SS.monsters:
+    for mon in SS.map.monsters:
         if mon != SS.u and SS.u.fov_map.in_fov(mon.x, mon.y):
             dist = SS.u.distance_to(mon)
             if dist < closest_dist:
@@ -73,7 +73,7 @@ def finish_fireball(item, x=None, y=None):
     message('The fireball explodes, burning everything within '
             + str(FIREBALL_RADIUS) + ' spaces!', CLR['orange'])
  
-    for mon in SS.monsters + [SS.u]:
+    for mon in SS.map.monsters + [SS.u]:
         if mon.distance(x, y) <= FIREBALL_RADIUS:
             message('The ' + mon.name + ' gets burned for '
                     + str(FIREBALL_DAMAGE) + ' hit points.', CLR['orange'])
@@ -95,7 +95,7 @@ def cast_confuse(item, x=None, y=None):
 def finish_confuse(item, x, y):
     # FIXME: should be able to target myself
     target = None
-    for mon in SS.monsters:
+    for mon in SS.map.monsters:
         if (mon.x == x and mon.y == y
             and mon.distance(SS.u.x, SS.u.y) <= CONFUSE_RANGE):
             target = mon

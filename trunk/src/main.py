@@ -25,7 +25,7 @@ from client.client_state import ClientState as CS
 from client.client_cell import ClientCell
 from client.client_monster import ClientMonster
 from client.client_main import *
-
+from client.client_map import ClientMap
     
 def main():
     parser = optparse.OptionParser()
@@ -37,16 +37,17 @@ def main():
     init_client()
 
     # FIXME! - this should go in the response handler loop
-    CS.map = [[ ClientCell('cmap, wall, dark') for y in xrange(MAP_H) ]
-           for x in xrange(MAP_W)]
+    CS.map = ClientMap(SS.map.w, SS.map.h, SS.map.layout)
+#    CS.map = [[ ClientCell('cmap, wall, dark') for y in xrange(MAP_H) ]
+#           for x in xrange(MAP_W)]
 
     for x in xrange(MAP_W):
         for y in xrange(MAP_H):
-            CS.map[x][y].set_attr(SS.map[x][y].name)
+            CS.map.grid[x][y].set_attr(SS.map.grid[x][y].name)
 
     from client.client_player import ClientPlayer
     CS.u = ClientPlayer(SS.u.x, SS.u.y, SS.u.name, SS.u.oid, fov_radius=10)
-    CS.u.set_fov_map(CS.map)
+    CS.u.set_fov_map(CS.map.grid)
     CS.u.fov_map.do_fov(CS.u.x, CS.u.y, CS.u.fov_radius)
     attach_key_actions()
 

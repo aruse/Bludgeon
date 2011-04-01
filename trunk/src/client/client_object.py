@@ -74,13 +74,13 @@ class ClientObject(object):
         x, y = flatten_args(x, y)
         can_move = True
 
-        if x < 0 or y < 0 or x >= len(CS.map) or y >= len(CS.map[0]):
+        if x < 0 or y < 0 or x >= CS.map.w or y >= CS.map.h:
             can_move = False
 
-        if S.map[x][y].blocks_movement:
+        if CS.map.grid[x][y].blocks_movement:
             can_move = False
 
-        for m in S.monsters + [S.u]:
+        for m in CS.monsters + [CS.u]:
             if x == m.x and y == m.y:
                 can_move = False
                 break

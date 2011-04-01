@@ -89,12 +89,6 @@ class ClientState(object):
     # The map of the current level, a two dimensional array
     map = None
 
-    # List of all monsters on the current level
-    monsters = []
-
-    # All free items (not in inventory) on the current level
-    items = []
-
     # The player object
     u = None
 

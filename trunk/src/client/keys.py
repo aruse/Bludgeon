@@ -37,7 +37,7 @@ def scroll_log_end(coords):
 def request_pick_up():
     """Tell server to pick up an item at the player's feet."""
     items = []
-    for item in CS.map[CS.u.x][CS.u.y].items:
+    for item in CS.map.grid[CS.u.x][CS.u.y].items:
         items.append(item.oid)
 
     Network.request(',', (tuple(items),))

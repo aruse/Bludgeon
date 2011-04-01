@@ -47,7 +47,7 @@ class ClientPlayer(ClientMonster):
 
         # Search for an attackable object.
         target = None
-        for m in CS.map[x][y].monsters:
+        for m in CS.map.grid[x][y].monsters:
             target = m
 
         # attack if target found, move otherwise

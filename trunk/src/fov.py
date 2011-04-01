@@ -13,9 +13,9 @@ class FOVMap(object):
             [0,  1,  1,  0,  0, -1, -1,  0],
             [1,  0,  0,  1, -1,  0,  0, -1]]
 
-    def __init__(self, map):
-        self.map = map
-        self.w, self.h = len(map), len(map[0])
+    def __init__(self, grid):
+        self.grid = grid
+        self.w, self.h = len(grid), len(grid[0])
         self.marked = []
         for i in xrange(self.w):
             self.marked.append([0] * self.h)
@@ -24,7 +24,7 @@ class FOVMap(object):
     def blocked(self, x, y):
         return (x < 0 or y < 0
                 or x >= self.w or y >= self.h
-                or self.map[x][y].blocks_sight)
+                or self.grid[x][y].blocks_sight)
 
     def in_fov(self, x, y):
         """Return whether or not this cell is in the FOV."""
@@ -48,7 +48,7 @@ class FOVMap(object):
 
             while dx <= 0:
                 dx += 1
-                # Translate the dx, dy coordinates into map coordinates.
+                # Translate the dx, dy coordinates into grid coordinates.
                 x = cx + dx * xx + dy * xy
                 y = cy + dx * yx + dy * yy
                 # l_slope and r_slope store the slopes of the left and right

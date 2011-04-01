@@ -11,9 +11,10 @@ from monster import Monster
 from player import Player
 from dlevel import *
 from requesthandler import *
+from map import Map
 
 def monsters_take_turn():
-    for m in SS.monsters:
+    for m in SS.map.monsters:
         if m.ai:
             m.ai.take_turn()
 
@@ -30,9 +31,6 @@ def handle_requests():
 
 def init_server():
     """Initialize all of the server state."""
-    SS.map_rand = random.Random()
-    SS.rand = random.Random()
-
 #    if options.save_file:
 #        load_game(options.save_file)
 #        SS.map_rand.seed(SS.random_seed)
@@ -50,11 +48,12 @@ def init_server():
         SS.u = Player(0, 0, 'wizard', fov_radius=10)
         SS.dlevel = 1
         SS.dlevel_dict['doom'] = []
-        SS.dlevel_dict['doom'].append(gen_connected_rooms())
-        SS.map = SS.dlevel_dict['doom'][0]
+        SS.map = Map(MAP_W, MAP_H, layout='connected_rooms')
+        SS.dlevel_dict['doom'].append(SS.map)
+        SS.u.move_to(SS.map.upstairs)
     
 
-    SS.u.set_fov_map(SS.map)
+    SS.u.set_fov_map(SS.map.grid)
     SS.u.fov_map.do_fov(SS.u.x, SS.u.y, SS.u.fov_radius)
     attach_request_actions()
     message('Welcome, {0}!'.format("Whatever"), CLR['gold'])
@@ -84,7 +83,7 @@ def server_tick():
     # FIXME: We currently send the whole monster object, but this needs to be
     # modified to only send the attributes which have changed since the last
     # update.
-    for mon in SS.monsters:
+    for mon in SS.map.monsters:
         if mon.dirty:
             if 'm' not in response:
                 response['m'] = {}
@@ -99,7 +98,7 @@ def server_tick():
 
 
     # Tell the client which items to update.
-    for item in SS.items:
+    for item in SS.map.items:
         if item.dirty:
             if 'i' not in response:
                 response['i'] = {}

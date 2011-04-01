@@ -32,16 +32,16 @@ class ClientItem(ClientObject):
         if map is None:
             map = CS.map
 
-        CS.items.append(self)
-        map[self.x][self.y].items.append(self)
+        CS.map.items.append(self)
+        map.grid[self.x][self.y].items.append(self)
 
     def delete(self, dict_remove=False):
         """
         Remove map references to this Item.
         @param dict_remove: Also remove the Item from the object dictionary.
         """
-        CS.items.remove(self)
-        CS.map[self.x][self.y].items.remove(self)
+        CS.map.items.remove(self)
+        CS.map.grid[self.x][self.y].items.remove(self)
         if dict_remove:
             del ClientObject.obj_dict[self.oid]
 
@@ -62,9 +62,9 @@ class ClientItem(ClientObject):
         if 'blocks_movement' in i_dict:
             self.blocks_movement = i_dict['blocks_movement']
 
-        if self in CS.map[old_x][old_y].items:
-            CS.map[old_x][old_y].items.remove(self)
-        if self not in CS.map[self.x][self.y].items:
-            CS.map[self.x][self.y].items.append(self)
-        if self not in CS.items:
-            CS.items.append(self)
+        if self in CS.map.grid[old_x][old_y].items:
+            CS.map.grid[old_x][old_y].items.remove(self)
+        if self not in CS.map.grid[self.x][self.y].items:
+            CS.map.grid[self.x][self.y].items.append(self)
+        if self not in CS.map.items:
+            CS.map.items.append(self)

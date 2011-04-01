@@ -23,8 +23,8 @@ simple_save_objs = [
 complex_save_objs = [
     'SS.u',
     'SS.map',
-    'SS.monsters',
-    'SS.items',
+    'SS.map.monsters',
+    'SS.map.items',
     ]
 #    'SS.dlevel_dict',
 #    'SS.monsters_dict',
@@ -39,18 +39,18 @@ def save_game(file):
 
     f.write('map = [')
 
-    for x in xrange(len(SS.map)):
+    for x in xrange(SS.map.w):
         f.write('[')
-        for y in xrange(len(SS.map[0])):
+        for y in xrange(SS.map.h):
             f.write("{{'n': {0}, 'e': {1}}}, ".format(
-                    repr(SS.map[x][y].name),  repr(SS.map[x][y].explored)))
+                    repr(SS.map.grid[x][y].name),  repr(SS.map.grid[x][y].explored)))
         f.write('],')
     f.write(']\n')
 
 
     # For references to Objects, just save the oid
-    f.write('monsters = ' + repr([mon.oid for mon in SS.monsters]) + '\n')
-    f.write('items = ' + repr([item.oid for item in SS.items]) + '\n')
+    f.write('monsters = ' + repr([mon.oid for mon in SS.map.monsters]) + '\n')
+    f.write('items = ' + repr([item.oid for item in SS.map.items]) + '\n')
 
     # Save all monsters in existence.
     f.write('monster_defs = [')
@@ -81,9 +81,10 @@ def load_game(file):
     # Replace the map structure in the save file with actual cells.
     SS.map = map
 
-    for x in xrange(len(SS.map)):
-        for y in xrange(len(SS.map[0])):
-            SS.map[x][y] = Cell(SS.map[x][y]['n'], explored=SS.map[x][y]['e'])
+    for x in xrange(SS.map.w):
+        for y in xrange(SS.map.h):
+            SS.map.grid[x][y] = Cell(
+                SS.map.grid[x][y]['n'], explored=SS.map.grid[x][y]['e'])
 
     # Re-create monsters
     for m_str in monster_defs:
@@ -100,8 +101,8 @@ def load_game(file):
 
 
 # FIXME: This is now handled by place_on_map().  I'm not sure if I need to save these at all.
-#    SS.monsters = [Object.obj_dict[m] for m in monsters]
-#    SS.items = [Object.obj_dict[i] for i in items]
+#    SS.map.monsters = [Object.obj_dict[m] for m in monsters]
+#    SS.map.items = [Object.obj_dict[i] for i in items]
 
 def run_history():
     old_history = SS.cmd_history

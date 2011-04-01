@@ -8,6 +8,7 @@ server actions.
 
 from const import *
 from server_state import ServerState as SS
+from object import Object
 from monster import Monster
 from item import Item
 from dlevel import *
@@ -24,7 +25,7 @@ def pick_up(oids):
 
     for oid in oids:
         item = Object.obj_dict[oid]
-        if item in SS.map[SS.u.x][SS.u.y].items:
+        if item in SS.map.grid[SS.u.x][SS.u.y].items:
             SS.u.pick_up(item)
             item_here = True
 
@@ -36,9 +37,9 @@ def pick_up(oids):
 
 def magic_mapping():
     """Reveal all tiles on the map."""
-    for x in xrange(len(SS.map)):
-        for y in xrange(len(SS.map[0])):
-            SS.map[x][y].explored = True
+    for x in xrange(SS.map.w):
+        for y in xrange(SS.map.h):
+            SS.map.grid[x][y].explored = True
 
 
 class RequestHandler(object):

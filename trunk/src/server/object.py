@@ -67,6 +67,18 @@ class Object(object):
         else:
             return False
 
+    def move_to(self, x, y=None):
+        """Move to (x, y), if possible."""
+        x, y = flatten_args(x, y)
+        self.dirty = True
+            
+        if self.can_move(x, y):
+            self.x = x
+            self.y = y
+            return True
+        else:
+            return False
+
     def move_randomly(self):
         dir = SS.rand.randrange(len(DIR))
         if self.can_move_dir(DIR[dir]):
@@ -123,13 +135,13 @@ class Object(object):
         x, y = flatten_args(x, y)
         can_move = True
 
-        if x < 0 or y < 0 or x >= len(SS.map) or y >= len(SS.map[0]):
+        if x < 0 or y < 0 or x >= SS.map.w or y >= SS.map.h:
             can_move = False
 
-        if SS.map[x][y].blocks_movement:
+        if SS.map.grid[x][y].blocks_movement:
             can_move = False
 
-        for mon in SS.map[x][y].monsters:
+        for mon in SS.map.grid[x][y].monsters:
             if mon.blocks_movement:
                 can_move = False
                 break

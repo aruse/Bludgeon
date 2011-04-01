@@ -60,8 +60,8 @@ class Item(Object):
         if map is None:
             map = SS.map
 
-        SS.items.append(self)
-        map[self.x][self.y].items.append(self)
+        map.items.append(self)
+        map.grid[self.x][self.y].items.append(self)
 
     def delete(self, dict_remove=False):
         """
@@ -69,8 +69,8 @@ class Item(Object):
         @param dict_remove: Also remove the Item from the object dictionary.
         """
         print 'in delete', self.oid
-        SS.items.remove(self)
-        SS.map[self.x][self.y].items.remove(self)
+        SS.map.items.remove(self)
+        SS.map.grid[self.x][self.y].items.remove(self)
         if dict_remove:
             del Object.obj_dict[self.oid]
             
@@ -81,8 +81,8 @@ class Item(Object):
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this item has moved.
-            SS.map[oldx][oldy].items.remove(self)
-            SS.map[self.x][self.y].items.append(self)
+            SS.map.grid[oldx][oldy].items.remove(self)
+            SS.map.grid[self.x][self.y].items.append(self)
             self.dirty = True
 
     def serialize(self):

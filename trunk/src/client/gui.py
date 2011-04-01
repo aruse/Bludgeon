@@ -84,9 +84,9 @@ def mouse_coords_to_map_coords(x, y):
     x /= TILE_W
     y /= TILE_H
 
-    if x < 0 or x >= len(CS.map):
+    if x < 0 or x >= CS.map.w:
         x = None
-    if y < 0 or y >= len(CS.map[0]):
+    if y < 0 or y >= CS.map.h:
         y = None
     return x, y
 
@@ -216,12 +216,12 @@ def object_under_mouse():
     x, y = mouse_coords_to_map_coords(x, y)
 
     if x is not None and y is not None and (
-        CS.u.fov_map.in_fov(x, y) or CS.map[x][y].explored):
+        CS.u.fov_map.in_fov(x, y) or CS.map.grid[x][y].explored):
     
-        if len(CS.map[x][y].monsters):
-            return CS.map[x][y].monsters[0]
-        if len(CS.map[x][y].items):
-            return CS.map[x][y].items[0]
+        if len(CS.map.grid[x][y].monsters):
+            return CS.map.grid[x][y].monsters[0]
+        if len(CS.map.grid[x][y].items):
+            return CS.map.grid[x][y].items[0]
 
     else:
         return None
@@ -577,27 +577,27 @@ def update_log_surf():
 def render_map():
     CS.map_surf.fill(CLR['black'])
 
-    for x in xrange(len(CS.map)):
-        for y in xrange(len(CS.map[0])):
+    for x in xrange(CS.map.w):
+        for y in xrange(CS.map.h):
             if CS.u.fov_map.in_fov(x, y):
-                CS.map[x][y].draw(x, y)
-                CS.map[x][y].explored = True
+                CS.map.grid[x][y].draw(x, y)
+                CS.map.grid[x][y].explored = True
             else:
-                if CS.map[x][y].explored:
-                    CS.map[x][y].draw_gray(x, y)
+                if CS.map.grid[x][y].explored:
+                    CS.map.grid[x][y].draw_gray(x, y)
                 else:
                     CS.map_surf.blit(CS.tiles_img,
                                      cell2pixel(x, y), CS.blank_tile)
     
 def render_objects():
-    for item in CS.items:
+    for item in CS.map.items:
         if CS.u.fov_map.in_fov(item.x, item.y):
             item.draw()
         else:
-            if CS.map[item.x][item.y].explored:
+            if CS.map.grid[item.x][item.y].explored:
                 item.draw_gray()
 
-    for mon in CS.monsters:
+    for mon in CS.map.monsters:
         if CS.u.fov_map.in_fov(mon.x, mon.y):
             mon.draw()
 
@@ -607,7 +607,7 @@ def render_objects():
 
 def draw_fov_outline(color):
     """Draws an outline around the outside of any FOV maps in play."""
-    for mon in CS.monsters + [CS.u]:
+    for mon in CS.map.monsters + [CS.u]:
         if mon.fov_map is None:
             continue
 

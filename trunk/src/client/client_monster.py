@@ -84,20 +84,18 @@ class ClientMonster(ClientObject):
         if map is None:
             map = CS.map
 
-        CS.monsters.append(self)
-        map[self.x][self.y].monsters.append(self)
+        CS.map.monsters.append(self)
+        map.grid[self.x][self.y].monsters.append(self)
 
     def delete(self, dict_remove=False):
         """
         Remove map references to this Monster.
         @param dict_remove: Also remove the Monster from the object dictionary.
         """
-        CS.monsters.remove(self)
-        CS.map[self.x][self.y].monsters.remove(self)
+        CS.map.monsters.remove(self)
+        CS.map.grid[self.x][self.y].monsters.remove(self)
         if dict_remove:
             del ClientObject.obj_dict[self.oid]
-
-
 
     def set_fov_map(self, map):
         self.fov_map = FOVMap(map)
@@ -132,9 +130,9 @@ class ClientMonster(ClientObject):
         if 'blocks_movement' in m_dict:
             self.blocks_movement = m_dict['blocks_movement']
 
-        if self in CS.map[old_x][old_y].monsters:
-            CS.map[old_x][old_y].monsters.remove(self)
-        if self not in CS.map[self.x][self.y].monsters:
-            CS.map[self.x][self.y].monsters.append(self)
-        if self not in CS.monsters:
-            CS.monsters.append(self)
+        if self in CS.map.grid[old_x][old_y].monsters:
+            CS.map.grid[old_x][old_y].monsters.remove(self)
+        if self not in CS.map.grid[self.x][self.y].monsters:
+            CS.map.grid[self.x][self.y].monsters.append(self)
+        if self not in CS.map.monsters:
+            CS.map.monsters.append(self)

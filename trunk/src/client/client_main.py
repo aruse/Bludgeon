@@ -320,9 +320,6 @@ def client_tick():
             CS.u.fov_map.do_fov(CS.u.x, CS.u.y, CS.u.fov_radius)
             center_map()
             
-#        print 'C', [i.oid for i in CS.items], [i.oid for i in CS.map[CS.u.x][CS.u.y].items]
-#        print 'S', [i.oid for i in SS.items], [i.oid for i in SS.map[SS.u.x][SS.u.y].items]
-
         res = Network.get_response()
 
     if CS.mode != ST_PLAYBACK:
