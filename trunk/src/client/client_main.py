@@ -24,6 +24,7 @@ from keys import *
 import image
 from client_util import *
 
+
 def init_client():
     """Initialiaze client state."""
     # Set up signal handlers
@@ -46,7 +47,7 @@ def init_client():
     usex = 'Male'
     urace = 'Human'
     urole = 'Wizard'
-    
+
     pygame.display.set_caption('{0} - {1} the {2} {3} {4}'.format(
             GAME_TITLE, uname, usex, urace, urole))
 
@@ -57,7 +58,7 @@ def init_client():
     CS.font_w = CS.font.size('X')[0]
 
     # Size of the map surface
-    CS.map_rect.w = (MAP_W + 2) * TILE_W 
+    CS.map_rect.w = (MAP_W + 2) * TILE_W
     CS.map_rect.h = (MAP_H + 2) * TILE_H
 
     # Size of the status panel
@@ -82,7 +83,6 @@ def init_client():
         CS.eq_rect.w + CS.status_rect.w) - SCROLLBAR_W - 50
     CS.log_rect.h = CS.status_rect.h
     CS.logview_rect.w, CS.logview_rect.h = CS.log_rect.w, CS.log_rect.h
-
 
     # The mapview size.  May be smaller or larger than the actual map size.
     # This is the location on the screen where the map or a piece thereof
@@ -121,20 +121,21 @@ def init_client():
     # Set the system icon
     system_icon = image.load_image('icon.xpm')
     pygame.display.set_icon(system_icon)
-    
+
     CS.tiles_img = image.load_image('tiles16.xpm')
     CS.gray_tiles_img = image.load_image('tiles16_gray.xpm')
     CS.menu_bg_img = image.load_image('parchment.jpg')
 
     CS.tile_dict = image.create_tile_dict()
     CS.blank_tile = CS.tile_dict['cmap, wall, dark']
-    
+
     CS.x_scrollbar = ScrollBar(SCROLLBAR_W, 0, CS.map_rect,
                                CS.mapview_rect, always_show=False)
     CS.y_scrollbar = ScrollBar(SCROLLBAR_W, 1, CS.map_rect,
                                CS.mapview_rect, always_show=False)
     CS.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, CS.log_rect,
                                  CS.logview_rect, always_show=False)
+
 
 def handle_events():
     # Handle input events
@@ -175,36 +176,36 @@ def handle_events():
                 if char not in CS.pkeys[KMOD_NONE]:
                     key_combo = 'Shift + '
 
-                if (key_code in CS.pkeys[KMOD_SHIFT]
-                    and CS.pkeys[KMOD_SHIFT][key_code].action):
+                if (key_code in CS.pkeys[KMOD_SHIFT] and
+                    CS.pkeys[KMOD_SHIFT][key_code].action):
                     CS.pkeys[KMOD_SHIFT][key_code].do()
                     handled = True
 
             elif mod & KMOD_CTRL:
                 key_combo = 'Ctrl + '
 
-                if (key_code in CS.pkeys[KMOD_CTRL]
-                    and CS.pkeys[KMOD_CTRL][key_code].action):
+                if (key_code in CS.pkeys[KMOD_CTRL] and
+                    CS.pkeys[KMOD_CTRL][key_code].action):
                     CS.pkeys[KMOD_CTRL][key_code].do()
                     handled = True
 
             elif mod & KMOD_ALT:
                 key_combo = 'Alt + '
 
-                if (key_code in CS.pkeys[KMOD_ALT]
-                    and CS.pkeys[KMOD_ALT][key_code].action):
+                if (key_code in CS.pkeys[KMOD_ALT] and
+                    CS.pkeys[KMOD_ALT][key_code].action):
                     CS.pkeys[KMOD_ALT][key_code].do()
                     handled = True
 
             if not handled:
                 # First, look up by char.  If it's not found, then look up by
                 # key_code.
-                if (char in CS.pkeys[KMOD_NONE]
-                    and CS.pkeys[KMOD_NONE][char].action):
+                if (char in CS.pkeys[KMOD_NONE] and
+                    CS.pkeys[KMOD_NONE][char].action):
                     CS.pkeys[KMOD_NONE][char].do()
                     handled = True
-                elif (key_code in CS.pkeys[KMOD_NONE]
-                    and CS.pkeys[KMOD_NONE][key_code].action):
+                elif (key_code in CS.pkeys[KMOD_NONE] and
+                      CS.pkeys[KMOD_NONE][key_code].action):
                     CS.pkeys[KMOD_NONE][key_code].do()
                     handled = True
 
@@ -222,22 +223,22 @@ def handle_events():
                 index = ord(char) - ord('a')
                 if index >= 0 and index < len(CS.menu_options):
                     if CS.menu == 'use':
-                        CS.mode = ST_PLAYING # Exit menu
+                        CS.mode = ST_PLAYING  # Exit menu
                         if len(CS.u.inventory) > 0:
                             item = CS.u.inventory[index]
                             if item is not None:
                                 Network.request('a', (item.oid,))
 
                     elif CS.menu == 'drop':
-                        CS.mode = ST_PLAYING # Exit menu
+                        CS.mode = ST_PLAYING  # Exit menu
                         if len(CS.u.inventory) > 0:
                             item = CS.u.inventory[index]
                             if item is not None:
                                 Network.request('d', (item.oid,))
                 else:
-                    CS.mode = ST_PLAYING # Exit menu
-            else:        
-                CS.mode = ST_PLAYING # Exit menu
+                    CS.mode = ST_PLAYING  # Exit menu
+            else:
+                CS.mode = ST_PLAYING  # Exit menu
 
     elif CS.mode == ST_TARGETING:
         if CS.button:
@@ -257,7 +258,7 @@ def handle_events():
                     CS.u.inventory.remove(CS.targeting_item)
                     del Object.obj_dict[CS.targeting_item.oid]
                     CS.targeting_item = None
-                    
+
             CS.mode = ST_PLAYING
         elif key_code:
             client_message('Cancelled')
@@ -269,6 +270,7 @@ def handle_events():
         pass
     else:
         impossible('Unknown state: ' + CS.mode)
+
 
 def client_tick():
     """
@@ -299,7 +301,7 @@ def client_tick():
         if 'm_del' in res:
             for oid, flags in res['m_del']:
                 ClientObject.obj_dict[oid].delete(flags)
-    
+
         # Update items
         if 'i' in res:
             for oid, i_str in res['i'].iteritems():
@@ -319,7 +321,7 @@ def client_tick():
             CS.u.update_from_string(res['u'])
             CS.u.fov_map.do_fov(CS.u.x, CS.u.y, CS.u.fov_radius)
             center_map()
-            
+
         res = Network.get_response()
 
     if CS.mode != ST_PLAYBACK:

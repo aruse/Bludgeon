@@ -9,9 +9,10 @@ from pygame.locals import *
 from const import *
 from color import CLR
 
+
 class ClientState(object):
     """
-    Static class that stores any game client state that needs to be shared 
+    Static class that stores any game client state that needs to be shared
     everywhere.
     """
     # Debug mode
@@ -21,7 +22,7 @@ class ClientState(object):
 
     key = None       # The last key event
     button = None    # The last clicked mouse button
-    
+
     # Whether or not an action has been handled this clock cycle
     action_handled = False
 
@@ -52,10 +53,10 @@ class ClientState(object):
 
     font = None
     font_h = None
-    
+
     # What to blit over an area that's not visible
     blank_tile = None
-    
+
     # Cell locations to blit equipment on the equipment panel
     eq_hands = None
     eq_rweap = None
@@ -94,12 +95,11 @@ class ClientState(object):
 
     branch = 'doom'
     dlevel = 1
-    
+
     fov_outline = False
 
     mode = ST_PLAYING
     msgs = deque()
-
 
     # Color definitions
     log_bg_color = CLR['black']

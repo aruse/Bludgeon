@@ -20,7 +20,7 @@ class Cell(object):
         # Monsters and items in this cell
         self.monsters = []
         self.items = []
-        
+
         # Set to true if this cell has been modified.
         self.dirty = True
 
@@ -31,7 +31,7 @@ class Cell(object):
         @param name: Name of this cell.  Used as a key to look up attributes.
         """
         self.name = name
-        
+
         # FIXME: this is just dummy code.
         # Need a real database of tiles to load from.
         if re.findall('wall', name):
@@ -42,4 +42,3 @@ class Cell(object):
             self.blocks_movement = False
             self.blocks_sight = False
             self.kind = 'floor'
-

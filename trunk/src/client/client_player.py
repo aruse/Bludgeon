@@ -12,9 +12,10 @@ from fov import *
 from client_state import ClientState as CS
 from network import Network
 from client_util import *
-from client_object import ClientObject                    
+from client_object import ClientObject
 from client_monster import ClientMonster
 from gui import *
+
 
 class ClientPlayer(ClientMonster):
     """Representation of the player character in the client."""
@@ -34,7 +35,7 @@ class ClientPlayer(ClientMonster):
         Network.request('m', (dx, dy))
 
     def rest(self):
-       self.move(0, 0)
+        self.move(0, 0)
 
     def try_move(self, dx, dy=None):
         """

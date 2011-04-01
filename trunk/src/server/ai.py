@@ -1,13 +1,14 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-"""AI routines.  Can be assigned to Monster objects to tell them how to 
+"""AI routines.  Can be assigned to Monster objects to tell them how to
 behave.
 """
 
 from const import *
 from server_state import ServerState as SS
 from util import *
+
 
 class StupidAI(object):
     """AI for a monster that tries to move next to the player and whack him."""
@@ -32,17 +33,16 @@ class ConfusedAI(object):
     def __init__(self, old_ai, num_turns=CONFUSE_NUM_TURNS):
         self.old_ai = old_ai
         self.num_turns = num_turns
- 
+
     def take_turn(self):
         if self.num_turns > 0:
             # Move in a random direction, and decrease the number of
             # turns confused
             self.owner.move_randomly()
             self.num_turns -= 1
- 
+
         else:
             # Restore the previous AI
             self.owner.ai = self.old_ai
             message('The ' + self.owner.name + ' is no longer confused!',
                     CLR['red'])
- 

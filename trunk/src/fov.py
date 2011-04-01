@@ -6,6 +6,7 @@ Routines for calculating field of view (FOV).
 Based on Bjorn Bergstrom's recursive shadowcasting algorithm.
 """
 
+
 class FOVMap(object):
     # Multipliers for transforming coordinates to other octants.
     mult = [[1,  0,  0, -1, -1,  0,  0,  1],
@@ -22,14 +23,14 @@ class FOVMap(object):
         self.flag = 1
 
     def blocked(self, x, y):
-        return (x < 0 or y < 0
-                or x >= self.w or y >= self.h
-                or self.grid[x][y].blocks_sight)
+        return (x < 0 or y < 0 or
+                x >= self.w or y >= self.h or
+                self.grid[x][y].blocks_sight)
 
     def in_fov(self, x, y):
         """Return whether or not this cell is in the FOV."""
-        return (0 <= x < self.w and 0 <= y < self.h
-                and self.marked[x][y] == self.flag)
+        return (0 <= x < self.w and 0 <= y < self.h and
+                self.marked[x][y] == self.flag)
 
     def set_marked(self, x, y):
         """Set a cell as in the FOV."""
@@ -41,7 +42,7 @@ class FOVMap(object):
         if start < end:
             return
 
-        for i in xrange(row, radius+1):
+        for i in xrange(row, radius + 1):
             dx = -i - 1
             dy = -i
             blocked = False
@@ -96,4 +97,3 @@ class FOVMap(object):
         # This is necessary because the algorithm doesn't recognise the
         # starting square as being in the FOV.
         self.set_marked(x, y)
-        

@@ -23,6 +23,7 @@ def move_surface_locations():
     CS.status_rect.x = CS.eq_rect.x + CS.eq_rect.w
     CS.status_rect.y = 0
 
+
 def handle_resize(w, h):
     """
     Shuffle surfaces around to their correct places when the game window
@@ -44,8 +45,8 @@ def handle_resize(w, h):
     CS.mapview_rect.h = CS.screen_rect.h - CS.status_rect.h - SCROLLBAR_W
 
     # Resize the log surface
-    CS.log_rect.w = CS.screen_rect.w - (CS.eq_rect.w + CS.status_rect.w) \
-        - SCROLLBAR_W
+    CS.log_rect.w = (CS.screen_rect.w - (CS.eq_rect.w + CS.status_rect.w) -
+                     SCROLLBAR_W)
     CS.logview_rect.w = CS.log_rect.w
 
     # Resize the dialog surface
@@ -60,6 +61,7 @@ def handle_resize(w, h):
     CS.log_scrollbar.resize()
 
     center_map()
+
 
 def set_dialog_size():
     """Set the rect dimensions for the dialog surface."""
@@ -90,12 +92,14 @@ def mouse_coords_to_map_coords(x, y):
         y = None
     return x, y
 
+
 def draw_box(x, y, color):
     """Draw a box around the cell at the given coords."""
     coords = cell2pixel(x, y)
     pygame.draw.rect(CS.map_surf, color,
                      Rect((x + 1) * TILE_W, (y + 1) * TILE_H,
                           TILE_W, TILE_H), 1)
+
 
 def draw_line_between(x1, y1, x2, y2, color):
     """Draw a line between the two given adjacent cells."""
@@ -126,7 +130,7 @@ def img_fill(surf, img, rect=None):
     if rect is None:
         rect = surf.get_rect()
     img_rect = img.get_rect()
-        
+
     x, y = 0, 0
     while True:
         # Don't worry about spilling over the edges of the surface.  Pygame
@@ -168,7 +172,6 @@ def menu(header, options, w):
              Rect(surf_w + padding, surf_h + padding,
                   surf_w - padding * 2, surf_h - padding * 2))
 
-    
     # Blit the header
     CS.dialog_surf.blit(text_img, (BORDER_W + PADDING, BORDER_W + PADDING))
 
@@ -192,7 +195,8 @@ def menu(header, options, w):
 
     CS.menu_options = options
     CS.mode = ST_MENU
- 
+
+
 def inventory_menu(header, menu_type):
     """
     Display an inventory menu.
@@ -206,10 +210,10 @@ def inventory_menu(header, menu_type):
         options = ['Inventory is empty.']
     else:
         options = [item.name for item in inv]
- 
+
     menu(header, options, MIN_INVENTORY_W)
- 
-    
+
+
 def object_under_mouse():
     """Return the top object under the mouse."""
     x, y = pygame.mouse.get_pos()
@@ -217,7 +221,7 @@ def object_under_mouse():
 
     if x is not None and y is not None and (
         CS.u.fov_map.in_fov(x, y) or CS.map.grid[x][y].explored):
-    
+
         if len(CS.map.grid[x][y].monsters):
             return CS.map.grid[x][y].monsters[0]
         if len(CS.map.grid[x][y].items):
@@ -268,7 +272,7 @@ def wordwrap_img(text, w, antialias, color, justify='left'):
             x = 0
         elif justify == 'right':
             x = w - line.get_width()
-        else: # justify == 'center'
+        else:  # justify == 'center'
             x = w / 2 - line.get_width() / 2
 
         final_surf.blit(line, (x, y))
@@ -282,7 +286,7 @@ def add_surface_border(surf):
 
     left_x, right_x = 0, rect.w - BORDER_W
     top_y, bottom_y = 0, rect.h - BORDER_W
-    
+
     for x in xrange(1, rect.w / BORDER_W):
         surf.blit(CS.tiles_img, (x * BORDER_W, top_y),
                   CS.tile_dict['explosion, fiery, top center'])
@@ -293,7 +297,7 @@ def add_surface_border(surf):
                   CS.tile_dict['explosion, fiery, middle left'])
         surf.blit(CS.tiles_img, (right_x, y * BORDER_W),
                   CS.tile_dict['explosion, fiery, middle right'])
-    
+
     surf.blit(CS.tiles_img, (left_x, top_y),
               CS.tile_dict['explosion, fiery, top left'])
     surf.blit(CS.tiles_img, (right_x, top_y),
@@ -353,7 +357,6 @@ def render_tooltips():
             hp_rect.top = BORDER_W + PADDING + text_rect.h
             tooltip_surf.blit(hp_img, hp_rect)
 
-
         rect = tooltip_surf.get_rect()
         x, rect.bottom = pygame.mouse.get_pos()
 
@@ -392,7 +395,6 @@ def update_eq_surf():
     CS.eq_surf.blit(CS.tiles_img, CS.eq_boots, CS.tile_dict['snow boots'])
     CS.eq_surf.blit(CS.tiles_img, CS.eq_light, CS.tile_dict['candle'])
 
-
     x = 0
     y = CS.eq_boots[1] + TILE_W * 1.5
     for i in CS.u.inventory:
@@ -405,7 +407,6 @@ def update_eq_surf():
             break
 
 
-    
 def write_text(surf, text, line_num, justify='left',
                column=None, color=CS.default_font_color,
                antialias=True, padding=0):
@@ -414,7 +415,7 @@ def write_text(surf, text, line_num, justify='left',
     rect = surf.get_rect()
 
     col_w = rect.w / 4
-    
+
     if column is None:
         left_border = rect.left + padding
         right_border = rect.right - padding
@@ -423,14 +424,14 @@ def write_text(surf, text, line_num, justify='left',
         left_border = rect.left + column * col_w + padding
         right_border = rect.right - ((3 - column) * col_w) - padding
         center = (left_border + right_border) / 2
-    
+
     text_img = CS.font.render(text, antialias, color)
     text_rect = text_img.get_rect()
     if justify == 'left':
         text_rect.left = left_border
     elif justify == 'right':
         text_rect.right = right_border
-    else: # justify == 'center':
+    else:  # justify == 'center':
         text_rect.centerx = center
 
     text_rect.top = surf.get_rect().top + line_num * CS.font_h
@@ -441,19 +442,19 @@ def render_bar(surf, x, y, length, value,
                max_value, bar_color, background_color):
     # Render a bar (HP, experience, etc).
     bar_length = int(float(value) / max_value * length)
- 
+
     surf.fill(background_color, rect=pygame.Rect(x, y, length, CS.font_h - 1))
     if bar_length > 0:
         surf.fill(bar_color, rect=pygame.Rect(x, y, bar_length, CS.font_h - 1))
- 
-    
+
+
 def update_status_surf():
     """Update the status surface."""
     surf = CS.status_surf
     rect = surf.get_rect()
     surf.fill(CS.log_bg_color)
     y = 0.5
-    
+
     write_text(surf, 'Taimor the Human Male Apprentice (Chaotic)',
                0.5, justify='center')
     y += 1
@@ -499,45 +500,46 @@ def update_status_surf():
     write_text(surf, str(18), y, justify='left', column=1, padding=CS.font_w)
     write_text(surf, 'AC', y, justify='right', column=2, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=3, padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Con', y, justify='right', column=0, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=1, padding=CS.font_w)
     write_text(surf, 'Gold', y, justify='right', column=2, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=3, padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Dex', y, justify='right', column=0, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=1, padding=CS.font_w)
     write_text(surf, 'Level', y, justify='right', column=2, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=3, padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Int', y, justify='right', column=0, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=1, padding=CS.font_w)
     write_text(surf, 'Time', y, justify='right', column=2, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=3, padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Wis', y, justify='right', column=0, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=1, padding=CS.font_w)
     write_text(surf, 'Score', y, justify='right', column=2, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=3, padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Cha', y, justify='right', column=0, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=1, padding=CS.font_w)
     write_text(surf, 'Weap Skill', y, justify='right',
                column=2, padding=CS.font_w)
     write_text(surf, str(18), y, justify='left', column=3, padding=CS.font_w)
 
-    y += 1    
+    y += 1
     write_text(surf, 'Weapon Damage 3d8 + ' + str(6), y, justify='left',
                padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Weapon Range ' + str(5), y, justify='left',
                padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Hungry Burdened Confused Poisoned', y, justify='left',
                padding=CS.font_w)
-    y += 1    
+    y += 1
     write_text(surf, 'Hallucinating Sick Blind Stunned', y, justify='left',
                padding=CS.font_w)
+
 
 def update_log_surf():
     """Update the log surface."""
@@ -572,7 +574,7 @@ def update_log_surf():
 
     # Mark the log surface as updated
     CS.log_updated = False
-    
+
 
 def render_map():
     CS.map_surf.fill(CLR['black'])
@@ -588,7 +590,8 @@ def render_map():
                 else:
                     CS.map_surf.blit(CS.tiles_img,
                                      cell2pixel(x, y), CS.blank_tile)
-    
+
+
 def render_objects():
     for item in CS.map.items:
         if CS.u.fov_map.in_fov(item.x, item.y):
@@ -630,8 +633,8 @@ def render_decorations():
         x, y = mouse_coords_to_map_coords(x, y)
         draw_box(x, y, CLR['white'])
 
-
-    pygame.draw.rect(CS.map_surf, CLR['red'], Rect(0, 0, CS.map_rect.w, CS.map_rect.h), 1)
+    pygame.draw.rect(CS.map_surf, CLR['red'],
+                     Rect(0, 0, CS.map_rect.w, CS.map_rect.h), 1)
 
     if CS.fov_outline:
         draw_fov_outline(CLR['red'])
@@ -647,12 +650,11 @@ def render_decorations():
 def center_map_x():
     """Helper function for center_map().  Handles the horizontal coordinate."""
     if CS.map_rect.w < CS.mapview_rect.w:
-        CS.map_rect.x = CS.mapview_rect.w / 2 - CS.map_rect.w / 2 + \
-            CS.mapview_rect.x
+        CS.map_rect.x = (CS.mapview_rect.w / 2 - CS.map_rect.w / 2 +
+                         CS.mapview_rect.x)
     else:
-        CS.map_rect.x = ((CS.mapview_rect.w / 2)
-                         - (CS.u.x * TILE_W)
-                         + CS.mapview_rect.x)
+        CS.map_rect.x = (CS.mapview_rect.w / 2 - CS.u.x * TILE_W +
+                         CS.mapview_rect.x)
 
         if CS.map_rect.x > CS.mapview_rect.x:
             CS.map_rect.x = CS.mapview_rect.x
@@ -669,12 +671,11 @@ def center_map_x():
 def center_map_y():
     """Helper function for center_map().  Handles the vertical coordinate."""
     if CS.map_rect.h < CS.mapview_rect.h:
-        CS.map_rect.y = CS.mapview_rect.h / 2 - CS.map_rect.h / 2 + \
-            CS.mapview_rect.y
+        CS.map_rect.y = (CS.mapview_rect.h / 2 - CS.map_rect.h / 2 +
+                         CS.mapview_rect.y)
     else:
-        CS.map_rect.y = ((CS.mapview_rect.h / 2)
-                         - (CS.u.y * TILE_H)
-                         + CS.mapview_rect.y)
+        CS.map_rect.y = (CS.mapview_rect.h / 2 - CS.u.y * TILE_H +
+                         CS.mapview_rect.y)
 
         if CS.map_rect.y > CS.mapview_rect.y:
             CS.map_rect.y = CS.mapview_rect.y
@@ -686,15 +687,16 @@ def center_map_y():
     # Move the scrollbar slider to the correct position
     CS.y_scrollbar.align()
 
+
 def center_map():
-    """Moves the map surface so that the player appears at the center of the 
+    """Moves the map surface so that the player appears at the center of the
     mapview.  If the map surface is smaller than the mapview, center the map
     inside of the mapview instead.
     """
     center_map_x()
     center_map_y()
 
-        
+
 def update_gui():
     """Handle all of the view actions in the game loop."""
     if CS.log_updated:
@@ -702,7 +704,7 @@ def update_gui():
 
     update_eq_surf()
     update_status_surf()
-    
+
     render_map()
     render_objects()
     render_decorations()

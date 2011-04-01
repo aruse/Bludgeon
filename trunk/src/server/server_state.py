@@ -6,14 +6,15 @@ from collections import deque
 
 from const import *
 
+
 class ServerState(object):
     """
-    Static class that stores any server state that needs to be shared      
+    Static class that stores any server state that needs to be shared
     everywhere.
     """
     # Debug mode
     debug = True
-    
+
     # The map of the current level, a two dimensional array
     map = None
 
@@ -33,7 +34,7 @@ class ServerState(object):
     fov_map = None
 
     mode = ST_PLAYING
-    
+
     u_action = None
     u_took_turn = False
 

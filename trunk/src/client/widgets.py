@@ -51,7 +51,7 @@ class ScrollBar(object):
 
         self.arrow_scroll_amount = 0
 
-        # We may be resizing the display rect, so we need to keep track of 
+        # We may be resizing the display rect, so we need to keep track of
         # the original dimensions in case we need to restore them.
         self.orig_display_rect = display_rect.copy()
 
@@ -71,7 +71,7 @@ class ScrollBar(object):
 
         # Ratio of the track size over the display size
         self.track_ratio = None
-        
+
         self.resize()
 
     def resize(self):
@@ -120,8 +120,8 @@ class ScrollBar(object):
         if self.always_show is False:
             # Only make the slider disappear if the surf_rect is
             # larger than the display_rect in both dimensions.
-            if (float(self.display_rect.w) / self.surf_rect.w >= 1
-                and float(self.display_rect.h) / self.surf_rect.h >= 1):
+            if (float(self.display_rect.w) / self.surf_rect.w >= 1 and
+                float(self.display_rect.h) / self.surf_rect.h >= 1):
                 self.shown = False
             else:
                 self.shown = True
@@ -132,7 +132,7 @@ class ScrollBar(object):
             return
 
         a = self.axis
-        
+
         if event.type == MOUSEBUTTONDOWN:
             if self.slider.collidepoint(event.pos):
                 self.clicked = True
@@ -147,10 +147,12 @@ class ScrollBar(object):
                     elif event.pos[a] < self.slider.topleft[a]:
                         move = -self.slider.w
 
-                    move = max(move, self.track.topleft[a] \
-                                   - self.slider.topleft[a])
-                    move = min(move, self.track.bottomright[a] \
-                                   - self.slider.bottomright[a])
+                    move = max(move,
+                               (self.track.topleft[a] -
+                                self.slider.topleft[a]))
+                    move = min(move,
+                               (self.track.bottomright[a] -
+                                self.slider.bottomright[a]))
                     self.slider.move_ip((move, 0))
                 elif a == 1:
                     if event.pos[a] > self.slider.bottomright[a]:
@@ -158,10 +160,12 @@ class ScrollBar(object):
                     elif event.pos[a] < self.slider.topleft[a]:
                         move = -self.slider.h
 
-                    move = max(move, self.track.topleft[a] \
-                                   - self.slider.topleft[a])
-                    move = min(move, self.track.bottomright[a] \
-                                   - self.slider.bottomright[a])
+                    move = max(move,
+                               (self.track.topleft[a] -
+                                self.slider.topleft[a]))
+                    move = min(move,
+                               (self.track.bottomright[a] -
+                                self.slider.bottomright[a]))
                     self.slider.move_ip((0, move))
 
                 self.move_surf()
@@ -173,14 +177,14 @@ class ScrollBar(object):
                 self.arrow_scroll_amount = 1
 
             # Handle scroll wheel
-            if (self.axis == 1
-                and (self.track.collidepoint(event.pos)
-                     or self.display_rect.collidepoint(event.pos))):
+            if (self.axis == 1 and
+                (self.track.collidepoint(event.pos) or
+                 self.display_rect.collidepoint(event.pos))):
                 if event.button == BUTTON_SCROLL_U:
                     self.move_slider(-ScrollBar.wheel_scroll_amt)
                 elif event.button == BUTTON_SCROLL_D:
                     self.move_slider(ScrollBar.wheel_scroll_amt)
-                
+
         elif event.type == MOUSEBUTTONUP:
             self.clicked = False
             self.scrolling = False
@@ -188,10 +192,10 @@ class ScrollBar(object):
 
         elif event.type == MOUSEMOTION:
             if self.scrolling and event.rel[a] != 0:
-                # This keeps the mouse from activating the slider if you 
+                # This keeps the mouse from activating the slider if you
                 # click and then move outside of the display_rect.
-                if (event.pos[a] > self.display_rect.topleft[a]
-                    and event.pos[a] < self.display_rect.bottomright[a]):
+                if (event.pos[a] > self.display_rect.topleft[a] and
+                    event.pos[a] < self.display_rect.bottomright[a]):
 
                     self.move_slider(event.rel[a])
 
@@ -207,15 +211,15 @@ class ScrollBar(object):
             # game window.
             if event.gain == 0:
                 self.hover = False
-                                
+
     def move_slider(self, d):
         """Move the slider by d amount."""
         a = self.axis
-        move = max(d, self.track.topleft[a] 
+        move = max(d, self.track.topleft[a]
                    - self.slider.topleft[a])
-        move = min(move, self.track.bottomright[a] 
+        move = min(move, self.track.bottomright[a]
                    - self.slider.bottomright[a])
-                        
+
         if move != 0:
             if a == 0:
                 self.slider.move_ip((move, 0))
@@ -246,9 +250,8 @@ class ScrollBar(object):
 
         if self.axis == 0:
             self.surf_rect.x = (
-                (self.track.x - self.slider.x)
-                / self.surf_ratio) / self.track_ratio \
-                + self.display_rect.x
+                (self.track.x - self.slider.x) /
+                self.surf_ratio) / self.track_ratio + self.display_rect.x
 
             # Compensate for rounding errors
             if self.surf_rect.right < self.display_rect.right:
@@ -256,14 +259,12 @@ class ScrollBar(object):
 
         elif self.axis == 1:
             self.surf_rect.y = (
-                (self.track.y - self.slider.y)
-                / self.surf_ratio) / self.track_ratio \
-                + self.display_rect.y
+                (self.track.y - self.slider.y) /
+                self.surf_ratio) / self.track_ratio + self.display_rect.y
 
             # Compensate for rounding errors
             if self.surf_rect.bottom < self.display_rect.bottom:
                 self.surf_rect.bottom = self.display_rect.bottom
-
 
     def align(self):
         """Place the slider where it should be, according to the location
@@ -311,7 +312,6 @@ class ScrollBar(object):
 
         if self.shown is False:
             return
-
 
         if self.axis == 0:
             # The horizontal track
@@ -413,7 +413,7 @@ class ScrollBar(object):
                                int(th * 0.5 - 2), 0)
             points = ((self.track.x + 4, self.track.y + self.track.h + 4),
                       (self.track.x + self.track.w - 4,
-                       self.track.y + self.track.h  + 4),
+                       self.track.y + self.track.h + 4),
                       (self.track.x + self.track.w / 2,
                        self.track.y + self.track.h + th - 4))
             if self.slider.bottom == self.track.bottom:

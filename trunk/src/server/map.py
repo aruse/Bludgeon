@@ -41,7 +41,7 @@ class Map(object):
     def create_h_tunnel(self, x1, x2, y):
         for x in xrange(min(x1, x2), max(x1, x2) + 1):
             self.grid[x][y].set_attr('cmap, floor of a room')
- 
+
     def create_v_tunnel(self, y1, y2, x):
         for y in xrange(min(y1, y2), max(y1, y2) + 1):
             self.grid[x][y].set_attr('cmap, floor of a room')
@@ -53,25 +53,25 @@ class Map(object):
 
             x = SS.map_rand.randrange(0, self.w - w - 1)
             y = SS.map_rand.randrange(0, self.h - h - 1)
- 
+
             new_room = Room(x, y, w, h)
-        
+
             # See if any of the other rooms intersect with this one
             failed = False
             for room in self.rooms:
                 if new_room.intersect(room):
                     failed = True
                     break
- 
+
             if not failed:
                 self.create_rectangular_room(new_room)
                 self.place_objects(new_room)
- 
+
                 # First room
                 if len(self.rooms) == 0:
                     (new_x, new_y) = new_room.center()
                     self.upstairs = (new_x, new_y)
- 
+
                 self.rooms.append(new_room)
 
         # Connect the rooms
@@ -107,20 +107,20 @@ class Map(object):
         for i in xrange(SS.map_rand.randrange(3)):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
- 
+
             if not self.blocks_movement(x, y):
                 if SS.map_rand.randrange(0, 100) < 60:
                     mon = Monster(x, y, 'orc', ai=StupidAI())
                 else:
                     mon = Monster(x, y, 'troll', ai=StupidAI())
- 
+
                 mon.place_on_map(self)
 
         # Choose random number of items
         for i in xrange(SS.map_rand.randrange(8)):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
- 
+
             if not self.blocks_movement(x, y):
                 dice = SS.map_rand.randrange(0, 100)
                 if dice < 40:
@@ -133,7 +133,6 @@ class Map(object):
                     item = Item(x, y, 'scroll of confusion')
 
                 item.place_on_map(self)
-
 
     def create_rectangular_room(self, room):
         # Punch out the floor tiles

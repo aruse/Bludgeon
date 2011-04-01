@@ -9,15 +9,17 @@ from ai import *
 
 from util import *
 
+
 def cast_heal(item, x=None, y=None):
     if SS.u.hp == SS.u.max_hp:
         message('You are already at full health.', CLR['light_violet'])
         return 'cancelled'
- 
+
     message('Your wounds start to feel better!', CLR['light_violet'])
     SS.u.heal(HEAL_AMOUNT)
     return 'success'
-    
+
+
 def closest_monster(max_range):
     # Find closest enemy, up to a maximum range and in the player's FOV
     closest_enemy = None
@@ -32,8 +34,8 @@ def closest_monster(max_range):
                 closest_dist = dist
 
     return closest_enemy
-                                                        
-    
+
+
 def cast_lightning(item, x=None, y=None):
     target = closest_monster(5)
 
@@ -44,11 +46,11 @@ def cast_lightning(item, x=None, y=None):
     else:
         message('A lighting bolt strikes the ' + target.name
                 + ' with a loud thunder!', CLR['light_blue'])
-        
+
     target.take_damage(LIGHTNING_DAMAGE)
     return 'success'
 
-    
+
 def cast_fireball(item, x=None, y=None):
     """Begin the casting of a fireball spell.  Ask the player to
     target a cell.
@@ -62,8 +64,8 @@ def cast_fireball(item, x=None, y=None):
         return 'targeting'
     else:
         finish_fireball(item, x, y)
-    
-    
+
+
 def finish_fireball(item, x=None, y=None):
     """Finish the casting of a fireball spell after a cell has been selected.
     Return whether or not the fireball was cast.
@@ -72,7 +74,7 @@ def finish_fireball(item, x=None, y=None):
         return False
     message('The fireball explodes, burning everything within '
             + str(FIREBALL_RADIUS) + ' spaces!', CLR['orange'])
- 
+
     for mon in SS.map.monsters + [SS.u]:
         if mon.distance(x, y) <= FIREBALL_RADIUS:
             message('The ' + mon.name + ' gets burned for '
@@ -80,7 +82,8 @@ def finish_fireball(item, x=None, y=None):
             mon.take_damage(FIREBALL_DAMAGE)
 
     return True
- 
+
+
 def cast_confuse(item, x=None, y=None):
     if x == None and y == None:
         message('Left-click an enemy to confuse it, or right-click to '
@@ -92,22 +95,24 @@ def cast_confuse(item, x=None, y=None):
     else:
         finish_confuse(item, x, y)
 
+
 def finish_confuse(item, x, y):
     # FIXME: should be able to target myself
     target = None
     for mon in SS.map.monsters:
-        if (mon.x == x and mon.y == y
-            and mon.distance(SS.u.x, SS.u.y) <= CONFUSE_RANGE):
+        if (mon.x == x and mon.y == y and
+            mon.distance(SS.u.x, SS.u.y) <= CONFUSE_RANGE):
             target = mon
             break
 
     if target is None:
         return False
- 
+
     # Replace the monster's AI with a confused one
     old_ai = target.ai
     target.ai = ConfusedAI(old_ai)
-    target.ai.owner = target  #tell the new component who owns it
+    # Tell the new component who owns it
+    target.ai.owner = target
     message('The eyes of the ' + target.name
             + ' look vacant, as he starts to stumble around!',
             CLR['light_green'])

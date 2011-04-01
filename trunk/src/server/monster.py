@@ -7,14 +7,16 @@ from fov import *
 
 from server_state import ServerState as SS
 from ai import *
-from object import Object                    
+from object import Object
 from item import Item
+
 
 def die_leave_corpse(mon):
     message(mon.name.capitalize() + ' dies!', CLR['red'])
     mon.delete()
     corpse = Item(mon.x, mon.y, 'corpse', prev_monster=mon)
     corpse.place_on_map()
+
 
 class Monster(Object):
     """
@@ -30,30 +32,29 @@ class Monster(Object):
         # Replace inventory oids with references to actual objects
         inv = [Object.obj_dict[oid] for oid in m_dict['inventory']]
 
-
         return Monster(
-            m_dict['x'], m_dict['y'], m_dict['name'], oid=m_dict['oid'], 
+            m_dict['x'], m_dict['y'], m_dict['name'], oid=m_dict['oid'],
             ai=eval(m_dict['ai'])(), hp=m_dict['hp'], max_hp=m_dict['max_hp'],
             mp=m_dict['mp'], max_mp=m_dict['max_mp'],
             death=eval(m_dict['death']), inventory=inv)
 
-    
     def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
                  mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS,
                  inventory=[]):
         Object.__init__(self, x, y, name, oid=oid)
 
         self.ai = ai
-        if self.ai: # Let the AI component access its owner
+        # Let the AI component know who its owner is
+        if self.ai is not None:
             self.ai.owner = self
-            
+
         self.blocks_sight = False
         self.blocks_movement = True
         self.fov_radius = fov_radius
 
         # Function to call when this monster dies
         self.death = None
-        
+
         # Field of view map.
         self.fov_map = None
 
@@ -80,7 +81,6 @@ class Monster(Object):
             self.atk_power = 2
             self.defense = 0
 
-
         if hp is not None:
             self.hp = hp
         if death is not None:
@@ -92,7 +92,7 @@ class Monster(Object):
             self.max_hp = max_hp
 
         self.inventory = inventory
-        
+
         # FIXME dummy values
         self.mp = 13
         self.max_mp = 25
@@ -102,7 +102,6 @@ class Monster(Object):
         self.burdened = 1000
         self.hunger = 450
         self.max_hunger = 1000
-
 
     def place_on_map(self, map=None):
         """Place the monster object on the current game map."""
@@ -121,7 +120,7 @@ class Monster(Object):
         SS.map.grid[self.x][self.y].monsters.remove(self)
         if dict_remove:
             del Object.obj_dict[self.oid]
-            
+
         SS.monsters_to_delete.append((self.oid, dict_remove))
 
     def pick_up(self, item):
@@ -136,7 +135,7 @@ class Monster(Object):
     def attack(self, target):
         """Attack target with wielded weapon."""
         damage = self.atk_power - target.defense
- 
+
         if damage > 0:
             message(self.name.capitalize() + ' attacks ' + target.name
                     + ' for ' + str(damage) + ' hit points.')
@@ -146,11 +145,11 @@ class Monster(Object):
                     + ' but it has no effect!')
 
         self.dirty = True
- 
+
     def take_damage(self, damage):
         if damage > 0:
             self.hp -= damage
- 
+
             # If dead, call death function
             if self.hp <= 0:
                 self.death(self)

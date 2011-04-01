@@ -35,6 +35,7 @@ def pick_up(oids):
         SS.u_took_turn = False
         message('Nothing to pick up!')
 
+
 def magic_mapping():
     """Reveal all tiles on the map."""
     for x in xrange(SS.map.w):
@@ -47,7 +48,7 @@ class RequestHandler(object):
     def __init__(self, action, turn, desc=None):
         """Arguments:
         @param action: Action to performed by the SS.
-        @param turn: Whether or not this action counts as taking a turn.  
+        @param turn: Whether or not this action counts as taking a turn.
         If this depends on the outcome of the action, set it to None and let
         the action handler take care of it.
         @param desc: Short description of what this request does.
@@ -63,7 +64,7 @@ class RequestHandler(object):
 
 def attach_request_actions():
     """Set up dictionaries to map requests to actions."""
-    
+
     SS.requests = {
         'm': RequestHandler(SS.u.move, True, "Move the player."),
         'F': RequestHandler(SS.u.attack, True, "Attack a location."),

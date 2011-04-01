@@ -6,10 +6,7 @@ import re
 from const import *
 from client_state import ClientState as CS
 from client_cell import ClientCell
-#from room import Room
-#from monster import Monster
-#from item import Item
-#from ai import *
+
 
 class ClientMap(object):
     """

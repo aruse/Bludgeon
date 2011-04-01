@@ -6,10 +6,12 @@ from pygame.locals import *
 
 from const import *
 
+
 def impossible(text):
     print 'Impossible area of code reached'
     print text
     exit(0)
+
 
 def flatten_args(x, y):
     if isinstance(x, tuple):

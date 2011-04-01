@@ -12,8 +12,9 @@ from fov import *
 from client_state import ClientState as CS
 from network import Network
 from client_util import *
-from client_object import ClientObject                    
+from client_object import ClientObject
 from gui import *
+
 
 class ClientMonster(ClientObject):
     """Monster representation for the client."""
@@ -68,7 +69,7 @@ class ClientMonster(ClientObject):
             self.max_hp = max_hp
 
         self.inventory = inventory
-        
+
         # FIXME dummy values
         self.mp = 13
         self.max_mp = 25

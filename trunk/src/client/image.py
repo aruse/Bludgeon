@@ -13,6 +13,7 @@ from pygame.locals import *
 
 from const import *
 
+
 def load_image(name):
     """Load image and return image object."""
     fullname = os.path.join('images', name)
@@ -24,8 +25,9 @@ def load_image(name):
             image = image.convert_alpha()
     except pygame.error, message:
         print 'Cannot load image:', fullname
-        raise SystemExit, message
+        raise SystemExit(message)
     return image
+
 
 def create_tile_dict():
     tile_dict = {}
@@ -37,7 +39,7 @@ def create_tile_dict():
     for line in map:
         (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
         x = (int(loc) % 38) * TILE_W
-        y = (int(loc) / 38) * TILE_H        
+        y = (int(loc) / 38) * TILE_H
         tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
 
     return tile_dict

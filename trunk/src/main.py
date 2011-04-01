@@ -26,7 +26,8 @@ from client.client_cell import ClientCell
 from client.client_monster import ClientMonster
 from client.client_main import *
 from client.client_map import ClientMap
-    
+
+
 def main():
     parser = optparse.OptionParser()
     parser.add_option('-s', '--input', dest='save_file', default='',

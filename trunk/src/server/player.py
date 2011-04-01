@@ -7,16 +7,18 @@ from fov import *
 
 from server_state import ServerState as SS
 from ai import *
-from object import Object                    
+from object import Object
 from monster import Monster
 from item import Item
+
 
 def player_death(mon):
     message(mon.name.capitalize() + ' dies!', CLR['red'])
     mon.delete()
     corpse = Item(mon.x, mon.y, 'corpse', prev_monster=m)
     corpse.place_on_map()
-    
+
+
 class Player(Monster):
     """Representation of the player character."""
 
@@ -58,7 +60,6 @@ class Player(Monster):
         item = Object.obj_dict[item]
         Monster.drop(self, item)
         message('You dropped the ' + item.name + '.')
-
 
     def serialize(self):
         """

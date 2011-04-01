@@ -12,6 +12,7 @@ from util import *
 from common import *
 from fov import *
 
+
 class Object(object):
     """
     Generic object.  Can be sub-classed into players, monsters,
@@ -54,12 +55,12 @@ class Object(object):
         # Set to true to delete.  This won't actually happen until after the
         # client is informed.
         self.delete_me = False
-        
+
     def move(self, dx, dy=None):
         """Move dx and dy spaces, if possible."""
         dx, dy = flatten_args(dx, dy)
         self.dirty = True
-            
+
         if self.can_move_dir(dx, dy):
             self.x += dx
             self.y += dy
@@ -71,7 +72,7 @@ class Object(object):
         """Move to (x, y), if possible."""
         x, y = flatten_args(x, y)
         self.dirty = True
-            
+
         if self.can_move(x, y):
             self.x = x
             self.y = y
@@ -90,8 +91,8 @@ class Object(object):
         dx = x - self.x
         dy = y - self.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
- 
-        # Normalize the distance to length 1 (preserving direction), then 
+
+        # Normalize the distance to length 1 (preserving direction), then
         # convert it to a movment direction.
         if dx > 0:
             x = 1
@@ -129,7 +130,7 @@ class Object(object):
         """Can the object move in this direction?"""
         x, y = flatten_args(x, y)
         return self.can_move(self.x + x, self.y + y)
-        
+
     def can_move(self, x, y=None):
         """Can the object move into this location?"""
         x, y = flatten_args(x, y)
@@ -149,7 +150,6 @@ class Object(object):
         if SS.u.x == x and SS.u.y == y:
             can_move = False
 
-            
         return can_move
 
     def serialize(self):

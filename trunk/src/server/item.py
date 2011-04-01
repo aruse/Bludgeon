@@ -4,17 +4,18 @@
 from const import *
 from server_state import ServerState as SS
 from ai import *
-from object import Object                    
+from object import Object
 from spell import *
 
 from util import *
 from fov import *
 
+
 class Item(Object):
     """
     Game items.  Anything that can be picked up.
     """
-    
+
     @classmethod
     def unserialize(cls, i_str):
         """Unserialize a string, returning an Item object."""
@@ -29,7 +30,6 @@ class Item(Object):
         return Item(
             i_dict['x'], i_dict['y'], i_dict['name'], oid=i_dict['oid'],
             use_function=use_function)
-
 
     def __init__(self, x, y, name, oid=None, use_function=None,
                  prev_monster=None):
@@ -73,7 +73,7 @@ class Item(Object):
         SS.map.grid[self.x][self.y].items.remove(self)
         if dict_remove:
             del Object.obj_dict[self.oid]
-            
+
         SS.items_to_delete.append((self.oid, dict_remove))
 
     def move(self, dx, dy=None):

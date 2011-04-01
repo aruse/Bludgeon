@@ -13,10 +13,11 @@ from client_util import *
 from fov import *
 from common import *
 
+
 class ClientObject(object):
     """
-    Generic object to be displayed in the client.  Base class for Item
-    and Monster.
+    Generic object to be displayed in the client.  Base class for Item and
+    Monster.
     """
 
     # Mapping of oids to objects
@@ -37,13 +38,13 @@ class ClientObject(object):
         self.y = y
 
         self.tile = CS.tile_dict[name]
-        
+
         # Which color to display in text mode
         self.color = None
 
         self.blocks_sight = False
         self.blocks_movement = False
-        
+
     def distance_to(self, obj):
         """Distance to another object."""
         return self.distance(obj.x, obj.y)
@@ -57,7 +58,7 @@ class ClientObject(object):
         CS.map_surf.blit(CS.tiles_img,
                          cell2pixel(self.x, self.y),
                          self.tile)
- 
+
     def draw_gray(self):
         """Draw this Object on the map at the current location, grayed out."""
         CS.map_surf.blit(CS.gray_tiles_img,
@@ -68,7 +69,7 @@ class ClientObject(object):
         """Can the character move in this direction?"""
         x, y = flatten_args(x, y)
         return self.can_move(self.x + x, self.y + y)
-        
+
     def can_move(self, x, y=None):
         """Can the object move into this location?"""
         x, y = flatten_args(x, y)
@@ -84,5 +85,5 @@ class ClientObject(object):
             if x == m.x and y == m.y:
                 can_move = False
                 break
-            
+
         return can_move

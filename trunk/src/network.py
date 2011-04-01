@@ -3,6 +3,7 @@
 
 from collections import deque
 
+
 class Network(object):
     """
     Static class defining an interface to the network, either local
@@ -12,7 +13,6 @@ class Network(object):
     requests = deque()
     # Queue of responses from the server to the client.
     responses = deque()
-
 
     @classmethod
     def request(cls, req, args):
@@ -42,4 +42,3 @@ class Network(object):
             return Network.responses.popleft()
         else:
             return None
-        

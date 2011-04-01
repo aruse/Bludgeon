@@ -13,6 +13,7 @@ from monster import Monster
 from player import Player
 from util import *
 
+
 simple_save_objs = [
     'SS.dlevel',
     'SS.branch',
@@ -43,10 +44,10 @@ def save_game(file):
         f.write('[')
         for y in xrange(SS.map.h):
             f.write("{{'n': {0}, 'e': {1}}}, ".format(
-                    repr(SS.map.grid[x][y].name),  repr(SS.map.grid[x][y].explored)))
+                    repr(SS.map.grid[x][y].name),
+                    repr(SS.map.grid[x][y].explored)))
         f.write('],')
     f.write(']\n')
-
 
     # For references to Objects, just save the oid
     f.write('monsters = ' + repr([mon.oid for mon in SS.map.monsters]) + '\n')
@@ -90,17 +91,18 @@ def load_game(file):
     for m_str in monster_defs:
         mon = Monster.unserialize(m_str)
         mon.place_on_map()
-        
+
     # Re-create items
     for i_str in item_defs:
         item = Item.unserialize(i_str)
         item.place_on_map()
-        
+
     # Re-create the player
     SS.u = Player.unserialize(u)
 
 
-# FIXME: This is now handled by place_on_map().  I'm not sure if I need to save these at all.
+# FIXME: This is now handled by place_on_map().  I'm not sure if I need to
+# save these at all.
 #    SS.map.monsters = [Object.obj_dict[m] for m in monsters]
 #    SS.map.items = [Object.obj_dict[i] for i in items]
 

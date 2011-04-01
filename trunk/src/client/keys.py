@@ -21,18 +21,22 @@ def show_fov():
     """Toggle a flag to visually outline the FOV on the map."""
     CS.fov_outline = not CS.fov_outline
 
+
 def scroll_map(coords):
     """Scroll the map in the direction given."""
     CS.x_scrollbar.move_slider(coords[0] * SCROLL_AMT)
     CS.y_scrollbar.move_slider(coords[1] * SCROLL_AMT)
 
+
 def scroll_log(coords):
     """Scroll the log window up or down."""
     CS.log_scrollbar.move_slider(coords[1] * SCROLL_AMT)
 
+
 def scroll_log_end(coords):
     """Scroll the log window all the way to the top or bottom."""
     CS.log_scrollbar.move_slider(coords[1] * CS.log_rect.h)
+
 
 def request_pick_up():
     """Tell server to pick up an item at the player's feet."""
@@ -41,6 +45,7 @@ def request_pick_up():
         items.append(item.oid)
 
     Network.request(',', (tuple(items),))
+
 
 class KeyHandler(object):
     """Handle the actions of a specific keystroke."""
@@ -60,7 +65,7 @@ class KeyHandler(object):
 
 def attach_key_actions():
     """Set up dictionaries to map keys to actions."""
-    
+
     # Keystroke handlers for 'playing' mode.
     # Accessed like pkeys[mod][KEY]
     # mod can be one of KMOD_NONE, KMOD_CTRL, KMOD_ALT
@@ -168,7 +173,7 @@ def attach_key_actions():
             'u': KeyHandler(None, (), "Move"),
             'v': KeyHandler(None, (), "Display the software version."),
             'w': KeyHandler(
-                None, (), 
+                None, (),
                 "Wield (a.k.a. put in your hand, ready to use) a weapon.  "
                 "In order to wield nothing and fight with your bare hands, "
                 "use '-' when asked for which weapon to wield."),
@@ -338,7 +343,6 @@ def attach_key_actions():
             }
         }
 
-
     # Key bindings that do the same as ones already defined above.
     CS.pkeys[KMOD_NONE][K_UP] = CS.pkeys[KMOD_NONE][K_KP8]
     CS.pkeys[KMOD_NONE][K_DOWN] = CS.pkeys[KMOD_NONE][K_KP2]
@@ -366,7 +370,7 @@ def attach_key_actions():
     CS.pkeys[KMOD_NONE][' '] = CS.pkeys[KMOD_NONE]['.']
     CS.pkeys[KMOD_NONE]['+'] = CS.pkeys[KMOD_NONE]['X']
 
-    CS.pkeys[KMOD_CTRL][K_c] = CS.pkeys['ext']['quit'] 
+    CS.pkeys[KMOD_CTRL][K_c] = CS.pkeys['ext']['quit']
     CS.pkeys[KMOD_NONE][K_y] = CS.pkeys['ext']['youpoly']
     CS.pkeys[KMOD_ALT][K_2] = CS.pkeys['ext']['2weapon']
     CS.pkeys[KMOD_ALT][K_a] = CS.pkeys['ext']['adjust']
@@ -389,7 +393,6 @@ def attach_key_actions():
     CS.pkeys[KMOD_ALT][K_u] = CS.pkeys['ext']['untrap']
     CS.pkeys[KMOD_ALT][K_w] = CS.pkeys['ext']['wipe']
     CS.pkeys[KMOD_ALT][K_y] = CS.pkeys['ext']['youpoly']
-
 
     # Define actions for special debug mode keystrokes.
     if CS.debug:

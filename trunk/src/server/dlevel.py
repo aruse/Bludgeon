@@ -20,11 +20,12 @@ DIR_RIGHT = 1
 DIR_UP = 2
 DIR_DOWN = 3
 
+
 def gen_perfect_maze(map):
     """Generate a perfect maze and return it"""
     # Map of all visited locations
-    visited_map = [[ 0 for y in xrange(map.h) ] for x in xrange(map.w)]
-    
+    visited_map = [[0 for y in xrange(map.h)] for x in xrange(map.w)]
+
     # Knock out a grid of holes in the walls
     total_cells = 0
     for x in xrange(0, map.w, 2):
@@ -46,25 +47,25 @@ def gen_perfect_maze(map):
 
     visited_cells = 1
     visited_map[cur_cell[0]][cur_cell[1]] = 1
-    cell_stack = [] # Cells to visit
-    
+    cell_stack = []  # Cells to visit
+
     while visited_cells < total_cells:
-        possible_moves = [0, 0, 0, 0] # left, right, up, down
-        if cur_cell[0] - 2 >= 0 and \
-               map.grid[cur_cell[0] - 1][cur_cell[1]].cell_class == 'wall' and \
-               not visited_map[cur_cell[0] - 2][cur_cell[1]]:
+        possible_moves = [0, 0, 0, 0]  # Left, right, up, down
+        if (cur_cell[0] - 2 >= 0 and
+            map.grid[cur_cell[0] - 1][cur_cell[1]].cell_class == 'wall' and
+            not visited_map[cur_cell[0] - 2][cur_cell[1]]):
             possible_moves[DIR_LEFT] = 1
-        if cur_cell[0] + 2 < w and \
-               map.grid[cur_cell[0] + 1][cur_cell[1]].cell_class == 'wall' and \
-               not visited_map[cur_cell[0] + 2][cur_cell[1]]:
+        if (cur_cell[0] + 2 < w and
+            map.grid[cur_cell[0] + 1][cur_cell[1]].cell_class == 'wall' and
+            not visited_map[cur_cell[0] + 2][cur_cell[1]]):
             possible_moves[DIR_RIGHT] = 1
-        if cur_cell[1] - 2 >= 0 and \
-               map.grid[cur_cell[0]][cur_cell[1] - 1].cell_class == 'wall' and \
-               not visited_map[cur_cell[0]][cur_cell[1] - 2]:
+        if (cur_cell[1] - 2 >= 0 and
+            map.grid[cur_cell[0]][cur_cell[1] - 1].cell_class == 'wall' and
+            not visited_map[cur_cell[0]][cur_cell[1] - 2]):
             possible_moves[DIR_UP] = 1
-        if cur_cell[1] + 2 < h and \
-               map.grid[cur_cell[0]][cur_cell[1] + 1].cell_class == 'wall' and \
-               not visited_map[cur_cell[0]][cur_cell[1] + 2]:
+        if (cur_cell[1] + 2 < h and
+            map.grid[cur_cell[0]][cur_cell[1] + 1].cell_class == 'wall' and
+            not visited_map[cur_cell[0]][cur_cell[1] + 2]):
             possible_moves[DIR_DOWN] = 1
 
         # If there are moves to make, select a random direction
@@ -75,7 +76,7 @@ def gen_perfect_maze(map):
             move_direction = possible_moves.index(1, move_direction)
 
             cell_stack.append([cur_cell[0], cur_cell[1]])
-                        
+
             # Knock down wall in the move direction, and then move
             # past the wall into the next cell
             if move_direction == DIR_LEFT:
@@ -94,8 +95,6 @@ def gen_perfect_maze(map):
                 map.grid[cur_cell[0]][cur_cell[1] + 1].set_attr(
                     'cmap, floor of a room')
                 cur_cell[1] += 2
-            else:
-                pass # Raise an error here
 
             visited_map[cur_cell[0]][cur_cell[1]] = 1
             visited_cells += 1
@@ -109,6 +108,7 @@ def gen_perfect_maze(map):
                 break
 
     return update_wall_tiles(map)
+
 
 def gen_braid_maze(w, h, braid_degree=1.0):
     """Generate a braid maze.
@@ -139,17 +139,18 @@ def gen_braid_maze(w, h, braid_degree=1.0):
                     connection = DIR_DOWN
 
                 # If there is only one connection, it's a dead-end
-                if connections == 1 and SS.map_rand.random() < braid_degree :
+                if connections == 1 and SS.map_rand.random() < braid_degree:
                     if connection == DIR_LEFT and x < w - 1:
                         map.grid[x + 1][y].set_attr('cmap, floor of a room')
                     if connection == DIR_RIGHT and x > 0:
                         map.grid[x - 1][y].set_attr('cmap, floor of a room')
                     if connection == DIR_UP and y < h - 1:
                         map.grid[x][y + 1].set_attr('cmap, floor of a room')
-                    if connection == DIR_DOWN and y > 0 :
+                    if connection == DIR_DOWN and y > 0:
                         map.grid[x][y - 1].set_attr('cmap, floor of a room')
 
     return update_wall_tiles(map)
+
 
 def gen_sparse_maze(w, h, sparse_degree=0.1, braid_degree=0.9):
     """Generate a maze that has more open space than the braid maze."""
@@ -172,12 +173,13 @@ def gen_sparse_maze(w, h, sparse_degree=0.1, braid_degree=0.9):
                 if y < h - 1 and map.grid[x][y + 1] == 1:
                     walls_ver += 1
 
-                if ((walls_hor == 2 and walls_ver == 0) or \
-                    (walls_ver == 2 and walls_hor == 0)) and \
-                    SS.map_rand.random() < sparse_degree:
+                if (((walls_hor == 2 and walls_ver == 0) or
+                     (walls_ver == 2 and walls_hor == 0)) and
+                    SS.map_rand.random() < sparse_degree):
                     map.grid[x][y] = 0
-                
+
     return update_wall_tiles(map)
+
 
 def update_wall_tiles(map):
     """Goes through a level map and makes sure the correct tiles are
@@ -190,57 +192,65 @@ def update_wall_tiles(map):
                 tee = 0
 
                 if x > 0 and map.grid[x - 1][y].cell_class == 'wall':
-                    if (y > 0 and map.grid[x][y - 1].cell_class == 'wall'
-                        and y < MAP_H - 1
-                        and map.grid[x][y + 1].cell_class == 'wall'):
+                    if (y > 0 and
+                        map.grid[x][y - 1].cell_class == 'wall' and
+                        y < MAP_H - 1 and
+                        map.grid[x][y + 1].cell_class == 'wall'):
                         wall_tile = 'cmap, wall, tee left'
                         tee = 1
                     elif y > 0 and map.grid[x][y - 1].cell_class == 'wall':
                         wall_tile = 'cmap, wall, top left corner'
-                    elif y < MAP_H - 1 and map.grid[x][y + 1].cell_class == 'wall':
+                    elif (y < MAP_H - 1 and
+                          map.grid[x][y + 1].cell_class == 'wall'):
                         wall_tile = 'cmap, wall, bottom left corner'
-                        
+
                 if x < MAP_W - 1 and map.grid[x + 1][y].cell_class == 'wall':
-                    if (y > 0 and map.grid[x][y - 1].cell_class == 'wall'
-                        and y < MAP_H - 1
-                        and map.grid[x][y + 1].cell_class == 'wall'):
+                    if (y > 0 and
+                        map.grid[x][y - 1].cell_class == 'wall' and
+                        y < MAP_H - 1 and
+                        map.grid[x][y + 1].cell_class == 'wall'):
                         wall_tile = 'cmap, wall, tee right'
                         tee = 1
                     elif y > 0 and map.grid[x][y - 1].cell_class == 'wall':
                         wall_tile = 'cmap, wall, top right corner'
-                    elif y < MAP_H - 1 and map.grid[x][y + 1].cell_class == 'wall':
+                    elif (y < MAP_H - 1 and
+                          map.grid[x][y + 1].cell_class == 'wall'):
                         wall_tile = 'cmap, wall, bottom right corner'
 
                 if not tee:
                     if y > 0 and map.grid[x][y - 1].cell_class == 'wall':
                         wall_tile = 'cmap, wall, vertical'
-                        if (x > 0 and map.grid[x - 1][y].cell_class == 'wall'
-                            and x < MAP_W - 1
-                            and map.grid[x + 1][y].cell_class == 'wall'):
+                        if (x > 0 and
+                            map.grid[x - 1][y].cell_class == 'wall' and
+                            x < MAP_W - 1 and
+                            map.grid[x + 1][y].cell_class == 'wall'):
                             wall_tile = 'cmap, wall, tee up'
                         elif x > 0 and map.grid[x - 1][y].cell_class == 'wall':
                             wall_tile = 'cmap, wall, bottom right corner'
-                        elif (x < MAP_W - 1
-                              and map.grid[x + 1][y].cell_class == 'wall'):
+                        elif (x < MAP_W - 1 and
+                              map.grid[x + 1][y].cell_class == 'wall'):
                             wall_tile = 'cmap, wall, bottom left corner'
-                        
+
                 if y < MAP_H - 1 and map.grid[x][y + 1].cell_class == 'wall':
                     wall_tile = 'cmap, wall, vertical'
-                    if (x > 0 and map.grid[x - 1][y].cell_class == 'wall'
-                        and x < MAP_W - 1
-                        and map.grid[x + 1][y].cell_class == 'wall'):
+                    if (x > 0 and
+                        map.grid[x - 1][y].cell_class == 'wall' and
+                        x < MAP_W - 1 and
+                        map.grid[x + 1][y].cell_class == 'wall'):
                         wall_tile = 'cmap, wall, tee down'
                     elif x > 0 and map.grid[x - 1][y].cell_class == 'wall':
                         wall_tile = 'cmap, wall, top right corner'
-                    elif x < MAP_W - 1 and map.grid[x + 1][y].cell_class == 'wall':
+                    elif (x < MAP_W - 1 and
+                          map.grid[x + 1][y].cell_class == 'wall'):
                         wall_tile = 'cmap, wall, top left corner'
 
-                if (x > 0 and map.grid[x - 1][y].cell_class == 'wall'
-                    and x < MAP_W - 1
-                    and map.grid[x + 1][y].cell_class == 'wall'
-                    and y > 0 and map.grid[x][y - 1].cell_class == 'wall'
-                    and y < MAP_H - 1
-                    and map.grid[x][y + 1].cell_class == 'wall'):
+                if (x > 0 and
+                    map.grid[x - 1][y].cell_class == 'wall' and
+                    x < MAP_W - 1 and
+                    map.grid[x + 1][y].cell_class == 'wall' and
+                    y > 0 and map.grid[x][y - 1].cell_class == 'wall' and
+                    y < MAP_H - 1 and
+                    map.grid[x][y + 1].cell_class == 'wall'):
                     wall_tile = 'cmap, wall, crosswall'
 
                 map.grid[x][y].set_attr(wall_tile)

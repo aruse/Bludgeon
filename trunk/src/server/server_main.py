@@ -13,6 +13,7 @@ from dlevel import *
 from requesthandler import *
 from map import Map
 
+
 def monsters_take_turn():
     for m in SS.map.monsters:
         if m.ai:
@@ -51,7 +52,6 @@ def init_server():
         SS.map = Map(MAP_W, MAP_H, layout='connected_rooms')
         SS.dlevel_dict['doom'].append(SS.map)
         SS.u.move_to(SS.map.upstairs)
-    
 
     SS.u.set_fov_map(SS.map.grid)
     SS.u.fov_map.do_fov(SS.u.x, SS.u.y, SS.u.fov_radius)
@@ -71,13 +71,11 @@ def server_tick():
         monsters_take_turn()
         SS.u_took_turn = False
 
-
     # Send responses to the client.
     response = {}
 
 #    if True: # FIXME: should be if map is dirty
 #        response['map'] = SS.map
-
 
     # Tell the client which monsters to update.
     # FIXME: We currently send the whole monster object, but this needs to be
@@ -96,7 +94,6 @@ def server_tick():
         response['m_del'].append(mon)
     del SS.monsters_to_delete[:]
 
-
     # Tell the client which items to update.
     for item in SS.map.items:
         if item.dirty:
@@ -110,7 +107,6 @@ def server_tick():
             response['i_del'] = []
         response['i_del'].append(item)
     del SS.items_to_delete[:]
-
 
     # Send the updated player to the client.
     if SS.u.dirty:
