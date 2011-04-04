@@ -20,6 +20,18 @@ from gui import *
 class ClientPlayer(ClientMonster):
     """Representation of the player character in the client."""
 
+    @classmethod
+    def unserialize(cls, u_str):
+        """Unserialize a string, returning a ClientMonster object."""
+        # Convert string to dict
+        u_dict = eval(u_str)
+
+        return ClientPlayer(
+            u_dict['x'], u_dict['y'], u_dict['name'], u_dict['oid'],
+            hp=u_dict['hp'], max_hp=u_dict['max_hp'],
+            mp=u_dict['mp'], max_mp=u_dict['max_mp'],
+            inventory=u_dict['inventory'])
+
     def __init__(self, x, y, name, oid, hp=None, max_hp=None,
                  mp=None, max_mp=None, fov_radius=TORCH_RADIUS,
                  inventory=[]):

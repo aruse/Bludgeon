@@ -311,7 +311,7 @@ def add_surface_border(surf):
 def render_tooltips():
     obj = object_under_mouse()
     if obj:
-        if obj.__class__.__name__ == 'Monster':
+        if obj.__class__.__name__ == 'ClientMonster':
             hp_bar = True
         else:
             hp_bar = False

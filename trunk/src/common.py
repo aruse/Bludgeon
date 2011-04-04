@@ -2,7 +2,6 @@
 # See LICENSE for details.
 
 import pygame
-from pygame.locals import *
 
 from const import *
 

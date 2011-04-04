@@ -1,6 +1,8 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""Implement the Network class."""
+
 from collections import deque
 
 

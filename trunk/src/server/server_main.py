@@ -30,7 +30,7 @@ def handle_requests():
 #        SS.server_responses.append(response)
 
 
-def init_server():
+def server_init():
     """Initialize all of the server state."""
 #    if options.save_file:
 #        load_game(options.save_file)
@@ -58,6 +58,9 @@ def init_server():
     attach_request_actions()
     message('Welcome, {0}!'.format("Whatever"), CLR['gold'])
 
+    # Send the client any initial response data
+    server_tick()
+
 
 def server_tick():
     """
@@ -72,10 +75,15 @@ def server_tick():
         SS.u_took_turn = False
 
     # Send responses to the client.
-    response = {}
+    res = {}
 
-#    if True: # FIXME: should be if map is dirty
-#        response['map'] = SS.map
+    # Tell the client to update the whole map, if necessary
+    if SS.map.dirty:
+        res['map'] = SS.map.client_serialize()
+        SS.map.dirty = False
+    else:
+        # If there are individual Cells to update, tell the client.
+        pass
 
     # Tell the client which monsters to update.
     # FIXME: We currently send the whole monster object, but this needs to be
@@ -83,41 +91,41 @@ def server_tick():
     # update.
     for mon in SS.map.monsters:
         if mon.dirty:
-            if 'm' not in response:
-                response['m'] = {}
-            response['m'][mon.oid] = mon.client_serialize()
+            if 'm' not in res:
+                res['m'] = {}
+            res['m'][mon.oid] = mon.client_serialize()
             mon.dirty = False
 
     for mon in SS.monsters_to_delete:
-        if 'm_del' not in response:
-            response['m_del'] = []
-        response['m_del'].append(mon)
+        if 'm_del' not in res:
+            res['m_del'] = []
+        res['m_del'].append(mon)
     del SS.monsters_to_delete[:]
 
     # Tell the client which items to update.
     for item in SS.map.items:
         if item.dirty:
-            if 'i' not in response:
-                response['i'] = {}
-            response['i'][item.oid] = item.client_serialize()
+            if 'i' not in res:
+                res['i'] = {}
+            res['i'][item.oid] = item.client_serialize()
             item.dirty = False
 
     for item in SS.items_to_delete:
-        if 'i_del' not in response:
-            response['i_del'] = []
-        response['i_del'].append(item)
+        if 'i_del' not in res:
+            res['i_del'] = []
+        res['i_del'].append(item)
     del SS.items_to_delete[:]
 
     # Send the updated player to the client.
     if SS.u.dirty:
-        response['u'] = SS.u.client_serialize()
+        res['u'] = SS.u.client_serialize()
         SS.u.dirty = False
 
     if len(SS.msgs):
-        response['log'] = []
+        res['log'] = []
         for msg in SS.msgs:
-            response['log'].append(msg)
+            res['log'].append(msg)
         SS.msgs.clear()
 
-    if response:
-        Network.send_response(response)
+    if res:
+        Network.send_response(res)

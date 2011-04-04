@@ -15,17 +15,18 @@ from common import *
 from network import Network
 
 from client_state import ClientState as CS
+from client_map import ClientMap
 from client_object import ClientObject
 from client_item import ClientItem
 from client_monster import ClientMonster
 from client_player import ClientPlayer
 from gui import *
-from keys import *
+import keys
 import image
 from client_util import *
 
 
-def init_client():
+def client_init():
     """Initialiaze client state."""
     # Set up signal handlers
     signal.signal(signal.SIGINT, quit_game)
@@ -136,6 +137,13 @@ def init_client():
     CS.log_scrollbar = ScrollBar(SCROLLBAR_W, 1, CS.log_rect,
                                  CS.logview_rect, always_show=False)
 
+    # Process any initial setup data we've gotten from the server.  This
+    # should include the first dungeon level and the Player object.
+    handle_responses()
+
+    # Set up keystroke actions
+    keys.attach_key_actions()
+
 
 def handle_events():
     # Handle input events
@@ -209,7 +217,7 @@ def handle_events():
                     CS.pkeys[KMOD_NONE][key_code].do()
                     handled = True
 
-            if key_code not in ignore_keys and handled is False:
+            if key_code not in keys.ignore_keys and handled is False:
                 if char in CS.pkeys[KMOD_NONE]:
                     key_to_print = char
                 else:
@@ -272,15 +280,18 @@ def handle_events():
         impossible('Unknown state: ' + CS.mode)
 
 
-def client_tick():
-    """
-    Called from the main game loop to handle client functionality.
-    Handle server responses, player input, and updating the client gui.
-    """
+def handle_responses():
+    """Read in server responses from the network and process."""
 
-    # If there are any server responses, handle them.
     res = Network.get_response()
     while res:
+        # Load level map
+        if 'map' in res:
+            CS.map = ClientMap.unserialize(res['map'])
+            new_dlevel = True
+        else:
+            new_dlevel = False
+
         # Update log messages
         if 'log' in res:
             for msg in res['log']:
@@ -318,11 +329,29 @@ def client_tick():
 
         # Update the player object
         if 'u' in res:
-            CS.u.update_from_string(res['u'])
+            if CS.u is not None:
+                CS.u.update_from_string(res['u'])
+            else:
+                CS.u = ClientPlayer.unserialize(res['u'])
+
+            # If we're changing dungeon levels, the player needs a new FOV map
+            if new_dlevel:
+                CS.u.set_fov_map(CS.map.grid)
+
             CS.u.fov_map.do_fov(CS.u.x, CS.u.y, CS.u.fov_radius)
             center_map()
 
         res = Network.get_response()
+
+
+def client_tick():
+    """
+    Called from the main game loop to handle client functionality.
+    Handle server responses, player input, and updating the client gui.
+    """
+
+    # If there are any server responses, handle them.
+    handle_responses()
 
     if CS.mode != ST_PLAYBACK:
         CS.clock.tick(FRAME_RATE)

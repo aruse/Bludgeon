@@ -50,7 +50,6 @@ class Map(object):
         for r in xrange(MAX_ROOMS):
             w = SS.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
             h = SS.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
-
             x = SS.map_rand.randrange(0, self.w - w - 1)
             y = SS.map_rand.randrange(0, self.h - h - 1)
 
@@ -104,7 +103,7 @@ class Map(object):
 
     def place_objects(self, room):
         # Choose random number of monsters
-        for i in xrange(SS.map_rand.randrange(3)):
+        for i in xrange(SS.map_rand.randrange(MAX_ROOM_MONSTERS)):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
 
@@ -117,7 +116,7 @@ class Map(object):
                 mon.place_on_map(self)
 
         # Choose random number of items
-        for i in xrange(SS.map_rand.randrange(8)):
+        for i in xrange(SS.map_rand.randrange(MAX_ROOM_ITEMS)):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
 
@@ -153,3 +152,11 @@ class Map(object):
         self.grid[room.x2][room.y1].set_attr('cmap, wall, top right corner')
         self.grid[room.x1][room.y2].set_attr('cmap, wall, bottom left corner')
         self.grid[room.x2][room.y2].set_attr('cmap, wall, bottom right corner')
+
+    def client_serialize(self):
+        grid = [[cell.client_serialize()
+                 for cell in x]
+                for x in self.grid]
+        return ("{{'w':{0},'h':{1},'layout':{2},'grid':{3},"
+                "}}".format(
+                self.w, self.h, repr(self.layout), grid))

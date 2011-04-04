@@ -25,12 +25,13 @@ CONFUSE_NUM_TURNS = 10
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 12
 
-
 # Max number of rooms on a single dungeon level
 MAX_ROOMS = 20
 
-ROOM_MAX_SIZE = 10
-ROOM_MIN_SIZE = 5
+#ROOM_MAX_SIZE = 10
+#ROOM_MIN_SIZE = 3
+ROOM_MAX_SIZE = 5
+ROOM_MIN_SIZE = 3
 
 # Size of various things
 FONT_SIZE = 12
@@ -42,8 +43,8 @@ TILE_W, TILE_H = 16, 16
 # Surface sizes, in cells
 EQ_W, EQ_H = 7, STATUS_H
 #MAP_W, MAP_H = 120, 50
-MAP_W, MAP_H = 45, 18
-#MAP_W, MAP_H = 20, 18
+#MAP_W, MAP_H = 45, 18
+MAP_W, MAP_H = 12, 12
 
 # Initial size of the screen, in pixels
 INIT_SCREEN_W, INIT_SCREEN_H = 800, 600
@@ -66,8 +67,8 @@ FRAME_RATE = 20
 FOV_LIGHT_WALLS = True
 TORCH_RADIUS = 10
 
-MAX_ROOM_MONSTERS = 2
-MAX_ROOM_ITEMS = 2
+MAX_ROOM_MONSTERS = 3
+MAX_ROOM_ITEMS = 8
 
 MAX_MSGS = 100
 

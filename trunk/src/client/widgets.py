@@ -6,7 +6,8 @@
 import math
 
 import pygame
-from pygame.locals import *
+from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
+from pygame.locals import ACTIVEEVENT
 
 # Mouse buttons
 BUTTON_L = 1
@@ -17,6 +18,8 @@ BUTTON_SCROLL_D = 5
 
 
 class ScrollBar(object):
+    """Scrollbar widget."""
+
     # Colors
     white = [255] * 3
     black = [0] * 3
@@ -42,6 +45,9 @@ class ScrollBar(object):
         self.surf_rect = surf_rect
         self.display_rect = display_rect
 
+        self.always_show = always_show
+        self.shown = always_show
+
         # Rect defining the track in which the slider moves
         self.track = None
         # Rect defining the slider
@@ -63,8 +69,6 @@ class ScrollBar(object):
         # Whether or not the mouse is hovering over the slider
         self.hover = False
 
-        self.always_show = always_show
-        self.shown = always_show
 
         # Ratio of the display size over the surface size
         self.surf_ratio = None
@@ -75,6 +79,8 @@ class ScrollBar(object):
         self.resize()
 
     def resize(self):
+        """Resize the ScrollBar."""
+
         if self.axis == 0:
             self.surf_ratio = float(self.display_rect.w) / self.surf_rect.w
             self.track = pygame.Rect(
@@ -460,10 +466,3 @@ class ScrollBar(object):
                                (self.slider.x + int(th * 0.5),
                                 self.slider.y + self.slider.h - int(th * 0.5)),
                                int(th * 0.5 - 2), 0)
-
-
-class ScrollView(object):
-    """Implements a scrollable area with scrollbars that appear if the
-    surface is larger than the view.
-    """
-    pass

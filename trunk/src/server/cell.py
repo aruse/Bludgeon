@@ -4,7 +4,6 @@
 import re
 
 from const import *
-from server_state import ServerState as SS
 from util import *
 
 
@@ -23,6 +22,10 @@ class Cell(object):
 
         # Set to true if this cell has been modified.
         self.dirty = True
+
+    def client_serialize(self):
+        return ("{{'name':{0},'explored':{1}}}".format(
+                repr(self.name), self.explored))
 
     def set_attr(self, name):
         """

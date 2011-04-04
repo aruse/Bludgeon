@@ -14,6 +14,11 @@ class ClientCell(object):
     in the client.
     """
 
+    @classmethod
+    def unserialize(cls, c_str):
+        c_dict = eval(c_str)
+        return ClientCell(c_dict['name'], explored=c_dict['explored'])
+
     def __init__(self, name, explored=False):
         self.set_attr(name)
 
