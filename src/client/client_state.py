@@ -6,8 +6,8 @@
 from collections import deque
 from pygame import Rect
 
-import cfg
-from color import CLR
+import common.cfg as cfg
+from common.color import CLR
 
 
 class ClientState(object):

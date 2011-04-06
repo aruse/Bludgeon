@@ -10,9 +10,9 @@ import pygame
 from pygame import Surface
 import pygame.locals as pgl
 
-import cfg
-from common import impossible
-from network import Network
+import common.cfg as cfg
+from common.common import impossible
+from common.network import Network
 from client_state import ClientState as CS
 from client_map import ClientMap
 from client_object import ClientObject
@@ -126,9 +126,11 @@ def client_init():
 
     CS.screen = pygame.display.set_mode(
         (CS.screen_rect.w, CS.screen_rect.h), pygame.RESIZABLE)
+    # pylint: disable=E1121
     CS.eq_surf = Surface((CS.eq_rect.w, CS.eq_rect.h)).convert()
     CS.status_surf = Surface((CS.status_rect.w, CS.status_rect.h)).convert()
     CS.map_surf = Surface((CS.map_rect.w, CS.map_rect.h)).convert()
+    # pylint: enable=E1121
 
     # Set the system icon
     system_icon = image.load_image('icon.xpm')

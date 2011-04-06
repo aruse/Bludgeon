@@ -5,7 +5,7 @@
 Routines for saving and loading games.
 """
 
-import cfg
+import common.cfg as cfg
 from server_state import ServerState as SS
 from cell import Cell
 from item import Item

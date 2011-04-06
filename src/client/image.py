@@ -10,7 +10,7 @@ import re
 import pygame
 from pygame import Surface
 
-import cfg
+import common.cfg as cfg
 
 
 def load_image(name):
@@ -47,7 +47,9 @@ def create_tile_dict():
 
 def convert_to_grayscale(surf):
     """Convert a Surface to grayscale, pixel by pixel.  Quite slow."""
+    # pylint: disable=E1121
     gray = Surface(surf.get_size(), 0, 8)
+    # pylint: enable=E1121
     w, h = surf.get_size()
     for x in xrange(w):
         for y in xrange(h):

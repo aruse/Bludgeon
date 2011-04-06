@@ -3,10 +3,10 @@
 
 """Monster class"""
 
-import cfg
-from color import CLR
+import common.cfg as cfg
+from common.color import CLR
 from util import message
-from fov import FOVMap
+from common.fov import FOVMap
 from server_state import ServerState as SS
 from object import Object
 from item import Item

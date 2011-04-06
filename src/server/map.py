@@ -3,7 +3,7 @@
 
 """Map class"""
 
-import cfg
+import common.cfg as cfg
 from server_state import ServerState as SS
 from cell import Cell
 from room import Room

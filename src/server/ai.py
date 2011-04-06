@@ -6,8 +6,8 @@ AI classes.  Can be assigned to Monster objects to tell them how to
 behave.
 """
 
-import cfg
-from color import CLR
+import common.cfg as cfg
+from common.color import CLR
 from server_state import ServerState as SS
 from util import message
 

@@ -5,7 +5,7 @@
 Routines for generating dungeon levels.
 """
 
-import cfg
+import common.cfg as cfg
 from server_state import ServerState as SS
 
 DIR_LEFT = 0

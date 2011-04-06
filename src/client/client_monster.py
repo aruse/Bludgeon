@@ -3,8 +3,8 @@
 
 """ClientMonster class"""
 
-import cfg
-from fov import FOVMap
+import common.cfg as cfg
+from common.fov import FOVMap
 from client_state import ClientState as CS
 from client_object import ClientObject
 

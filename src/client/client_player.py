@@ -3,10 +3,10 @@
 
 """ClientPlayer class"""
 
-import cfg
-from common import flatten_args
+import common.cfg as cfg
+from common.common import flatten_args
 from client_state import ClientState as CS
-from network import Network
+from common.network import Network
 from client_object import ClientObject
 from client_monster import ClientMonster
 

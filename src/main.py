@@ -7,7 +7,7 @@ Setup of game objects and main game loop.
 
 import optparse
 
-import cfg
+import common.cfg as cfg
 from server.server_main import server_init, server_tick
 from client.client_state import ClientState as CS
 from client.client_main import client_init, client_tick

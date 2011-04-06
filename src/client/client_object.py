@@ -7,7 +7,7 @@ import math
 
 from client_state import ClientState as CS
 from client_util import cell2pixel
-from common import flatten_args
+from common.common import flatten_args
 
 
 class ClientObject(object):

@@ -7,9 +7,9 @@ import sys
 import random
 import uuid
 
-import cfg
-from color import CLR
-from network import Network
+import common.cfg as cfg
+from common.color import CLR
+from common.network import Network
 from server_state import ServerState as SS
 from player import Player
 import requesthandler

@@ -6,7 +6,7 @@
 import random
 from collections import deque
 
-import cfg
+import common.cfg as cfg
 
 
 class ServerState(object):

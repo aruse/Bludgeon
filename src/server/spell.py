@@ -3,10 +3,8 @@
 
 """Functions that define what happens when a spell is cast."""
 
-import random
-
-import cfg
-from color import CLR
+import common.cfg as cfg
+from common.color import CLR
 from server_state import ServerState as SS
 import ai
 from util import message

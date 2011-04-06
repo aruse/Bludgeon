@@ -5,9 +5,9 @@
 
 import math
 
-import cfg
+import common.cfg as cfg
 from server_state import ServerState as SS
-from common import flatten_args
+from common.common import flatten_args
 
 
 class Object(object):

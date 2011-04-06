@@ -5,7 +5,7 @@
 Utility functions, needed in a wide variety of places in the client code.
 """
 
-import cfg
+import common.cfg as cfg
 from client_state import ClientState as CS
 
 

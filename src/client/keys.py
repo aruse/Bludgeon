@@ -5,9 +5,9 @@
 
 import pygame.locals as pgl
 
-import cfg
+import common.cfg as cfg
 from client_state import ClientState as CS
-from network import Network
+from common.network import Network
 from client_util import quit_game
 import gui
 

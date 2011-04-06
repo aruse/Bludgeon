@@ -10,8 +10,8 @@ import pygame
 from pygame import Rect, Surface
 import pygame.locals as pgl
 
-import cfg
-from color import CLR
+import common.cfg as cfg
+from common.color import CLR
 from client_state import ClientState as CS
 from client_util import cell2pixel
 
@@ -173,7 +173,9 @@ def menu(header, options, w):
     # Create a new surface on which to draw the menu
     surf_w = w + padding * 2
     surf_h = h + padding * 2
+    # pylint: disable=E1121
     CS.dialog_surf = Surface((surf_w, surf_h)).convert()
+    # pylint: enable=E1121
     img_fill(CS.dialog_surf, CS.menu_bg_img,
              Rect(surf_w + padding, surf_h + padding,
                   surf_w - padding * 2, surf_h - padding * 2))
@@ -270,8 +272,10 @@ def wordwrap_img(text, w, antialias, color, justify='left'):
 
     # This surface needs to have a transparent background
     # like all of the surfaces in rendered_lines.
+    # pylint: disable=E1121
     final_surf = Surface((w, total_h), pgl.SRCALPHA,
-                                rendered_lines[0]).convert_alpha()
+                         rendered_lines[0]).convert_alpha()
+    # pylint: enable=E1121
 
     y = 0
     for line in rendered_lines:
@@ -346,7 +350,9 @@ def render_tooltips():
         if hp_bar:
             surf_h += CS.font_h
 
+        # pylint: disable=E1121
         tooltip_surf = Surface((surf_w, surf_h)).convert()
+        # pylint: enable=E1121
         tooltip_surf.fill(CLR['black'])
 
         text_rect.centerx = surf_w / 2
@@ -575,7 +581,9 @@ def update_log_surf():
     if total_h < 1:
         total_h = 1
 
+    # pylint: disable=E1121
     CS.log_surf = Surface((CS.logview_rect.w, total_h)).convert()
+    # pylint: enable=E1121
     CS.log_surf.fill(CS.log_bg_color)
     CS.log_rect.h = total_h
     CS.log_rect.bottom = CS.logview_rect.bottom
