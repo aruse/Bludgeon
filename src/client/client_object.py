@@ -1,17 +1,13 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import random
+"""ClientObject class"""
+
 import math
 
-import pygame
-from pygame.locals import *
-
-from const import *
 from client_state import ClientState as CS
-from client_util import *
-from fov import *
-from common import *
+from client_util import cell2pixel
+from common import flatten_args
 
 
 class ClientObject(object):
@@ -81,9 +77,12 @@ class ClientObject(object):
         if CS.map.grid[x][y].blocks_movement:
             can_move = False
 
-        for m in CS.monsters + [CS.u]:
-            if x == m.x and y == m.y:
+        for mon in CS.map.grid[x][y].monsters:
+            if mon.blocks_movement:
                 can_move = False
                 break
+
+        if CS.u.x == x and CS.u.y == y:
+            can_move = False
 
         return can_move

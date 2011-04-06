@@ -1,18 +1,14 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import math
+"""ClientItem class"""
 
-import pygame
-from pygame.locals import *
-
-from const import *
 from client_state import ClientState as CS
 from client_object import ClientObject
 
 
 class ClientItem(ClientObject):
-    """Game items to be displayed in the client."""
+    """Game item to be displayed in the client."""
 
     @classmethod
     def unserialize(cls, i_str):
@@ -28,13 +24,13 @@ class ClientItem(ClientObject):
         self.blocks_sight = False
         self.blocks_movement = False
 
-    def place_on_map(self, map=None):
+    def place_on_map(self, amap=None):
         """Place the item object on the current game map."""
-        if map is None:
-            map = CS.map
+        if amap is None:
+            amap = CS.map
 
         CS.map.items.append(self)
-        map.grid[self.x][self.y].items.append(self)
+        amap.grid[self.x][self.y].items.append(self)
 
     def delete(self, dict_remove=False):
         """

@@ -5,8 +5,6 @@
 Constant declarations.
 """
 
-from color import CLR
-
 GAME_NAME = 'Bludgeon'
 VERSION = '0.0.1'
 
@@ -21,7 +19,7 @@ HEAL_AMOUNT = 4
 LIGHTNING_DAMAGE = 20
 LIGHTNING_RANGE = 5
 CONFUSE_RANGE = 8
-CONFUSE_NUM_TURNS = 10
+CONFUSE_TURNS = 10
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 12
 
@@ -43,8 +41,8 @@ TILE_W, TILE_H = 16, 16
 # Surface sizes, in cells
 EQ_W, EQ_H = 7, STATUS_H
 #MAP_W, MAP_H = 120, 50
-#MAP_W, MAP_H = 45, 18
-MAP_W, MAP_H = 12, 12
+MAP_W, MAP_H = 45, 18
+#MAP_W, MAP_H = 12, 12
 
 # Initial size of the screen, in pixels
 INIT_SCREEN_W, INIT_SCREEN_H = 800, 600

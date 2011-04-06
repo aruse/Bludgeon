@@ -3,18 +3,13 @@
 
 """KeyHandler class and dictionaries use to map keys to handlers."""
 
-import pygame
-from pygame.locals import *
+import pygame.locals as pgl
 
-from const import *
+import cfg
 from client_state import ClientState as CS
 from network import Network
-
-from client_util import *
-from client_monster import ClientMonster
-from client_item import ClientItem
-from client_cell import ClientCell
-from gui import *
+from client_util import quit_game
+import gui
 
 
 def show_fov():
@@ -24,13 +19,13 @@ def show_fov():
 
 def scroll_map(coords):
     """Scroll the map in the direction given."""
-    CS.x_scrollbar.move_slider(coords[0] * SCROLL_AMT)
-    CS.y_scrollbar.move_slider(coords[1] * SCROLL_AMT)
+    CS.x_scrollbar.move_slider(coords[0] * cfg.SCROLL_AMT)
+    CS.y_scrollbar.move_slider(coords[1] * cfg.SCROLL_AMT)
 
 
 def scroll_log(coords):
     """Scroll the log window up or down."""
-    CS.log_scrollbar.move_slider(coords[1] * SCROLL_AMT)
+    CS.log_scrollbar.move_slider(coords[1] * cfg.SCROLL_AMT)
 
 
 def scroll_log_end(coords):
@@ -57,8 +52,10 @@ class KeyHandler(object):
         """
         self.action = action
         self.args = args
+        self.turn = turn
+        self.desc = desc
 
-    def do(self):
+    def perform_action(self):
         """Perform the action associated with this key press."""
         self.action(*self.args)
 
@@ -68,20 +65,20 @@ def attach_key_actions():
 
     # Keystroke handlers for 'playing' mode.
     # Accessed like pkeys[mod][KEY]
-    # mod can be one of KMOD_NONE, KMOD_CTRL, KMOD_ALT
+    # mod can be one of pgl.KMOD_NONE, pgl.KMOD_CTRL, pgl.KMOD_ALT
     CS.pkeys = {
-        KMOD_NONE: {
-            K_KP1: KeyHandler(CS.u.try_move, (DIRH['dl'],), ""),
-            K_KP2: KeyHandler(CS.u.try_move, (DIRH['d'],), ""),
-            K_KP3: KeyHandler(CS.u.try_move, (DIRH['dr'],), ""),
-            K_KP4: KeyHandler(CS.u.try_move, (DIRH['l'],), ""),
-            K_KP5: KeyHandler(None, (), ""),
-            K_KP6: KeyHandler(CS.u.try_move, (DIRH['r'],), ""),
-            K_KP7: KeyHandler(CS.u.try_move, (DIRH['ul'],), ""),
-            K_KP8: KeyHandler(CS.u.try_move, (DIRH['u'],), ""),
-            K_KP9: KeyHandler(CS.u.try_move, (DIRH['ur'],), ""),
+        pgl.KMOD_NONE: {
+            pgl.K_KP1: KeyHandler(CS.u.try_move, (cfg.DIRH['dl'],), ""),
+            pgl.K_KP2: KeyHandler(CS.u.try_move, (cfg.DIRH['d'],), ""),
+            pgl.K_KP3: KeyHandler(CS.u.try_move, (cfg.DIRH['dr'],), ""),
+            pgl.K_KP4: KeyHandler(CS.u.try_move, (cfg.DIRH['l'],), ""),
+            pgl.K_KP5: KeyHandler(None, (), ""),
+            pgl.K_KP6: KeyHandler(CS.u.try_move, (cfg.DIRH['r'],), ""),
+            pgl.K_KP7: KeyHandler(CS.u.try_move, (cfg.DIRH['ul'],), ""),
+            pgl.K_KP8: KeyHandler(CS.u.try_move, (cfg.DIRH['u'],), ""),
+            pgl.K_KP9: KeyHandler(CS.u.try_move, (cfg.DIRH['ur'],), ""),
 
-            K_ESCAPE: KeyHandler(None, (), "Cancel command."),
+            pgl.K_ESCAPE: KeyHandler(None, (), "Cancel command."),
             '^': KeyHandler(None, (), "Examine a trap."),
             '<': KeyHandler(None, (), "Go up a staircase or ladder."),
             '>': KeyHandler(None, (), "Go down a staircase or ladder."),
@@ -126,7 +123,7 @@ def attach_key_actions():
                 "etc."),
             'b': KeyHandler(None, (), "Move"),
             'c': KeyHandler(None, (), "Close a door"),
-            'd': KeyHandler(inventory_menu, (DELETE_HEADER, 'drop'),
+            'd': KeyHandler(gui.inventory_menu, (cfg.DELETE_HEADER, 'drop'),
                             "Drop one item from your inventory."),
             'e': KeyHandler(
                 None, (),
@@ -143,7 +140,7 @@ def attach_key_actions():
                 "Prefix: When followed by a direction, move until you are "
                 "next to something interesting."),
             'h': KeyHandler(None, (), "Move"),
-            'i': KeyHandler(inventory_menu, (USE_HEADER, 'use'),
+            'i': KeyHandler(gui.inventory_menu, (cfg.USE_HEADER, 'use'),
                             "Show your current inventory."),
             'j': KeyHandler(None, (), "Move"),
             'k': KeyHandler(None, (), "Move"),
@@ -223,11 +220,11 @@ def attach_key_actions():
                 None, (),
                 "Remove a worn accessory, such as a ring, amulet, or "
                 "blindfold."),
-#            'S': KeyHandler(
-#                save_game, ('save.bludgeon',),
-#                "Save the game.  There is only one savefile per character, "
-#                "so this will overwrite any existing savefile.  This is by "
-#                "design."),
+            'S': KeyHandler(
+                Network.request, ('S', ()),
+                "Save the game.  There is only one savefile per character, "
+                "so this will overwrite any existing savefile.  This is by "
+                "design."),
             'T': KeyHandler(None, (),
                             "Take off one piece of worn armor."),
             'U': KeyHandler(None, (), "Move"),
@@ -237,51 +234,51 @@ def attach_key_actions():
             'Y': KeyHandler(None, (), "Move"),
             'Z': KeyHandler(None, (), "Zap (a.k.a. cast) a known spell."),
             },
-        KMOD_SHIFT: {
-            K_KP1: KeyHandler(scroll_map, (DIRH['dl'],),
+        pgl.KMOD_SHIFT: {
+            pgl.K_KP1: KeyHandler(scroll_map, (cfg.DIRH['dl'],),
                               "Scroll the map window."),
-            K_KP2: KeyHandler(scroll_map, (DIRH['d'],),
+            pgl.K_KP2: KeyHandler(scroll_map, (cfg.DIRH['d'],),
                               "Scroll the map window."),
-            K_KP3: KeyHandler(scroll_map, (DIRH['dr'],),
+            pgl.K_KP3: KeyHandler(scroll_map, (cfg.DIRH['dr'],),
                               "Scroll the map window."),
-            K_KP4: KeyHandler(scroll_map, (DIRH['l'],),
+            pgl.K_KP4: KeyHandler(scroll_map, (cfg.DIRH['l'],),
                               "Scroll the map window."),
-            K_KP6: KeyHandler(scroll_map, (DIRH['r'],),
+            pgl.K_KP6: KeyHandler(scroll_map, (cfg.DIRH['r'],),
                               "Scroll the map window."),
-            K_KP7: KeyHandler(scroll_map, (DIRH['ul'],),
+            pgl.K_KP7: KeyHandler(scroll_map, (cfg.DIRH['ul'],),
                               "Scroll the map window."),
-            K_KP8: KeyHandler(scroll_map, (DIRH['u'],),
+            pgl.K_KP8: KeyHandler(scroll_map, (cfg.DIRH['u'],),
                               "Scroll the map window."),
-            K_KP9: KeyHandler(scroll_map, (DIRH['ur'],),
+            pgl.K_KP9: KeyHandler(scroll_map, (cfg.DIRH['ur'],),
                               "Scroll the map window."),
-            K_PAGEUP: KeyHandler(scroll_log, (DIRH['u'],),
+            pgl.K_PAGEUP: KeyHandler(scroll_log, (cfg.DIRH['u'],),
                               "Scroll the log window up."),
-            K_PAGEDOWN: KeyHandler(scroll_log, (DIRH['d'],),
+            pgl.K_PAGEDOWN: KeyHandler(scroll_log, (cfg.DIRH['d'],),
                               "Scroll the log window down."),
-            K_HOME: KeyHandler(scroll_log_end, (DIRH['u'],),
+            pgl.K_HOME: KeyHandler(scroll_log_end, (cfg.DIRH['u'],),
                               "Scroll the log window to the top."),
-            K_END: KeyHandler(scroll_log_end, (DIRH['d'],),
+            pgl.K_END: KeyHandler(scroll_log_end, (cfg.DIRH['d'],),
                               "Scroll the log window to the bottom."),
             },
-        KMOD_CTRL: {
-            K_a: KeyHandler(None, (), "Re-do the previous command."),
-            K_d: KeyHandler(
+        pgl.KMOD_CTRL: {
+            pgl.K_a: KeyHandler(None, (), "Re-do the previous command."),
+            pgl.K_d: KeyHandler(
                 None, (),
                 "Kick something (usually something locked that you wish to "
                 "open)."),
-#            K_b: KeyHandler(None, (), "Move"),
-#            K_h: KeyHandler(None, (), "Move"),
-#            K_j: KeyHandler(None, (), "Move"),
-#            K_k: KeyHandler(None, (), "Move"),
-#            K_l: KeyHandler(None, (), "Move"),
-#            K_n: KeyHandler(None, (), "Move"),
-#            K_u: KeyHandler(None, (), "Move"),
-#            K_y: KeyHandler(None, (), "Move"),
-            K_t: KeyHandler(None, (), "Teleport, if you are able."),
-            K_x: KeyHandler(None, (), ""),
+#            pgl.K_b: KeyHandler(None, (), "Move"),
+#            pgl.K_h: KeyHandler(None, (), "Move"),
+#            pgl.K_j: KeyHandler(None, (), "Move"),
+#            pgl.K_k: KeyHandler(None, (), "Move"),
+#            pgl.K_l: KeyHandler(None, (), "Move"),
+#            pgl.K_n: KeyHandler(None, (), "Move"),
+#            pgl.K_u: KeyHandler(None, (), "Move"),
+#            pgl.K_y: KeyHandler(None, (), "Move"),
+            pgl.K_t: KeyHandler(None, (), "Teleport, if you are able."),
+            pgl.K_x: KeyHandler(None, (), ""),
             },
-        KMOD_ALT: {
-            K_QUESTION: KeyHandler(None, (),
+        pgl.KMOD_ALT: {
+            pgl.K_QUESTION: KeyHandler(None, (),
                                    "Display help with extended commands."),
             },
         'ext': {
@@ -344,75 +341,75 @@ def attach_key_actions():
         }
 
     # Key bindings that do the same as ones already defined above.
-    CS.pkeys[KMOD_NONE][K_UP] = CS.pkeys[KMOD_NONE][K_KP8]
-    CS.pkeys[KMOD_NONE][K_DOWN] = CS.pkeys[KMOD_NONE][K_KP2]
-    CS.pkeys[KMOD_NONE][K_LEFT] = CS.pkeys[KMOD_NONE][K_KP4]
-    CS.pkeys[KMOD_NONE][K_RIGHT] = CS.pkeys[KMOD_NONE][K_KP6]
-    CS.pkeys[KMOD_NONE][K_HOME] = CS.pkeys[KMOD_NONE][K_KP7]
-    CS.pkeys[KMOD_NONE][K_END] = CS.pkeys[KMOD_NONE][K_KP1]
-    CS.pkeys[KMOD_NONE][K_PAGEUP] = CS.pkeys[KMOD_NONE][K_KP9]
-    CS.pkeys[KMOD_NONE][K_PAGEDOWN] = CS.pkeys[KMOD_NONE][K_KP3]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_UP] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP8]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_DOWN] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP2]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_LEFT] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP4]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_RIGHT] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP6]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_HOME] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP7]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_END] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP1]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_PAGEUP] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP9]
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_PAGEDOWN] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP3]
 
-    CS.pkeys[KMOD_SHIFT][K_UP] = CS.pkeys[KMOD_SHIFT][K_KP8]
-    CS.pkeys[KMOD_SHIFT][K_DOWN] = CS.pkeys[KMOD_SHIFT][K_KP2]
-    CS.pkeys[KMOD_SHIFT][K_LEFT] = CS.pkeys[KMOD_SHIFT][K_KP4]
-    CS.pkeys[KMOD_SHIFT][K_RIGHT] = CS.pkeys[KMOD_SHIFT][K_KP6]
+    CS.pkeys[pgl.KMOD_SHIFT][pgl.K_UP] = CS.pkeys[pgl.KMOD_SHIFT][pgl.K_KP8]
+    CS.pkeys[pgl.KMOD_SHIFT][pgl.K_DOWN] = CS.pkeys[pgl.KMOD_SHIFT][pgl.K_KP2]
+    CS.pkeys[pgl.KMOD_SHIFT][pgl.K_LEFT] = CS.pkeys[pgl.KMOD_SHIFT][pgl.K_KP4]
+    CS.pkeys[pgl.KMOD_SHIFT][pgl.K_RIGHT] = CS.pkeys[pgl.KMOD_SHIFT][pgl.K_KP6]
 
-    CS.pkeys[KMOD_NONE][1] = CS.pkeys[KMOD_NONE][K_KP1]
-    CS.pkeys[KMOD_NONE][2] = CS.pkeys[KMOD_NONE][K_KP2]
-    CS.pkeys[KMOD_NONE][3] = CS.pkeys[KMOD_NONE][K_KP3]
-    CS.pkeys[KMOD_NONE][4] = CS.pkeys[KMOD_NONE][K_KP4]
-    CS.pkeys[KMOD_NONE][6] = CS.pkeys[KMOD_NONE][K_KP6]
-    CS.pkeys[KMOD_NONE][7] = CS.pkeys[KMOD_NONE][K_KP7]
-    CS.pkeys[KMOD_NONE][8] = CS.pkeys[KMOD_NONE][K_KP8]
-    CS.pkeys[KMOD_NONE][9] = CS.pkeys[KMOD_NONE][K_KP9]
+    CS.pkeys[pgl.KMOD_NONE][1] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP1]
+    CS.pkeys[pgl.KMOD_NONE][2] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP2]
+    CS.pkeys[pgl.KMOD_NONE][3] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP3]
+    CS.pkeys[pgl.KMOD_NONE][4] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP4]
+    CS.pkeys[pgl.KMOD_NONE][6] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP6]
+    CS.pkeys[pgl.KMOD_NONE][7] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP7]
+    CS.pkeys[pgl.KMOD_NONE][8] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP8]
+    CS.pkeys[pgl.KMOD_NONE][9] = CS.pkeys[pgl.KMOD_NONE][pgl.K_KP9]
 
-    CS.pkeys[KMOD_NONE][' '] = CS.pkeys[KMOD_NONE]['.']
-    CS.pkeys[KMOD_NONE]['+'] = CS.pkeys[KMOD_NONE]['X']
+    CS.pkeys[pgl.KMOD_NONE][' '] = CS.pkeys[pgl.KMOD_NONE]['.']
+    CS.pkeys[pgl.KMOD_NONE]['+'] = CS.pkeys[pgl.KMOD_NONE]['X']
 
-    CS.pkeys[KMOD_CTRL][K_c] = CS.pkeys['ext']['quit']
-    CS.pkeys[KMOD_NONE][K_y] = CS.pkeys['ext']['youpoly']
-    CS.pkeys[KMOD_ALT][K_2] = CS.pkeys['ext']['2weapon']
-    CS.pkeys[KMOD_ALT][K_a] = CS.pkeys['ext']['adjust']
-    CS.pkeys[KMOD_ALT][K_b] = CS.pkeys['ext']['borrow']
-    CS.pkeys[KMOD_ALT][K_c] = CS.pkeys['ext']['chat']
-    CS.pkeys[KMOD_ALT][K_d] = CS.pkeys['ext']['dip']
-    CS.pkeys[KMOD_ALT][K_e] = CS.pkeys['ext']['enhance']
-    CS.pkeys[KMOD_ALT][K_f] = CS.pkeys['ext']['force']
-    CS.pkeys[KMOD_ALT][K_i] = CS.pkeys['ext']['invoke']
-    CS.pkeys[KMOD_ALT][K_j] = CS.pkeys['ext']['jump']
-    CS.pkeys[KMOD_ALT][K_l] = CS.pkeys['ext']['loot']
-    CS.pkeys[KMOD_ALT][K_m] = CS.pkeys['ext']['monster']
-    CS.pkeys[KMOD_ALT][K_n] = CS.pkeys['ext']['name']
-    CS.pkeys[KMOD_ALT][K_o] = CS.pkeys['ext']['offer']
-    CS.pkeys[KMOD_ALT][K_p] = CS.pkeys['ext']['pray']
-    CS.pkeys[KMOD_ALT][K_q] = CS.pkeys['ext']['quit']
-    CS.pkeys[KMOD_ALT][K_r] = CS.pkeys['ext']['rub']
-    CS.pkeys[KMOD_ALT][K_s] = CS.pkeys['ext']['sit']
-    CS.pkeys[KMOD_ALT][K_t] = CS.pkeys['ext']['technique']
-    CS.pkeys[KMOD_ALT][K_u] = CS.pkeys['ext']['untrap']
-    CS.pkeys[KMOD_ALT][K_w] = CS.pkeys['ext']['wipe']
-    CS.pkeys[KMOD_ALT][K_y] = CS.pkeys['ext']['youpoly']
+    CS.pkeys[pgl.KMOD_CTRL][pgl.K_c] = CS.pkeys['ext']['quit']
+    CS.pkeys[pgl.KMOD_NONE][pgl.K_y] = CS.pkeys['ext']['youpoly']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_2] = CS.pkeys['ext']['2weapon']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_a] = CS.pkeys['ext']['adjust']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_b] = CS.pkeys['ext']['borrow']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_c] = CS.pkeys['ext']['chat']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_d] = CS.pkeys['ext']['dip']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_e] = CS.pkeys['ext']['enhance']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_f] = CS.pkeys['ext']['force']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_i] = CS.pkeys['ext']['invoke']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_j] = CS.pkeys['ext']['jump']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_l] = CS.pkeys['ext']['loot']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_m] = CS.pkeys['ext']['monster']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_n] = CS.pkeys['ext']['name']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_o] = CS.pkeys['ext']['offer']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_p] = CS.pkeys['ext']['pray']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_q] = CS.pkeys['ext']['quit']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_r] = CS.pkeys['ext']['rub']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_s] = CS.pkeys['ext']['sit']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_t] = CS.pkeys['ext']['technique']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_u] = CS.pkeys['ext']['untrap']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_w] = CS.pkeys['ext']['wipe']
+    CS.pkeys[pgl.KMOD_ALT][pgl.K_y] = CS.pkeys['ext']['youpoly']
 
     # Define actions for special debug mode keystrokes.
     if CS.debug:
-        CS.pkeys[KMOD_CTRL][K_e] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_e] = KeyHandler(
             None, (), "Search an entire room.")
-#        CS.pkeys[KMOD_CTRL][K_f] = KeyHandler(
+#        CS.pkeys[pgl.KMOD_CTRL][pgl.K_f] = KeyHandler(
 #            magic_mapping, (), "Map the entire level.")
-        CS.pkeys[KMOD_CTRL][K_f] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_f] = KeyHandler(
             Network.request, ('^f', ()), "Map the entire level.")
-        CS.pkeys[KMOD_CTRL][K_g] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_g] = KeyHandler(
             None, (), "Create a monster.")
-        CS.pkeys[KMOD_CTRL][K_i] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_i] = KeyHandler(
             None, (), "Identify all items in inventory.")
-        CS.pkeys[KMOD_CTRL][K_j] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_j] = KeyHandler(
             None, (), "Go up one experience level.")
-        CS.pkeys[KMOD_CTRL][K_o] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_o] = KeyHandler(
             None, (), "Show the layout of the entire dungeon.")
-        CS.pkeys[KMOD_CTRL][K_v] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_v] = KeyHandler(
             None, (5, 6), "Level teleport.")
-        CS.pkeys[KMOD_CTRL][K_w] = KeyHandler(
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_w] = KeyHandler(
             None, (), "Wish.")
 
         CS.pkeys['ext']['levelchange'] = KeyHandler(
@@ -437,23 +434,23 @@ def attach_key_actions():
             None, (), "Show all wall modes.")
 
         # FIXME: This should actually be handled under #vision
-        CS.pkeys[KMOD_CTRL][K_z] = KeyHandler(show_fov, (), False)
+        CS.pkeys[pgl.KMOD_CTRL][pgl.K_z] = KeyHandler(show_fov, (), False)
 
-
-# Dictionary of key presses to ignore.  Note that this includes modifier keys,
-# as they are handled above in the sections that handle the key modified.
-ignore_keys = {
-    K_NUMLOCK: True,
-    K_CAPSLOCK: True,
-    K_SCROLLOCK: True,
-    K_RSHIFT: True,
-    K_LSHIFT: True,
-    K_RCTRL: True,
-    K_LCTRL: True,
-    K_RALT: True,
-    K_LALT: True,
-    K_RMETA: True,
-    K_LMETA: True,
-    K_LSUPER: True,
-    K_RSUPER: True,
-    }
+    # Dictionary of key presses to ignore.  Note that this includes
+    # modifier keys, as they are handled above in the sections that
+    # handle the key modified.
+    CS.ignore_keys = {
+        pgl.K_NUMLOCK: True,
+        pgl.K_CAPSLOCK: True,
+        pgl.K_SCROLLOCK: True,
+        pgl.K_RSHIFT: True,
+        pgl.K_LSHIFT: True,
+        pgl.K_RCTRL: True,
+        pgl.K_LCTRL: True,
+        pgl.K_RALT: True,
+        pgl.K_LALT: True,
+        pgl.K_RMETA: True,
+        pgl.K_LMETA: True,
+        pgl.K_LSUPER: True,
+        pgl.K_RSUPER: True,
+        }

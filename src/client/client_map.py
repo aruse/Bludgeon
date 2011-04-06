@@ -1,10 +1,8 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import re
+"""ClientMap class"""
 
-from const import *
-from client_state import ClientState as CS
 from client_cell import ClientCell
 
 
@@ -15,14 +13,19 @@ class ClientMap(object):
 
     @classmethod
     def unserialize(cls, m_str):
+        """
+        Create a new ClientMap from a serialized string recieved from the
+        server.
+        """
         m_dict = eval(m_str)
-        map = ClientMap(m_dict['w'], m_dict['h'], layout=m_dict['layout'], grid=m_dict['grid'])
+        amap = ClientMap(m_dict['w'], m_dict['h'],
+                         layout=m_dict['layout'], grid=m_dict['grid'])
 
-        for x in xrange(map.w):
-            for y in xrange(map.h):
-                map.grid[x][y] = ClientCell.unserialize(map.grid[x][y])
+        for x in xrange(amap.w):
+            for y in xrange(amap.h):
+                amap.grid[x][y] = ClientCell.unserialize(amap.grid[x][y])
 
-        return map
+        return amap
 
     def __init__(self, w, h, layout='connected_rooms', grid=None):
         self.w, self.h = w, h
@@ -39,6 +42,6 @@ class ClientMap(object):
             self.grid = grid
         else:
             self.grid = [[ClientCell('cmap, wall, dark')
-                          for y in xrange(self.h)]
-                         for x in xrange(self.w)]
+                          for j in xrange(self.h)]
+                         for i in xrange(self.w)]
         self.rooms = []

@@ -1,12 +1,12 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""ClientState class"""
+
 from collections import deque
+from pygame import Rect
 
-import pygame
-from pygame.locals import *
-
-from const import *
+import cfg
 from color import CLR
 
 
@@ -53,6 +53,7 @@ class ClientState(object):
 
     font = None
     font_h = None
+    font_w = None
 
     # What to blit over an area that's not visible
     blank_tile = None
@@ -78,6 +79,7 @@ class ClientState(object):
     log_scrollbar = None
 
     pkeys = None
+    ignore_keys = None
 
     menu = None
     menu_options = []
@@ -98,8 +100,8 @@ class ClientState(object):
 
     fov_outline = False
 
-    mode = ST_PLAYING
-    msgs = deque()
+    mode = cfg.ST_PLAYING
+    msgs = deque(maxlen=cfg.MAX_MSGS)
 
     # Color definitions
     log_bg_color = CLR['black']
@@ -118,3 +120,4 @@ class ClientState(object):
     mp_bar_bg_color = (0, 0, 95)
     xp_bar_color = (32, 200, 32)
     xp_bar_bg_color = (0, 63, 0)
+

@@ -1,19 +1,12 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import math
+"""ClientMonster class"""
 
-import pygame
-from pygame.locals import *
-
-from const import *
-from common import *
-from fov import *
+import cfg
+from fov import FOVMap
 from client_state import ClientState as CS
-from network import Network
-from client_util import *
 from client_object import ClientObject
-from gui import *
 
 
 class ClientMonster(ClientObject):
@@ -32,8 +25,8 @@ class ClientMonster(ClientObject):
             inventory=m_dict['inventory'])
 
     def __init__(self, x, y, name, oid, hp=None, max_hp=None,
-                 mp=None, max_mp=None, fov_radius=TORCH_RADIUS,
-                 inventory=[]):
+                 mp=None, max_mp=None, fov_radius=cfg.TORCH_RADIUS,
+                 inventory=None):
         ClientObject.__init__(self, x, y, name, oid)
 
         self.blocks_sight = False
@@ -68,7 +61,10 @@ class ClientMonster(ClientObject):
         else:
             self.max_hp = max_hp
 
-        self.inventory = inventory
+        if inventory is None:
+            self.inventory = []
+        else:
+            self.inventory = inventory
 
         # FIXME dummy values
         self.mp = 13
@@ -80,13 +76,13 @@ class ClientMonster(ClientObject):
         self.hunger = 450
         self.max_hunger = 1000
 
-    def place_on_map(self, map=None):
+    def place_on_map(self, amap=None):
         """Place the monster object on the current game map."""
-        if map is None:
-            map = CS.map
+        if amap is None:
+            amap = CS.map
 
         CS.map.monsters.append(self)
-        map.grid[self.x][self.y].monsters.append(self)
+        amap.grid[self.x][self.y].monsters.append(self)
 
     def delete(self, dict_remove=False):
         """
@@ -98,8 +94,12 @@ class ClientMonster(ClientObject):
         if dict_remove:
             del ClientObject.obj_dict[self.oid]
 
-    def set_fov_map(self, map):
-        self.fov_map = FOVMap(map)
+    def set_fov_map(self, amap):
+        """
+        Set the FOV map that this ClientMonster uses to see what in its field
+        of view.
+        """
+        self.fov_map = FOVMap(amap)
 
     def update_from_string(self, m_str):
         """Update attributes from a serialized string."""

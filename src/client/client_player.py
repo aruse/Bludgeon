@@ -1,20 +1,14 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import math
+"""ClientPlayer class"""
 
-import pygame
-from pygame.locals import *
-
-from const import *
-from common import *
-from fov import *
+import cfg
+from common import flatten_args
 from client_state import ClientState as CS
 from network import Network
-from client_util import *
 from client_object import ClientObject
 from client_monster import ClientMonster
-from gui import *
 
 
 class ClientPlayer(ClientMonster):
@@ -33,20 +27,23 @@ class ClientPlayer(ClientMonster):
             inventory=u_dict['inventory'])
 
     def __init__(self, x, y, name, oid, hp=None, max_hp=None,
-                 mp=None, max_mp=None, fov_radius=TORCH_RADIUS,
-                 inventory=[]):
+                 mp=None, max_mp=None, fov_radius=cfg.TORCH_RADIUS,
+                 inventory=None):
         ClientMonster.__init__(self, x, y, name, oid, hp=hp,
                          max_hp=max_hp, mp=mp, max_mp=max_mp,
                          fov_radius=fov_radius, inventory=inventory)
 
     def attack(self, target):
+        """Attack a target oid."""
         Network.request('F', (target.oid,))
 
     def move(self, dx, dy=None):
+        """Move by (dx, dy) cells."""
         dx, dy = flatten_args(dx, dy)
         Network.request('m', (dx, dy))
 
     def rest(self):
+        """Rest for a turn."""
         self.move(0, 0)
 
     def try_move(self, dx, dy=None):
@@ -60,8 +57,8 @@ class ClientPlayer(ClientMonster):
 
         # Search for an attackable object.
         target = None
-        for m in CS.map.grid[x][y].monsters:
-            target = m
+        for mon in CS.map.grid[x][y].monsters:
+            target = mon
 
         # attack if target found, move otherwise
         if target is not None:
@@ -73,7 +70,6 @@ class ClientPlayer(ClientMonster):
         """Update attributes from a serialized string."""
         # Convert string to dict
         u_dict = eval(u_str)
-        old_x, old_y = self.x, self.y
 
         if 'x' in u_dict:
             self.x = u_dict['x']

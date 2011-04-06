@@ -5,23 +5,23 @@
 Routines for saving and loading games.
 """
 
-from const import *
+import cfg
 from server_state import ServerState as SS
 from cell import Cell
 from item import Item
 from monster import Monster
 from player import Player
-from util import *
+from util import message
+from object import Object
 
-
-simple_save_objs = [
+SIMPLE_SAVE_OBJS = [
     'SS.dlevel',
     'SS.branch',
     'Object.oid_seq',
     'SS.random_seed',
     'SS.cmd_history',
     ]
-complex_save_objs = [
+COMPLEX_SAVE_OBJS = [
     'SS.u',
     'SS.map',
     'SS.map.monsters',
@@ -32,10 +32,12 @@ complex_save_objs = [
 #    'SS.items_dict',
 
 
-def save_game(file):
-    f = open(file, 'w')
+def save_game():
+    """Save a game to a file."""
+    save_file = SS.game_id + '.save'
+    f = open(save_file, 'w')
 
-    for obj in simple_save_objs:
+    for obj in SIMPLE_SAVE_OBJS:
         f.write('{0} = {1}\n'.format(obj, repr(eval(obj))))
 
     f.write('map = [')
@@ -55,27 +57,28 @@ def save_game(file):
 
     # Save all monsters in existence.
     f.write('monster_defs = [')
-    for oid, o in Object.obj_dict.iteritems():
-        if oid != SS.u.oid and o.__class__.__name__ == 'Monster':
-            f.write(repr(o.serialize()) + ',')
+    for oid, obj in Object.obj_dict.iteritems():
+        if oid != SS.u.oid and obj.__class__.__name__ == 'Monster':
+            f.write(repr(obj.serialize()) + ',')
     f.write(']\n')
 
     # Save all items in existence.
     f.write('item_defs = [')
-    for oid, o in Object.obj_dict.iteritems():
-        if o.__class__.__name__ == 'Item':
-            f.write(repr(o.serialize()) + ',')
+    for oid, obj in Object.obj_dict.iteritems():
+        if obj.__class__.__name__ == 'Item':
+            f.write(repr(obj.serialize()) + ',')
     f.write(']\n')
 
     # Save the player's state.
     f.write('u = ' + repr(SS.u.serialize()) + '\n')
 
     f.close()
-    message('Saved game to {0}.'.format(file))
+    message('Saved game to {0}.'.format(save_file))
 
 
-def load_game(file):
-    f = open(file, 'r')
+def load_game(save_file):
+    """Load a saved game from a file."""
+    f = open(save_file, 'r')
     exec(f.read())
     f.close()
 
@@ -107,9 +110,10 @@ def load_game(file):
 #    SS.map.items = [Object.obj_dict[i] for i in items]
 
 def run_history():
+    """Play back a game in movie mode."""
     old_history = SS.cmd_history
     SS.cmd_history = []
-    SS.mode = ST_PLAYBACK
+    SS.mode = cfg.ST_PLAYBACK
 
     for cmd in old_history:
         print 'Running ' + str(cmd)
@@ -127,4 +131,4 @@ def run_history():
         server_tick()
         client_tick()
 
-    SS.mode = ST_PLAYING
+    SS.mode = cfg.ST_PLAYING

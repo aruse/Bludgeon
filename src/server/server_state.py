@@ -1,10 +1,12 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""ServerState class"""
+
 import random
 from collections import deque
 
-from const import *
+import cfg
 
 
 class ServerState(object):
@@ -33,7 +35,7 @@ class ServerState(object):
     # Two dimensional array showing which locations are in the field of view
     fov_map = None
 
-    mode = ST_PLAYING
+    mode = cfg.ST_PLAYING
 
     u_action = None
     u_took_turn = False
@@ -51,3 +53,6 @@ class ServerState(object):
     map_rand = random.Random()
     # The random number generator used for everything else.
     rand = random.Random()
+
+    # UUID representing this game
+    game_id = None

@@ -1,23 +1,26 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""Server setup and main loop functions, along with helpers."""
+
 import sys
 import random
+import uuid
 
-from const import *
+import cfg
+from color import CLR
 from network import Network
 from server_state import ServerState as SS
-from monster import Monster
 from player import Player
-from dlevel import *
-from requesthandler import *
+import requesthandler
 from map import Map
-
+from util import message
 
 def monsters_take_turn():
-    for m in SS.map.monsters:
-        if m.ai:
-            m.ai.take_turn()
+    """Let the monsters do their thing."""
+    for mon in SS.map.monsters:
+        if mon.ai:
+            mon.ai.take_turn()
 
 
 def handle_requests():
@@ -26,8 +29,7 @@ def handle_requests():
         req, args = Network.requests.popleft()
 
         SS.cmd_history.append((req, args))
-        response = SS.requests[req].do(args)
-#        SS.server_responses.append(response)
+        SS.requests[req].perform_request(args)
 
 
 def server_init():
@@ -46,16 +48,18 @@ def server_init():
         SS.map_rand.seed(SS.random_seed)
         SS.rand.seed(SS.random_seed)
 
-        SS.u = Player(0, 0, 'wizard', fov_radius=10)
+        SS.u = Player(0, 0, 'wizard', fov_radius=cfg.TORCH_RADIUS)
         SS.dlevel = 1
         SS.dlevel_dict['doom'] = []
-        SS.map = Map(MAP_W, MAP_H, layout='connected_rooms')
+        SS.map = Map(cfg.MAP_W, cfg.MAP_H, layout='connected_rooms')
         SS.dlevel_dict['doom'].append(SS.map)
         SS.u.move_to(SS.map.upstairs)
 
+        SS.game_id = str(uuid.uuid1())
+
     SS.u.set_fov_map(SS.map.grid)
     SS.u.fov_map.do_fov(SS.u.x, SS.u.y, SS.u.fov_radius)
-    attach_request_actions()
+    requesthandler.attach_request_actions()
     message('Welcome, {0}!'.format("Whatever"), CLR['gold'])
 
     # Send the client any initial response data

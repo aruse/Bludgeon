@@ -7,11 +7,10 @@ Routines for loading and manipulating images.
 
 import os
 import re
-
 import pygame
-from pygame.locals import *
+from pygame import Surface
 
-from const import *
+import cfg
 
 
 def load_image(name):
@@ -30,24 +29,25 @@ def load_image(name):
 
 
 def create_tile_dict():
+    """Create a dictionary mapping tile names to image Rects."""
     tile_dict = {}
 
     # Read in tile mapping document, line-by-line, and build a
     # dictionary pointing to coordinates of the graphic
-    map = open('data/tiles.map')
+    mapping = open('data/tiles.map')
 
-    for line in map:
+    for line in mapping:
         (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
-        x = (int(loc) % 38) * TILE_W
-        y = (int(loc) / 38) * TILE_H
-        tile_dict[name] = pygame.Rect(x, y, TILE_W, TILE_H)
+        x = (int(loc) % 38) * cfg.TILE_W
+        y = (int(loc) / 38) * cfg.TILE_H
+        tile_dict[name] = pygame.Rect(x, y, cfg.TILE_W, cfg.TILE_H)
 
     return tile_dict
 
 
 def convert_to_grayscale(surf):
     """Convert a Surface to grayscale, pixel by pixel.  Quite slow."""
-    gray = pygame.Surface(surf.get_size(), 0, 8)
+    gray = Surface(surf.get_size(), 0, 8)
     w, h = surf.get_size()
     for x in xrange(w):
         for y in xrange(h):

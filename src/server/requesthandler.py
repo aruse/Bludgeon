@@ -6,17 +6,11 @@ RequestHandler class and dictionaries use to map client requests to
 server actions.
 """
 
-from const import *
 from server_state import ServerState as SS
 from object import Object
-from monster import Monster
-from item import Item
-from dlevel import *
-from cell import Cell
-from ai import *
-from spell import *
-from saveload import *
-from util import *
+import spell
+from saveload import save_game
+from util import message
 
 
 def pick_up(oids):
@@ -36,13 +30,6 @@ def pick_up(oids):
         message('Nothing to pick up!')
 
 
-def magic_mapping():
-    """Reveal all tiles on the map."""
-    for x in xrange(SS.map.w):
-        for y in xrange(SS.map.h):
-            SS.map.grid[x][y].explored = True
-
-
 class RequestHandler(object):
     """Handle a specific client request."""
     def __init__(self, action, turn, desc=None):
@@ -55,8 +42,9 @@ class RequestHandler(object):
         """
         self.action = action
         self.turn = turn
+        self.desc = desc
 
-    def do(self, args):
+    def perform_request(self, args):
         """Perform the action associated with this request."""
         SS.u_took_turn = self.turn
         return self.action(*args)
@@ -71,9 +59,10 @@ def attach_request_actions():
         ',': RequestHandler(pick_up, None, "Pick up an item."),
         'd': RequestHandler(SS.u.drop, None, "Drop an item."),
         'a': RequestHandler(SS.u.use, None, "Use an item."),
+        'S': RequestHandler(save_game, False, "Save the game."),
         }
 
     # Define actions for special debug mode requests.
     if SS.debug:
         SS.requests['^f'] = RequestHandler(
-            magic_mapping, False, "Map the entire level.")
+            spell.magic_mapping, False, "Map the entire level.")

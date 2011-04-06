@@ -25,7 +25,7 @@ class Network(object):
         args -- The arguments for the request, a tuple.
         """
         Network.requests.append((req, args))
-        print 'Requests:', Network.requests
+#        print 'Requests:', Network.requests
 
     @classmethod
     def send_response(cls, res):
@@ -33,7 +33,7 @@ class Network(object):
         Send a response to the client.
         """
         Network.responses.append(res)
-        print 'Responses:', Network.responses
+#        print 'Responses:', Network.responses
 
     @classmethod
     def get_response(cls):

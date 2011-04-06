@@ -1,18 +1,20 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import re
+"""Map cell, representing a single location on the map."""
 
-from const import *
-from util import *
+import re
 
 
 class Cell(object):
-    """
-    Map cell, representing a single location on the map.
-    """
+    """Map cell, representing a single location on the map."""
 
     def __init__(self, name, explored=False):
+        self.kind = None
+        self.name = None
+        self.blocks_movement = False
+        self.blocks_sight = False
+
         self.set_attr(name)
         self.explored = explored
 
@@ -24,6 +26,7 @@ class Cell(object):
         self.dirty = True
 
     def client_serialize(self):
+        """Turn into a string for transmission to the client."""
         return ("{{'name':{0},'explored':{1}}}".format(
                 repr(self.name), self.explored))
 

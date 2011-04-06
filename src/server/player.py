@@ -1,21 +1,22 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-from const import *
-from util import *
-from fov import *
+"""Player class"""
 
+import cfg
+from color import CLR
+from util import message
 from server_state import ServerState as SS
-from ai import *
 from object import Object
 from monster import Monster
 from item import Item
 
 
 def player_death(mon):
+    """Take care of everything that happens when the player dies."""
     message(mon.name.capitalize() + ' dies!', CLR['red'])
     mon.delete()
-    corpse = Item(mon.x, mon.y, 'corpse', prev_monster=m)
+    corpse = Item(mon.x, mon.y, 'corpse', prev_monster=mon)
     corpse.place_on_map()
 
 
@@ -38,8 +39,8 @@ class Player(Monster):
             death=eval(u_dict['death']), inventory=u_dict['inventory'])
 
     def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
-                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS,
-                 inventory=[]):
+                 mp=None, max_mp=None, death=None, fov_radius=cfg.TORCH_RADIUS,
+                 inventory=None):
         if death is None:
             death = player_death
         Monster.__init__(self, x, y, name, oid=oid, ai=ai, hp=hp,
@@ -47,16 +48,20 @@ class Player(Monster):
                          fov_radius=fov_radius, inventory=inventory)
 
     def attack(self, target):
+        """Attack the target."""
         Monster.attack(self, Object.obj_dict[target])
 
     def rest(self):
+        """Rest for a turn."""
         self.move(0, 0)
 
     def targeted_use(self, item, x, y):
+        """Use an item on the given (x, y) coords."""
         SS.cmd_history.append(('u', item.oid, x, y))
         Monster.targeted_use(self, item, x, y)
 
     def drop(self, item):
+        """Drop an item."""
         item = Object.obj_dict[item]
         Monster.drop(self, item)
         message('You dropped the ' + item.name + '.')
@@ -77,7 +82,7 @@ class Player(Monster):
     def use(self, item):
         """Use an item."""
         if item.use_function is None:
-                message('The ' + item.name + ' cannot be used.')
+            message('The ' + item.name + ' cannot be used.')
 
 #        elif needs target:
 #            pass

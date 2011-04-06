@@ -1,7 +1,10 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-from const import *
+"""
+Utility functions, needed in a wide variety of places in the server code.
+"""
+
 from server_state import ServerState as SS
 
 

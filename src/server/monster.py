@@ -1,17 +1,19 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-from const import *
-from util import *
-from fov import *
+"""Monster class"""
 
+import cfg
+from color import CLR
+from util import message
+from fov import FOVMap
 from server_state import ServerState as SS
-from ai import *
 from object import Object
 from item import Item
 
 
 def die_leave_corpse(mon):
+    """Kill monster and transform it into a corpse."""
     message(mon.name.capitalize() + ' dies!', CLR['red'])
     mon.delete()
     corpse = Item(mon.x, mon.y, 'corpse', prev_monster=mon)
@@ -39,8 +41,8 @@ class Monster(Object):
             death=eval(m_dict['death']), inventory=inv)
 
     def __init__(self, x, y, name, oid=None, ai=None, hp=None, max_hp=None,
-                 mp=None, max_mp=None, death=None, fov_radius=TORCH_RADIUS,
-                 inventory=[]):
+                 mp=None, max_mp=None, death=None, fov_radius=cfg.TORCH_RADIUS,
+                 inventory=None):
         Object.__init__(self, x, y, name, oid=oid)
 
         self.ai = ai
@@ -91,7 +93,10 @@ class Monster(Object):
         else:
             self.max_hp = max_hp
 
-        self.inventory = inventory
+        if inventory is None:
+            self.inventory = []
+        else:
+            self.inventory = inventory
 
         # FIXME dummy values
         self.mp = 13
@@ -103,13 +108,13 @@ class Monster(Object):
         self.hunger = 450
         self.max_hunger = 1000
 
-    def place_on_map(self, map=None):
+    def place_on_map(self, amap=None):
         """Place the monster object on the current game map."""
-        if map is None:
-            map = SS.map
+        if amap is None:
+            amap = SS.map
 
-        map.monsters.append(self)
-        map.grid[self.x][self.y].monsters.append(self)
+        amap.monsters.append(self)
+        amap.grid[self.x][self.y].monsters.append(self)
 
     def delete(self, dict_remove=False):
         """
@@ -124,13 +129,18 @@ class Monster(Object):
         SS.monsters_to_delete.append((self.oid, dict_remove))
 
     def pick_up(self, item):
+        """Pick up an item."""
         self.inventory.append(item)
         item.delete()
         message('You picked up a ' + item.name + '.', CLR['green'])
         self.dirty = True
 
-    def set_fov_map(self, map):
-        self.fov_map = FOVMap(map)
+    def set_fov_map(self, amap):
+        """
+        Set the FOV map that this Monster uses to see what in its field
+        of view.
+        """
+        self.fov_map = FOVMap(amap)
 
     def attack(self, target):
         """Attack target with wielded weapon."""
@@ -147,6 +157,10 @@ class Monster(Object):
         self.dirty = True
 
     def take_damage(self, damage):
+        """
+        Take the given amount of damage, and call death function if
+        necessary.
+        """
         if damage > 0:
             self.hp -= damage
 
@@ -157,7 +171,7 @@ class Monster(Object):
             self.dirty = True
 
     def heal(self, amount):
-        #heal by the given amount, without going over the maximum
+        """Heal by the given amount."""
         self.hp += amount
         if self.hp > self.max_hp:
             self.hp = self.max_hp
@@ -173,7 +187,6 @@ class Monster(Object):
 
     def use(self, item):
         """Use an item."""
-
         if item.use_function is None:
             message('The ' + item.name + ' cannot be used.')
         else:
@@ -194,6 +207,7 @@ class Monster(Object):
         self.dirty = True
 
     def move(self, dx, dy=None):
+        """Move by (dx, dy) amounts."""
         oldx, oldy = self.x, self.y
         if Object.move(self, dx, dy):
             # Let the map know that this monster has moved.

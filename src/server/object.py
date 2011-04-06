@@ -1,16 +1,13 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import random
+"""Object class"""
+
 import math
 
-from const import *
+import cfg
 from server_state import ServerState as SS
-from ai import *
-from util import *
-
-from common import *
-from fov import *
+from common import flatten_args
 
 
 class Object(object):
@@ -81,16 +78,16 @@ class Object(object):
             return False
 
     def move_randomly(self):
-        dir = SS.rand.randrange(len(DIR))
-        if self.can_move_dir(DIR[dir]):
-            self.move(DIR[dir])
+        """Move one space in a random direction."""
+        adir = SS.rand.randrange(len(cfg.DIR))
+        if self.can_move_dir(cfg.DIR[adir]):
+            self.move(cfg.DIR[adir])
 
     def move_towards(self, x, y=None):
         """Move towards the x, y coords, if possible."""
         x, y = flatten_args(x, y)
         dx = x - self.x
         dy = y - self.y
-        distance = math.sqrt(dx ** 2 + dy ** 2)
 
         # Normalize the distance to length 1 (preserving direction), then
         # convert it to a movment direction.

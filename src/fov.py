@@ -8,7 +8,10 @@ Based on Bjorn Bergstrom's recursive shadowcasting algorithm.
 
 
 class FOVMap(object):
-    # Multipliers for transforming coordinates to other octants.
+    """
+    @classvar mult: Multipliers for transforming coordinates to other octants.
+    """
+
     mult = [[1,  0,  0, -1, -1,  0,  0,  1],
             [0,  1, -1,  0,  0, -1,  1,  0],
             [0,  1,  1,  0,  0, -1, -1,  0],
@@ -17,12 +20,14 @@ class FOVMap(object):
     def __init__(self, grid):
         self.grid = grid
         self.w, self.h = len(grid), len(grid[0])
-        self.marked = []
-        for i in xrange(self.w):
-            self.marked.append([0] * self.h)
+        self.marked = [[0 for j in xrange(self.h)]
+                       for i in xrange(self.w)]
         self.flag = 1
 
-    def blocked(self, x, y):
+    def blocks_sight(self, x, y):
+        """
+        @return: Whether or not this cell blocks sight.
+        """
         return (x < 0 or y < 0 or
                 x >= self.w or y >= self.h or
                 self.grid[x][y].blocks_sight)
@@ -37,7 +42,8 @@ class FOVMap(object):
         if 0 <= x < self.w and 0 <= y < self.h:
             self.marked[x][y] = self.flag
 
-    def _cast_ray(self, cx, cy, row, start, end, radius, xx, xy, yx, yy, id):
+    def _cast_ray(self, center_x, center_y, row, start, end, radius,
+                  mult_xx, mult_xy, mult_yx, mult_yy):
         """Recursive raycasting function"""
         if start < end:
             return
@@ -45,13 +51,13 @@ class FOVMap(object):
         for i in xrange(row, radius + 1):
             dx = -i - 1
             dy = -i
-            blocked = False
+            blocks_sight = False
 
             while dx <= 0:
                 dx += 1
                 # Translate the dx, dy coordinates into grid coordinates.
-                x = cx + dx * xx + dy * xy
-                y = cy + dx * yx + dy * yy
+                x = center_x + dx * mult_xx + dy * mult_xy
+                y = center_y + dx * mult_yx + dy * mult_yy
                 # l_slope and r_slope store the slopes of the left and right
                 # extremities of the square we're considering.
                 l_slope = (dx - 0.5) / (dy + 0.5)
@@ -64,25 +70,26 @@ class FOVMap(object):
                     # Our light beam is touching this square, so light it.
                     if dx ** 2 + dy ** 2 < radius ** 2:
                         self.set_marked(x, y)
-                    if blocked:
+                    if blocks_sight:
                         # We're scanning a row of blocked squares.
-                        if self.blocked(x, y):
+                        if self.blocks_sight(x, y):
                             new_start = r_slope
                             continue
                         else:
-                            blocked = False
+                            blocks_sight = False
                             start = new_start
                     else:
-                        if self.blocked(x, y) and i < radius:
+                        if self.blocks_sight(x, y) and i < radius:
                             # This is a blocking square; start a
                             # recursive scan.
-                            blocked = True
-                            self._cast_ray(cx, cy, i + 1, start, l_slope,
-                                           radius, xx, xy, yx, yy, id + 1)
+                            blocks_sight = True
+                            self._cast_ray(
+                                center_x, center_y, i + 1, start, l_slope,
+                                radius, mult_xx, mult_xy, mult_yx, mult_yy)
                             new_start = r_slope
             # This row is scanned; do the next row unless the last square was
             # blocked.
-            if blocked:
+            if blocks_sight:
                 break
 
     def do_fov(self, x, y, radius):
@@ -90,10 +97,10 @@ class FOVMap(object):
         Calculate which cells are in FOV from the given location and radius.
         """
         self.flag += 1
-        for oct in xrange(8):
+        for i in xrange(8):
             self._cast_ray(x, y, 1, 1.0, 0.0, radius,
-                           self.mult[0][oct], self.mult[1][oct],
-                           self.mult[2][oct], self.mult[3][oct], 0)
+                           self.mult[0][i], self.mult[1][i],
+                           self.mult[2][i], self.mult[3][i])
         # This is necessary because the algorithm doesn't recognise the
         # starting square as being in the FOV.
         self.set_marked(x, y)

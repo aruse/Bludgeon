@@ -1,11 +1,12 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""ClientCell class"""
+
 import re
 
-from const import *
 from client_state import ClientState as CS
-from client_util import *
+from client_util import cell2pixel
 
 
 class ClientCell(object):
@@ -16,10 +17,19 @@ class ClientCell(object):
 
     @classmethod
     def unserialize(cls, c_str):
+        """
+        Create a new ClientCell from a serialized string recieved from the
+        server.
+        """
         c_dict = eval(c_str)
         return ClientCell(c_dict['name'], explored=c_dict['explored'])
 
     def __init__(self, name, explored=False):
+        self.kind = None
+        self.name = None
+        self.blocks_movement = False
+        self.blocks_sight = False
+        self.tile = None
         self.set_attr(name)
 
         self.explored = explored

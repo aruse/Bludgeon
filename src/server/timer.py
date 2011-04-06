@@ -1,6 +1,7 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""Timer class for counting down to game events."""
 
 class Timer(object):
     """
@@ -20,7 +21,7 @@ class Timer(object):
         """
         pass
 
-    def trigger():
+    def trigger(self):
         """
         Trigger the event.
         """

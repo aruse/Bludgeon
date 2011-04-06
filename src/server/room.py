@@ -1,6 +1,7 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
+"""Room class"""
 
 class Room(object):
     """A room in the dungeon level."""
@@ -11,6 +12,7 @@ class Room(object):
         self.y2 = y + h
 
     def center(self):
+        """Return the center coordinates of the room."""
         center_x = (self.x1 + self.x2) / 2
         center_y = (self.y1 + self.y2) / 2
         return (center_x, center_y)

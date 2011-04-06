@@ -1,20 +1,21 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-import re
+"""Map class"""
 
-from const import *
+import cfg
 from server_state import ServerState as SS
 from cell import Cell
 from room import Room
 from monster import Monster
 from item import Item
-from ai import *
+import ai
 
 
 class Map(object):
     """
-    Map of dungeon level, containing a grid of Cell objects.
+    Map of dungeon level, containing a grid of Cell objects, and lists of
+    monsters, items, and dungeon features.
     """
 
     def __init__(self, w, h, layout='connected_rooms'):
@@ -30,8 +31,8 @@ class Map(object):
         self.downstairs = None
 
         self.grid = [[Cell('cmap, wall, dark')
-                      for y in xrange(self.h)]
-                     for x in xrange(self.w)]
+                      for j in xrange(self.h)]
+                     for i in xrange(self.w)]
         self.rooms = []
         self.gen_connected_rooms()
 
@@ -39,17 +40,23 @@ class Map(object):
         self.dirty = True
 
     def create_h_tunnel(self, x1, x2, y):
+        """Create horizontal tunnel."""
         for x in xrange(min(x1, x2), max(x1, x2) + 1):
             self.grid[x][y].set_attr('cmap, floor of a room')
 
     def create_v_tunnel(self, y1, y2, x):
+        """Create vertical tunnel."""
         for y in xrange(min(y1, y2), max(y1, y2) + 1):
             self.grid[x][y].set_attr('cmap, floor of a room')
 
     def gen_connected_rooms(self):
-        for r in xrange(MAX_ROOMS):
-            w = SS.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
-            h = SS.map_rand.randrange(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+        """
+        Generate a series of rooms, connected with vertical and horizontal
+        tunnels.  Each room is connected to the previous one with one tunnel.
+        """
+        for i in xrange(cfg.MAX_ROOMS):
+            w = SS.map_rand.randrange(cfg.ROOM_MIN_SIZE, cfg.ROOM_MAX_SIZE)
+            h = SS.map_rand.randrange(cfg.ROOM_MIN_SIZE, cfg.ROOM_MAX_SIZE)
             x = SS.map_rand.randrange(0, self.w - w - 1)
             y = SS.map_rand.randrange(0, self.h - h - 1)
 
@@ -74,9 +81,9 @@ class Map(object):
                 self.rooms.append(new_room)
 
         # Connect the rooms
-        for i in xrange(1, len(self.rooms)):
-            (new_x, new_y) = self.rooms[i].center()
-            (prev_x, prev_y) = self.rooms[i - 1].center()
+        for j in xrange(1, len(self.rooms)):
+            (new_x, new_y) = self.rooms[j].center()
+            (prev_x, prev_y) = self.rooms[j - 1].center()
             if SS.map_rand.randrange(0, 2):
                 self.create_h_tunnel(prev_x, new_x, prev_y)
                 self.create_v_tunnel(prev_y, new_y, new_x)
@@ -85,6 +92,7 @@ class Map(object):
                 self.create_h_tunnel(prev_x, new_x, new_y)
 
     def blocks_movement(self, x, y):
+        """Return whether or not this location blocks movement."""
         if self.grid[x][y].blocks_movement:
             return True
 
@@ -102,21 +110,22 @@ class Map(object):
         return False
 
     def place_objects(self, room):
+        """Place random objects in a room."""
         # Choose random number of monsters
-        for i in xrange(SS.map_rand.randrange(MAX_ROOM_MONSTERS)):
+        for i in xrange(SS.map_rand.randrange(cfg.MAX_ROOM_MONSTERS)):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
 
             if not self.blocks_movement(x, y):
                 if SS.map_rand.randrange(0, 100) < 60:
-                    mon = Monster(x, y, 'orc', ai=StupidAI())
+                    mon = Monster(x, y, 'orc', ai=ai.StupidAI())
                 else:
-                    mon = Monster(x, y, 'troll', ai=StupidAI())
+                    mon = Monster(x, y, 'troll', ai=ai.StupidAI())
 
                 mon.place_on_map(self)
 
         # Choose random number of items
-        for i in xrange(SS.map_rand.randrange(MAX_ROOM_ITEMS)):
+        for i in xrange(SS.map_rand.randrange(cfg.MAX_ROOM_ITEMS)):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
 
@@ -134,6 +143,7 @@ class Map(object):
                 item.place_on_map(self)
 
     def create_rectangular_room(self, room):
+        """Create a rectangular room."""
         # Punch out the floor tiles
         for x in xrange(room.x1 + 1, room.x2):
             for y in xrange(room.y1 + 1, room.y2):
@@ -154,6 +164,7 @@ class Map(object):
         self.grid[room.x2][room.y2].set_attr('cmap, wall, bottom right corner')
 
     def client_serialize(self):
+        """Convert map to a string for transport to the client."""
         grid = [[cell.client_serialize()
                  for cell in x]
                 for x in self.grid]

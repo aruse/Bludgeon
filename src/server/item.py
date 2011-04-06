@@ -1,14 +1,11 @@
 # Copyright (c) 2011 Andy Ruse.
 # See LICENSE for details.
 
-from const import *
-from server_state import ServerState as SS
-from ai import *
-from object import Object
-from spell import *
+"""Item class"""
 
-from util import *
-from fov import *
+from server_state import ServerState as SS
+from object import Object
+import spell
 
 
 class Item(Object):
@@ -43,25 +40,25 @@ class Item(Object):
 
         if use_function is None:
             if self.name == 'healing potion':
-                self.use_function = cast_heal
+                self.use_function = spell.cast_heal
             elif self.name == 'scroll of fireball':
-                self.use_function = cast_fireball
+                self.use_function = spell.cast_fireball
             elif self.name == 'scroll of lightning':
-                self.use_function = cast_lightning
+                self.use_function = spell.cast_lightning
             elif self.name == 'scroll of confusion':
-                self.use_function = cast_confuse
+                self.use_function = spell.cast_confuse
             else:
                 self.use_function = None
         else:
             self.use_function = use_function
 
-    def place_on_map(self, map=None):
+    def place_on_map(self, amap=None):
         """Place the item object on the current game map."""
-        if map is None:
-            map = SS.map
+        if amap is None:
+            amap = SS.map
 
-        map.items.append(self)
-        map.grid[self.x][self.y].items.append(self)
+        amap.items.append(self)
+        amap.grid[self.x][self.y].items.append(self)
 
     def delete(self, dict_remove=False):
         """
@@ -90,16 +87,16 @@ class Item(Object):
         Convert Item to a string, suitable for saving to a file.
         """
         # Need to trim off the trailing bracket from the Object serialization.
-        o = Object.serialize(self)[:-1]
+        obj = Object.serialize(self)[:-1]
 
         if self.use_function is None:
             use_function = None
         else:
             use_function = self.use_function.__name__
 
-        i = "'use_function':{0},}}".format(repr(use_function))
+        item = "'use_function':{0},}}".format(repr(use_function))
 
-        return o + i
+        return obj + item
 
     def client_serialize(self):
         """
@@ -107,7 +104,7 @@ class Item(Object):
         Only include attributes which the client cares about.
         """
         # Need to trim off the trailing bracket from the Object serialization.
-        o = Object.client_serialize(self)[:-1]
-        i = "}}".format()
+        obj = Object.client_serialize(self)[:-1]
+        item = "}}".format()
 
-        return o + i
+        return obj + item

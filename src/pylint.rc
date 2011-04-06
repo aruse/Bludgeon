@@ -1,0 +1,17 @@
+[MESSAGES CONTROL]
+disable-msg=W0142
+
+[BASIC]
+good-names=f,i,j,x,y,x1,x2,y1,y2,h,w,dx,dy,ai,hp,mp,xp
+
+[DESIGN]
+max-args=20
+max-locals=20
+max-attributes=20
+min-public-methods=0
+max-public-methods=30
+max-branchs=50
+max-statements=100
+
+[VARIABLES]
+dummy-variables-rgx=^i|j$
