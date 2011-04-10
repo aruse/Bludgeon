@@ -3,9 +3,14 @@
 
 """Room class"""
 
+import common.cfg as cfg
+
 class Room(object):
     """A room in the dungeon level."""
     def __init__(self, x, y, w, h):
+        if w < cfg.MIN_ROOM_SIZE or h < cfg.MIN_ROOM_SIZE:
+            raise ValueError
+
         self.x1 = x
         self.y1 = y
         self.x2 = x + w

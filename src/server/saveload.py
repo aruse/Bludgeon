@@ -35,52 +35,49 @@ COMPLEX_SAVE_OBJS = [
 def save_game():
     """Save a game to a file."""
     save_file = SS.game_id + '.save'
-    f = open(save_file, 'w')
+    with open(save_file, 'w') as f:
+        for obj in SIMPLE_SAVE_OBJS:
+            f.write('{0} = {1}\n'.format(obj, repr(eval(obj))))
 
-    for obj in SIMPLE_SAVE_OBJS:
-        f.write('{0} = {1}\n'.format(obj, repr(eval(obj))))
+        f.write('map = [')
 
-    f.write('map = [')
+        for x in xrange(SS.map.w):
+            f.write('[')
+            for y in xrange(SS.map.h):
+                f.write("{{'n': {0}, 'e': {1}}}, ".format(
+                        repr(SS.map.grid[x][y].name),
+                        repr(SS.map.grid[x][y].explored)))
+            f.write('],')
+        f.write(']\n')
 
-    for x in xrange(SS.map.w):
-        f.write('[')
-        for y in xrange(SS.map.h):
-            f.write("{{'n': {0}, 'e': {1}}}, ".format(
-                    repr(SS.map.grid[x][y].name),
-                    repr(SS.map.grid[x][y].explored)))
-        f.write('],')
-    f.write(']\n')
+        # For references to Objects, just save the oid
+        f.write('monsters = ' + repr([mon.oid for mon in SS.map.monsters]) + '\n')
+        f.write('items = ' + repr([item.oid for item in SS.map.items]) + '\n')
 
-    # For references to Objects, just save the oid
-    f.write('monsters = ' + repr([mon.oid for mon in SS.map.monsters]) + '\n')
-    f.write('items = ' + repr([item.oid for item in SS.map.items]) + '\n')
+        # Save all monsters in existence.
+        f.write('monster_defs = [')
+        for oid, obj in Object.obj_dict.iteritems():
+            if oid != SS.u.oid and obj.__class__.__name__ == 'Monster':
+                f.write(repr(obj.serialize()) + ',')
+        f.write(']\n')
 
-    # Save all monsters in existence.
-    f.write('monster_defs = [')
-    for oid, obj in Object.obj_dict.iteritems():
-        if oid != SS.u.oid and obj.__class__.__name__ == 'Monster':
-            f.write(repr(obj.serialize()) + ',')
-    f.write(']\n')
+        # Save all items in existence.
+        f.write('item_defs = [')
+        for oid, obj in Object.obj_dict.iteritems():
+            if obj.__class__.__name__ == 'Item':
+                f.write(repr(obj.serialize()) + ',')
+        f.write(']\n')
 
-    # Save all items in existence.
-    f.write('item_defs = [')
-    for oid, obj in Object.obj_dict.iteritems():
-        if obj.__class__.__name__ == 'Item':
-            f.write(repr(obj.serialize()) + ',')
-    f.write(']\n')
+        # Save the player's state.
+        f.write('u = ' + repr(SS.u.serialize()) + '\n')
 
-    # Save the player's state.
-    f.write('u = ' + repr(SS.u.serialize()) + '\n')
-
-    f.close()
     message('Saved game to {0}.'.format(save_file))
 
 
 def load_game(save_file):
     """Load a saved game from a file."""
-    f = open(save_file, 'r')
-    exec(f.read())
-    f.close()
+    with open(save_file, 'r') as f:
+        exec(f.read())
 
     # Replace the map structure in the save file with actual cells.
     SS.map = map

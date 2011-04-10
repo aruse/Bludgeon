@@ -53,6 +53,7 @@ def server_init():
         SS.dlevel_dict['doom'] = []
         SS.map = Map(cfg.MAP_W, cfg.MAP_H, layout='connected_rooms')
         SS.dlevel_dict['doom'].append(SS.map)
+        print SS.map.upstairs
         SS.u.move_to(SS.map.upstairs)
 
         SS.game_id = str(uuid.uuid1())

@@ -34,13 +34,12 @@ def create_tile_dict():
 
     # Read in tile mapping document, line-by-line, and build a
     # dictionary pointing to coordinates of the graphic
-    mapping = open('data/tiles.map')
-
-    for line in mapping:
-        (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
-        x = (int(loc) % 38) * cfg.TILE_W
-        y = (int(loc) / 38) * cfg.TILE_H
-        tile_dict[name] = pygame.Rect(x, y, cfg.TILE_W, cfg.TILE_H)
+    with open('data/tiles.map') as f:
+        for line in f:
+            (loc, name) = re.findall(r'(\d+) "(.*)"', line)[0]
+            x = (int(loc) % 38) * cfg.TILE_W
+            y = (int(loc) / 38) * cfg.TILE_H
+            tile_dict[name] = pygame.Rect(x, y, cfg.TILE_W, cfg.TILE_H)
 
     return tile_dict
 

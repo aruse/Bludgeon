@@ -27,8 +27,8 @@ class Map(object):
         # List of all free items (not in inventory) on this map
         self.items = []
 
-        self.upstairs = None
-        self.downstairs = None
+        self.upstairs = (0, 0)
+        self.downstairs = (0, 0)
 
         self.grid = [[Cell('cmap, wall, dark')
                       for j in xrange(self.h)]
@@ -55,8 +55,8 @@ class Map(object):
         tunnels.  Each room is connected to the previous one with one tunnel.
         """
         for i in xrange(cfg.MAX_ROOMS):
-            w = SS.map_rand.randrange(cfg.ROOM_MIN_SIZE, cfg.ROOM_MAX_SIZE)
-            h = SS.map_rand.randrange(cfg.ROOM_MIN_SIZE, cfg.ROOM_MAX_SIZE)
+            w = SS.map_rand.randrange(cfg.MIN_ROOM_SIZE, cfg.MAX_ROOM_SIZE)
+            h = SS.map_rand.randrange(cfg.MIN_ROOM_SIZE, cfg.MAX_ROOM_SIZE)
             x = SS.map_rand.randrange(0, self.w - w - 1)
             y = SS.map_rand.randrange(0, self.h - h - 1)
 
@@ -70,14 +70,13 @@ class Map(object):
                     break
 
             if not failed:
-                self.create_rectangular_room(new_room)
-                self.place_objects(new_room)
-
                 # First room
                 if len(self.rooms) == 0:
                     (new_x, new_y) = new_room.center()
                     self.upstairs = (new_x, new_y)
 
+                self.create_rectangular_room(new_room)
+                self.place_objects(new_room)
                 self.rooms.append(new_room)
 
         # Connect the rooms
@@ -116,7 +115,9 @@ class Map(object):
             x = SS.map_rand.randrange(room.x1 + 1, room.x2 - 1)
             y = SS.map_rand.randrange(room.y1 + 1, room.y2 - 1)
 
-            if not self.blocks_movement(x, y):
+            # Don't place monsters on the up stairs, as that's where the player
+            # will be placed.
+            if not self.blocks_movement(x, y) and (x, y) != self.upstairs:
                 if SS.map_rand.randrange(0, 100) < 60:
                     mon = Monster(x, y, 'orc', ai=ai.StupidAI())
                 else:
